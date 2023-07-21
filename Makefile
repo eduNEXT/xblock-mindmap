@@ -45,6 +45,19 @@ piptools: ## install pinned version of pip-compile and pip-sync
 requirements: piptools ## install development environment requirements
 	pip-sync -q requirements/dev.txt requirements/private.*
 
+quality: ## run the quality checks
+	pylint --rcfile=pylintrc mindmap
+	python setup.py -q sdist
+	twine check dist/*
+
+test: ## run tests
+	mkdir -p var
+	rm -rf .coverage
+	python -m coverage run --rcfile=.coveragerc -m pytest
+
+covreport: ## Show the coverage results
+	python -m coverage report -m --skip-covered
+
 dev.clean:
 	-docker rm $(REPO_NAME)-dev
 	-docker rmi $(REPO_NAME)-dev
