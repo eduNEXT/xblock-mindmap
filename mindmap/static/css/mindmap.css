@@ -1,0 +1,9 @@
+/* CSS for MindMapXBlock */
+
+.mindmap_block .count {
+    font-weight: bold;
+}
+
+.mindmap_block p {
+    cursor: pointer;
+}
