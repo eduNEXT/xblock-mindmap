@@ -147,7 +147,10 @@ setup(
     entry_points={
         'xblock.v1': [
             'mindmap = mindmap:MindMapXBlock',
-        ]
+        ],
+        'lms.djangoapp': [
+            "mindmap = mindmap.apps:MindMapConfig",
+        ],
     },
     package_data=package_data("mindmap", ["static", "public"]),
 )

@@ -12,6 +12,16 @@ asgiref==3.7.2
     # via
     #   -r requirements/base.txt
     #   django
+boto3==1.7.0
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/base.txt
+botocore==1.10.84
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/base.txt
+    #   boto3
+    #   s3transfer
 click==8.1.6
     # via code-annotations
 code-annotations==1.5.0
@@ -28,8 +38,12 @@ django-appconf==1.0.5
     # via
     #   -r requirements/base.txt
     #   django-statici18n
-django-statici18n==2.3.1
+django-statici18n==2.4.0
     # via -r requirements/base.txt
+docutils==0.20.1
+    # via
+    #   -r requirements/base.txt
+    #   botocore
 edx-i18n-tools==1.0.0
     # via -r requirements/base.txt
 exceptiongroup==1.1.2
@@ -42,6 +56,11 @@ iniconfig==2.0.0
     # via pytest
 jinja2==3.1.2
     # via code-annotations
+jmespath==0.10.0
+    # via
+    #   -r requirements/base.txt
+    #   boto3
+    #   botocore
 lxml==4.9.3
     # via
     #   -r requirements/base.txt
@@ -81,6 +100,7 @@ pytest-django==4.5.2
 python-dateutil==2.8.2
     # via
     #   -r requirements/base.txt
+    #   botocore
     #   xblock
 python-slugify==8.0.1
     # via code-annotations
@@ -95,6 +115,10 @@ pyyaml==6.0.1
     #   code-annotations
     #   edx-i18n-tools
     #   xblock
+s3transfer==0.1.13
+    # via
+    #   -r requirements/base.txt
+    #   boto3
 simplejson==3.19.1
     # via
     #   -r requirements/base.txt
@@ -133,7 +157,7 @@ xblock==1.6.2
     # via
     #   -r requirements/base.txt
     #   xblock-utils
-xblock-utils==3.2.0
+xblock-utils==3.3.0
     # via -r requirements/base.txt
 
 # The following packages are considered to be unsafe in a requirements file:
