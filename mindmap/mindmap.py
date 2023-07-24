@@ -80,6 +80,7 @@ class MindMapXBlock(XBlock):
 
         html = self.render_template("static/html/mindmap_edit.html", context)
         frag = Fragment(html)
+        frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
