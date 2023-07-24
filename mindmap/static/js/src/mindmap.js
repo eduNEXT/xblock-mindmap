@@ -1,28 +1,25 @@
-/* Javascript for MindMapXBlock. */
 function MindMapXBlock(runtime, element) {
+    console.log("This is the MindMapXBlock");
+    (function () {
+        var mind = {
+            "meta": {
+                "name": "jsMind remote",
+                "author": "eduNEXT",
+                "version": "0.1"
+            },
+            "format": "node_array",
+            "data": [
+                { "id": "root", "isroot": true, "topic": "Root" },
+            ]
+        };
 
-    function updateCount(result) {
-        $('.count', element).text(result.count);
-    }
+        var options = {
+            container: 'jsmind_container',
+            editable: true,
+            theme: 'asphalt',
+        };
 
-    var handlerUrl = runtime.handlerUrl(element, 'increment_count');
-
-    $('p', element).click(function(eventObject) {
-        $.ajax({
-            type: "POST",
-            url: handlerUrl,
-            data: JSON.stringify({"hello": "world"}),
-            success: updateCount
-        });
-    });
-
-    $(function ($) {
-        /*
-        Use `gettext` provided by django-statici18n for static translations
-
-        var gettext = MindMapXBlocki18n.gettext;
-        */
-
-        /* Here's where you'd do things on page load. */
-    });
+        var jm = new jsMind(options);
+        jm.show(mind);
+    })();
 }
