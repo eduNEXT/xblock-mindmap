@@ -60,6 +60,7 @@ class MindMapXBlock(XBlock):
         html = self.resource_string("static/html/mindmap.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
+        frag.add_css(self.resource_string("static/css/jsmind.css"))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
@@ -67,6 +68,8 @@ class MindMapXBlock(XBlock):
             frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
 
         frag.add_javascript(self.resource_string("static/js/src/mindmap.js"))
+        frag.add_javascript(self.resource_string("static/js/src/jsmind.js"))
+        frag.add_javascript(self.resource_string("static/js/src/jsmind.draggable-node.js"))
         frag.initialize_js('MindMapXBlock')
         return frag
 
