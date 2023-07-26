@@ -19,13 +19,4 @@ function MindMapXBlock(runtime, element) {
 
     var jm = new jsMind(options);
     jm.show(mind);
-
-    function saveMindMap() {
-        const jsonData = jm.get_data('node_array');
-        const data = JSON.stringify(jsonData);
-        console.log(data);
-    }
-
-    const saveButton = document.getElementById('save');
-    saveButton.addEventListener('click', saveMindMap);
 }
