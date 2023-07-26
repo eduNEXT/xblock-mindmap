@@ -1,34 +1,37 @@
-"""XBlock to create Mind Maps in Open edX."""
+"""XBlock to create and save Mind Maps in Open edX."""
 
+import json
 import pkg_resources
 
+import boto3
+from django.conf import settings
 from django.template import Context, Template
 from django.utils import translation
+from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, String
-from xblock.fragment import Fragment
+from xblock.fields import Scope, String
 from xblockutils.resources import ResourceLoader
 
 
+AWS_BUCKET_NAME = getattr(settings, "AWS_BUCKET_NAME", None)
+
+
+@XBlock.wants("user")
 class MindMapXBlock(XBlock):
     """
     Mind Map XBlock provides a way to create and save mind maps in a course.
     """
-
-    # Fields are defined on the class.  You can access them in your code as
-    # self.<fieldname>.
-
-    # TO-DO: delete count, and define your own fields.
-    count = Integer(
-        default=0, scope=Scope.user_state,
-        help="A simple counter, to show something happening",
-    )
-
     display_name = String(
         display_name="Display Name",
         default="Mind Map",
         scope=Scope.settings,
     )
+
+    def anonymous_user_id(self, user) -> str:
+        """
+        Return the anonymous user ID of the user.
+        """
+        return user.opt_attrs.get("edx-platform.anonymous_user_id")
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -36,28 +39,34 @@ class MindMapXBlock(XBlock):
         return data.decode("utf8")
 
     def render_template(self, template_path: str, context=None) -> str:
-        """Render the template with the provided context.
+        """
+        Render the template with the provided context.
 
-        args:
+        Args:
             template_path (str): The path to the template
-            context: The context to render in the template
+            context(dict, optional): The context to render in the template
 
-        returns:
+        Returns:
             str: The rendered template
         """
         template_str = self.resource_string(template_path)
         template = Template(template_str)
         return template.render(Context(context))
 
-    # TO-DO: change this view to display your data your own way.
-    def student_view(self, context=None):
+    def student_view(self, _context=None) -> Fragment:
         """
-        The primary view of the MindMapXBlock, shown to students
-        when viewing courses.
+        The primary view of the MindMapXBlock, shown to students when viewing courses.
+
+        Args:
+            _context (dict, optional): Context for the template. Defaults to None.
+
+        Returns:
+            Fragment: The fragment to render
         """
-        if context:
-            pass  # TO-DO: do something based on the context.
-        html = self.resource_string("static/html/mindmap.html")
+        mind_map = self.get_mind_map()
+        js_context = {'mind_map': mind_map} if mind_map else None
+
+        html = self.render_template("static/html/mindmap.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
@@ -67,12 +76,18 @@ class MindMapXBlock(XBlock):
             frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
 
         frag.add_javascript(self.resource_string("static/js/src/mindmap.js"))
-        frag.initialize_js('MindMapXBlock')
+        frag.initialize_js('MindMapXBlock', json_args=js_context)
         return frag
 
-    def studio_view(self, context=None):
+    def studio_view(self, context=None) -> Fragment:
         """
         The studio view of the MindMapXBlock, shown to instructors.
+
+        Args:
+            context (dict, optional): Context for the template. Defaults to None.
+
+        Returns:
+            Fragment: The fragment to render
         """
         context = {
             "display_name": self.display_name,
@@ -91,20 +106,81 @@ class MindMapXBlock(XBlock):
         frag.initialize_js("MindMapXBlock")
         return frag
 
-    # TO-DO: change this handler to perform your own actions.  You may need more
-    # than one handler, or you may not need any handlers at all.
-    @XBlock.json_handler
-    def increment_count(self, data, suffix=''):
+    def connect_to_s3(self):
         """
-        An example handler, which increments the data.
-        """
-        if suffix:
-            pass  # TO-DO: Use the suffix when storing data.
-        # Just to show data coming in...
-        assert data['hello'] == 'world'
+        Create a connection to S3.
 
-        self.count += 1
-        return {"count": self.count}
+        Returns:
+            boto3.client: The connection to S3.
+        """
+        AWS_ACCESS_KEY_ID = getattr(settings, "AWS_ACCESS_KEY_ID", None)
+        AWS_SECRET_ACCESS_KEY_ID = getattr(settings, "AWS_SECRET_ACCESS_KEY_ID", None)
+
+        return boto3.client(
+            "s3",
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY_ID,
+        )
+
+    def get_key(self) -> str:
+        """
+        Return the key (path) to use in S3.
+
+        Returns:
+            str: The key (path) to use in S3.
+        """
+        user_service = self.runtime.service(self, "user")
+        user = user_service.get_current_user()
+        anonymous_user_id = self.anonymous_user_id(user)
+        block_id = self.location.block_id # pylint: disable=no-member
+        return f"{block_id}/{anonymous_user_id}/mindmap.json"
+
+    def file_exists(self) -> bool:
+        """
+        Check if the file exists in S3.
+
+        Returns:
+            bool: True if the file exists, False otherwise.
+        """
+        s3_client = self.connect_to_s3()
+        try:
+            s3_client.head_object(Bucket=AWS_BUCKET_NAME, Key=self.get_key())
+        except s3_client.exceptions.ClientError as e:
+            if e.response["Error"]["Code"] == "404":
+                return False
+            raise e
+        return True
+
+    def get_mind_map(self) -> dict:
+        """
+        Return the mind map content.
+
+        Returns:
+            dict: The mind map content.
+        """
+        if not self.file_exists():
+            return {}
+
+        s3_client = self.connect_to_s3()
+        response = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=self.get_key())
+        json_data = response["Body"].read().decode("utf-8")
+        return json.loads(json_data)
+
+    @XBlock.json_handler
+    def upload_file(self, data, suffix="") -> None: # pylint: disable=unused-argument
+        """
+        Uploads a mind map file to S3.
+
+        Args:
+            data (dict): The data to upload
+            suffix (str, optional): Defaults to "".
+        """
+        s3_client = self.connect_to_s3()
+        s3_client.put_object(
+            Bucket=AWS_BUCKET_NAME,
+            Key=self.get_key(),
+            Body=data.get("mind_map")
+        )
 
     @XBlock.json_handler
     def studio_submit(self, data, suffix=""):  # pylint: disable=unused-argument
