@@ -1,9 +1,11 @@
 /* Javascript for MindMapXBlock. */
+
+// TODO: add notifications
 function MindMapXBlock(runtime, element) {
 
   $(element).find('.save-button').click(function () {
-    var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
-    var data = {
+    const handlerUrl = runtime.handlerUrl(element, 'studio_submit');
+    const data = {
       display_name: $(element).find('input[name=mindmap_display_name]').val(),
     };
     $.post(handlerUrl, JSON.stringify(data)).done(function (response) {

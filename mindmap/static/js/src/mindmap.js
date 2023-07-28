@@ -1,5 +1,5 @@
 function MindMapXBlock(runtime, element) {
-    var mind = {
+    const mind = {
         "meta": {
             "name": "Mind Map",
             "author": "eduNEXT",
@@ -11,12 +11,12 @@ function MindMapXBlock(runtime, element) {
         ]
     };
 
-    var options = {
+    const options = {
         container: 'jsmind_container',
         editable: true,
         theme: 'asphalt',
     };
 
-    var jm = new jsMind(options);
+    const jm = new jsMind(options);
     jm.show(mind);
 }

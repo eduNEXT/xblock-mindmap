@@ -34,6 +34,27 @@ For details regarding how to deploy this or any other XBlock in the LMS instance
 .. _installing-the-xblock: https://edx.readthedocs.io/projects/xblock-tutorial/en/latest/edx_platform/devstack.html#installing-the-xblock
 
 
+Using the jsMind library
+************************
+jsMind library can be used with the mouse or with certain keyboard shortcuts, which allow you to
+interact with the mind map.
+
+With the mouse
+==============
+- Click the node to select it.
+- Double-click the node to edit it.
+- Drag the node to move it.
+- Click the circle to expand or collapse the child nodes.
+
+With the keyboard
+=================
+- ``Ctrl + Enter``: Create a new child node for the selected node.
+- ``Enter``: Create a new brother node for the selected node.
+- ``F2``: Edit the selected node.
+- ``Delete``: Delete the selected node.
+- ``Space``: Expand or collapse the selected node.
+
+
 Enabling in Studio
 ******************
 
