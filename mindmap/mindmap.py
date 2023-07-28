@@ -41,13 +41,29 @@ class MindMapXBlock(XBlock):
         scope=Scope.settings,
     )
 
-    def anonymous_user_id(self) -> str:
+    def get_current_user(self):
+        """
+        Get the current user.
+        """
+        return self.runtime.service(self, "user").get_current_user()
+
+    def anonymous_user_id(self, user) -> str:
         """
         Return the anonymous user ID of the user.
         """
-        user_service = self.runtime.service(self, "user")
-        user = user_service.get_current_user()
         return user.opt_attrs.get("edx-platform.anonymous_user_id")
+
+    def user_is_staff(self, user) -> bool:
+        """
+        Check whether the user has course staff permissions for this XBlock.
+        """
+        return user.opt_attrs.get("edx-platform.user_is_staff")
+
+    def is_student(self, user) -> bool:
+        """
+        Check if the user is a student.
+        """
+        return user.opt_attrs.get("edx-platform.user_role") == "student"
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -79,11 +95,17 @@ class MindMapXBlock(XBlock):
         Returns:
             Fragment: The fragment to render
         """
-        anonymous_user_id = self.anonymous_user_id()
-        mind_map = self.get_current_mind_map(anonymous_user_id)
-        js_context = {'mind_map': mind_map}
+        user = self.get_current_user()
+        anonymous_user_id = self.anonymous_user_id(user)
+        show_mindmap = self.is_student(user) or self.user_is_staff(user)
+        js_context = {}
+        context = {"show_mindmap": show_mindmap}
 
-        html = self.render_template("static/html/mindmap.html")
+        if show_mindmap:
+            mind_map = self.get_current_mind_map(anonymous_user_id)
+            js_context.update({"mind_map": mind_map})
+
+        html = self.render_template("static/html/mindmap.html", context)
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
@@ -208,10 +230,13 @@ class MindMapXBlock(XBlock):
             data (dict): The data to upload
             suffix (str, optional): Defaults to "".
         """
+        user = self.get_current_user()
+        anonymous_user_id = self.anonymous_user_id(user)
         s3_client, aws_bucket_name = self.connect_to_s3()
+
         s3_client.put_object(
             Bucket=aws_bucket_name,
-            Key=self.get_file_key(self.anonymous_user_id()),
+            Key=self.get_file_key(anonymous_user_id),
             Body=data.get("mind_map")
         )
 
