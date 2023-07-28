@@ -99,11 +99,16 @@ class MindMapXBlock(XBlock):
         anonymous_user_id = self.anonymous_user_id(user)
         show_mindmap = self.is_student(user) or self.user_is_staff(user)
         js_context = {}
-        context = {"show_mindmap": show_mindmap}
+        error_message = None
 
         if show_mindmap:
-            mind_map = self.get_current_mind_map(anonymous_user_id)
-            js_context.update({"mind_map": mind_map})
+            try:
+                mind_map = self.get_current_mind_map(anonymous_user_id)
+                js_context.update({"mind_map": mind_map})
+            except Exception as error: # pylint: disable=broad-except
+                error_message = str(error)
+
+        context = {"show_mindmap": show_mindmap, "error_message": error_message}
 
         html = self.render_template("static/html/mindmap.html", context)
         frag = Fragment(html.format(self=self))
