@@ -7,3 +7,7 @@
 .mindmap_block p {
     cursor: pointer;
 }
+
+#jsmind_container > .jsmind-inner {
+    min-height: 400px;
+}

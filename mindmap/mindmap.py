@@ -1,9 +1,11 @@
 """XBlock to create Mind Maps in Open edX."""
 
 import pkg_resources
+
+from django.template import Context, Template
 from django.utils import translation
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope
+from xblock.fields import Integer, Scope, String
 from xblock.fragment import Fragment
 from xblockutils.resources import ResourceLoader
 
@@ -22,10 +24,30 @@ class MindMapXBlock(XBlock):
         help="A simple counter, to show something happening",
     )
 
+    display_name = String(
+        display_name="Display Name",
+        default="Mind Map",
+        scope=Scope.settings,
+    )
+
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
+
+    def render_template(self, template_path: str, context=None) -> str:
+        """Render the template with the provided context.
+
+        args:
+            template_path (str): The path to the template
+            context: The context to render in the template
+
+        returns:
+            str: The rendered template
+        """
+        template_str = self.resource_string(template_path)
+        template = Template(template_str)
+        return template.render(Context(context))
 
     # TO-DO: change this view to display your data your own way.
     def student_view(self, context=None):
@@ -48,6 +70,26 @@ class MindMapXBlock(XBlock):
         frag.initialize_js('MindMapXBlock')
         return frag
 
+    def studio_view(self, context=None):
+        """
+        The studio view of the MindMapXBlock, shown to instructors.
+        """
+        context = {
+            "display_name": self.display_name,
+        }
+
+        html = self.render_template("static/html/mindmap_edit.html", context)
+        frag = Fragment(html)
+
+        # Add i18n js
+        statici18n_js_url = self._get_statici18n_js_url()
+        if statici18n_js_url:
+            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
+
+        frag.add_javascript(self.resource_string("static/js/src/mindmapEdit.js"))
+        frag.initialize_js("MindMapXBlock")
+        return frag
+
     # TO-DO: change this handler to perform your own actions.  You may need more
     # than one handler, or you may not need any handlers at all.
     @XBlock.json_handler
@@ -62,6 +104,13 @@ class MindMapXBlock(XBlock):
 
         self.count += 1
         return {"count": self.count}
+
+    @XBlock.json_handler
+    def studio_submit(self, data, suffix=""):  # pylint: disable=unused-argument
+        """
+        Called when submitting the form in Studio.
+        """
+        self.display_name = data.get("display_name")
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

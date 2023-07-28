@@ -1,151 +1,169 @@
-Mind Map XBlock for Open edX
-#############################
+Mind Map XBlock
+#################
 
-Testing with Docker
-********************
+|status-badge| |license-badge| |ci-badge|
 
-This XBlock comes with a Docker test environment ready to build, based on the xblock-sdk workbench. To build and run it::
+Purpose
+*******
 
-    $ make dev.run
+`XBlock`_ is the Open edX component architecture for building custom learning interactives.
 
-The XBlock SDK Workbench, including this XBlock, will be available on the list of XBlocks at http://localhost:8000
+.. _XBlock: https://openedx.org/r/xblock
 
-Translating
-*************
-
-Internationalization (i18n) is when a program is made aware of multiple languages.
-Localization (l10n) is adapting a program to local language and cultural habits.
-
-Use the locale directory to provide internationalized strings for your XBlock project.
-For more information on how to enable translations, visit the
-`Open edX XBlock tutorial on Internationalization <https://edx.readthedocs.org/projects/xblock-tutorial/en/latest/edx_platform/edx_lms.html>`_.
-
-This cookiecutter template uses `django-statici18n <https://django-statici18n.readthedocs.io/en/latest/>`_
-to provide translations to static javascript using ``gettext``.
-
-The included Makefile contains targets for extracting, compiling and validating translatable strings.
-The general steps to provide multilingual messages for a Python program (or an XBlock) are:
-
-1. Mark translatable strings.
-2. Run i18n tools to create raw message catalogs.
-3. Create language specific translations for each message in the catalogs.
-4. Use ``gettext`` to translate strings.
-
-1. Mark translatable strings
-=============================
-
-Mark translatable strings in python::
+Mind Map XBlock allows students to create and edit Mind Maps in a course.
 
 
-    from django.utils.translation import ugettext as _
+Getting Started
+***************
+You can see the Mind Map in action in the XBlock Workbench. Running the Workbench requires
+having docker running.
 
-    # Translators: This comment will appear in the `.po` file.
-    message = _("This will be marked.")
+.. code:: bash
 
-See `edx-developer-guide <https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/internationalization/i18n.html#python-source-code>`__
-for more information.
+    git clone git@github.com:eduNEXT/xblock-mindmap
+    cd xblock-mindmap
+    virtualenv -p python3.8 venv && source venv/bin/activate
+    make upgrade
+    make install
+    make dev.run
 
-You can also use ``gettext`` to mark strings in javascript::
+You can interact with the MindMapXBlock in the Workbench by navigating to http://localhost:8000
 
+For details regarding how to deploy this or any other XBlock in the LMS instance, see the `installing-the-xblock`_ documentation.
 
-    // Translators: This comment will appear in the `.po` file.
-    var message = gettext("Custom message.");
-
-See `edx-developer-guide <https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/internationalization/i18n.html#javascript-files>`__
-for more information.
-
-2. Run i18n tools to create Raw message catalogs
-=================================================
-
-This cookiecutter template offers multiple make targets which are shortcuts to
-use `edx-i18n-tools <https://github.com/openedx/i18n-tools>`_.
-
-After marking strings as translatable we have to create the raw message catalogs.
-These catalogs are created in ``.po`` files. For more information see
-`GNU PO file documentation <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`_.
-These catalogs can be created by running::
+.. _installing-the-xblock: https://edx.readthedocs.io/projects/xblock-tutorial/en/latest/edx_platform/devstack.html#installing-the-xblock
 
 
-    $ make extract_translations
+Using the jsMind library
+************************
+jsMind library can be used with the mouse or with certain keyboard shortcuts, which allow you to
+interact with the mind map.
 
-The previous command will create the necessary ``.po`` files under
-``xblock-mindmap/mindmap/locale/en/LC_MESSAGES/text.po``.
-The ``text.po`` file is created from the ``django-partial.po`` file created by
-``django-admin makemessages`` (`makemessages documentation <https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#message-files>`_),
-this is why you will not see a ``django-partial.po`` file.
+With the mouse
+==============
+- Click the node to select it.
+- Double-click the node to edit it.
+- Drag the node to move it.
+- Click the circle to expand or collapse the child nodes.
 
-3. Create language specific translations
-==============================================
+With the keyboard
+=================
+- ``Ctrl + Enter``: Create a new child node for the selected node.
+- ``Enter``: Create a new brother node for the selected node.
+- ``F2``: Edit the selected node.
+- ``Delete``: Delete the selected node.
+- ``Space``: Expand or collapse the selected node.
 
-3.1 Add translated strings
----------------------------
 
-After creating the raw message catalogs, all translations should be filled out by the translator.
-One or more translators must edit the entries created in the message catalog, i.e. the ``.po`` file(s).
-The format of each entry is as follows::
+Enabling in Studio
+******************
 
-    #  translator-comments
-    A. extracted-comments
-    #: reference…
-    #, flag…
-    #| msgid previous-untranslated-string
-    msgid 'untranslated message'
-    msgstr 'mensaje traducido (translated message)'
+You can enable the Mind Map XBlock in the studio through the advanced settings.
 
-For more information see
-`GNU PO file documentation <https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html>`_.
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/52b644de-4cd4-4971-abba-83f08e7aacdb
 
-To use translations from transifex use the follow Make target to pull translations::
+1. From the main page of a specific course, navigate to ``Settings → Advanced Settings`` from the top menu.
+2. Check for the ``Advanced Module List`` policy key, and add ``"mindmap"`` to the policy value list.
+3. Click the "Save changes" button.
 
-    $ make pull_translations
 
-See `config instructions <https://github.com/openedx/i18n-tools#transifex-commands>`_ for information on how to set up your
-transifex credentials.
+Configuring Component
+*********************
 
-See `transifex documentation <https://docs.transifex.com/integrations/django>`_ for more details about integrating
-django with transiflex.
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/8a6da9d7-10d3-4803-a085-e84a68e2f066
 
-3.2 Compile translations
--------------------------
+Fields
+======
+- **Display name (String)**: Name of the component.
 
-Once translations are in place, use the following Make target to compile the translation catalogs ``.po`` into
-``.mo`` message files::
 
-    $ make compile_translations
+View from Learning Management System (LMS)
+******************************************
 
-The previous command will compile ``.po`` files using
-``django-admin compilemessages`` (`compilemessages documentation <https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#compiling-message-files>`_).
-After compiling the ``.po`` file(s), ``django-statici18n`` is used to create language specific catalogs. See
-``django-statici18n`` `documentation <https://django-statici18n.readthedocs.io/en/latest/>`_ for more information.
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/67be4ebf-4d0e-44c8-ac61-173756da01d1
 
-To upload translations to transiflex use the follow Make target::
+The student observes the component from the LMS and will be able to create, save and edit a mind map.
 
-    $ make push_translations
 
-See `config instructions <https://github.com/openedx/i18n-tools#transifex-commands>`_ for information on how to set up your
-transifex credentials.
+Getting Help
+************
 
-See `transifex documentation <https://docs.transifex.com/integrations/django>`_ for more details about integrating
-django with transiflex.
+Documentation
+=============
 
- **Note:** The ``dev.run`` make target will automatically compile any translations.
+If you're having trouble, we have discussion forums at https://discuss.openedx.org where you can
+connect with others in the community.
 
- **Note:** To check if the source translation files (``.po``) are up-to-date run::
+Our real-time conversations are on Slack. You can request a `Slack invitation`_, then join our
+`community Slack workspace`_.
 
-     $ make detect_changed_source_translations
+For anything non-trivial, the best path is to open an issue in this repository with as many details
+about the issue you are facing as you can provide.
 
-4. Use ``gettext`` to translate strings
-========================================
+https://github.com/eduNEXT/xblock-limesurvey/issues
 
-Django will automatically use ``gettext`` and the compiled translations to translate strings.
+For more information about these options, see the `Getting Help`_ page.
 
-Troubleshooting
-****************
+.. _Slack invitation: https://openedx.org/slack
+.. _community Slack workspace: https://openedx.slack.com/
+.. _Getting Help: https://openedx.org/getting-help
 
-If there are any errors compiling ``.po`` files run the following command to validate your ``.po`` files::
 
-    $ make validate
+License
+*******
 
-See `django's i18n troubleshooting documentation
-<https://docs.djangoproject.com/en/3.2/topics/i18n/translation/#troubleshooting-gettext-incorrectly-detects-python-format-in-strings-with-percent-signs>`_
-for more information.
+The code in this repository is licensed under the AGPL-3.0 unless otherwise noted.
+
+Please see `LICENSE.txt <LICENSE.txt>`_ for details.
+
+
+Contributing
+************
+
+Contributions are very welcome.
+Please read `How To Contribute <https://openedx.org/r/how-to-contribute>`_ for details.
+
+This project is currently accepting all types of contributions, bug fixes, security fixes, maintenance
+work, or new features.  However, please make sure to have a discussion about your new feature idea with
+the maintainers prior to beginning development to maximize the chances of your change being accepted.
+You can start a conversation by creating a new issue on this repo summarizing your idea.
+
+
+The Open edX Code of Conduct
+****************************
+
+All community members are expected to follow the `Open edX Code of Conduct`_.
+
+.. _Open edX Code of Conduct: https://openedx.org/code-of-conduct/
+
+
+Reporting Security Issues
+*************************
+
+Please do not report security issues in public. Please email security@edunext.co.
+
+.. |pypi-badge| image:: https://img.shields.io/pypi/v/xblock-mindmap.svg
+    :target: https://pypi.python.org/pypi/xblock-mindmap/
+    :alt: PyPI
+
+.. |ci-badge| image:: https://github.com/eduNEXT/xblock-mindmap/workflows/Python%20CI/badge.svg?branch=main
+    :target: https://github.com/eduNEXT/xblock-mindmap/actions
+    :alt: CI
+
+.. |codecov-badge| image:: https://codecov.io/github/eduNEXT/xblock-mindmap/coverage.svg?branch=main
+    :target: https://codecov.io/github/eduNEXT/xblock-mindmap?branch=main
+    :alt: Codecov
+
+.. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/xblock-mindmap.svg
+    :target: https://pypi.python.org/pypi/xblock-mindmap/
+    :alt: Supported Python versions
+
+.. |license-badge| image:: https://img.shields.io/github/license/eduNEXT/xblock-mindmap.svg
+    :target: https://github.com/eduNEXT/xblock-mindmap/blob/main/LICENSE.txt
+    :alt: License
+
+.. TODO: Choose one of the statuses below and remove the other status-badge lines.
+.. |status-badge| image:: https://img.shields.io/badge/Status-Experimental-yellow
+.. .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
+.. .. |status-badge| image:: https://img.shields.io/badge/Status-Deprecated-orange
+.. .. |status-badge| image:: https://img.shields.io/badge/Status-Unsupported-red
