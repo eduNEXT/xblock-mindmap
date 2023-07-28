@@ -3,6 +3,8 @@
 // TODO: add notifications
 function MindMapXBlock(runtime, element) {
 
+  const { notify } = new window.StudioRuntime.v1();
+
   $(element).find('.save-button').click(function () {
     const handlerUrl = runtime.handlerUrl(element, 'studio_submit');
     const data = {
@@ -11,6 +13,10 @@ function MindMapXBlock(runtime, element) {
     $.post(handlerUrl, JSON.stringify(data)).done(function (response) {
       window.location.reload(false);
     }).fail(function () {
+      notify('error', {
+        title: 'Error',
+        message: 'Error saving mindmap display name.'
+      });
       console.log('Error saving mindmap display name.')
     });
   });
