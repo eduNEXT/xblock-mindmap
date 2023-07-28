@@ -8,6 +8,15 @@ appdirs==1.4.4
     # via fs
 asgiref==3.7.2
     # via django
+boto3==1.7.0
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/base.in
+botocore==1.10.84
+    # via
+    #   -c requirements/constraints.txt
+    #   boto3
+    #   s3transfer
 django==3.2.20
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
@@ -18,10 +27,16 @@ django-appconf==1.0.5
     # via django-statici18n
 django-statici18n==2.3.1
     # via -r requirements/base.in
+docutils==0.20.1
+    # via botocore
 edx-i18n-tools==1.0.0
     # via -r requirements/base.in
 fs==2.4.16
     # via xblock
+jmespath==0.10.0
+    # via
+    #   boto3
+    #   botocore
 lxml==4.9.3
     # via xblock
 mako==1.2.4
@@ -37,7 +52,9 @@ path==16.7.1
 polib==1.2.0
     # via edx-i18n-tools
 python-dateutil==2.8.2
-    # via xblock
+    # via
+    #   botocore
+    #   xblock
 pytz==2023.3
     # via
     #   django
@@ -46,6 +63,8 @@ pyyaml==6.0.1
     # via
     #   edx-i18n-tools
     #   xblock
+s3transfer==0.1.13
+    # via boto3
 simplejson==3.19.1
     # via xblock-utils
 six==1.16.0
@@ -66,7 +85,7 @@ xblock==1.6.2
     # via
     #   -r requirements/base.in
     #   xblock-utils
-xblock-utils==3.2.0
+xblock-utils==3.3.0
     # via -r requirements/base.in
 
 # The following packages are considered to be unsafe in a requirements file:

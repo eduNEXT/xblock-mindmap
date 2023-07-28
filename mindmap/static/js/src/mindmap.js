@@ -1,4 +1,5 @@
 function MindMapXBlock(runtime, element, context) {
+
     const baseMind = {
         "meta": {
             "name": "Mind Map",

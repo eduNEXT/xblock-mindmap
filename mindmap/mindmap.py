@@ -1,9 +1,13 @@
 """XBlock to create and save Mind Maps in Open edX."""
 
+from __future__ import annotations
+
 import json
-import pkg_resources
+from http import HTTPStatus
+from typing import Tuple
 
 import boto3
+import pkg_resources
 from django.conf import settings
 from django.template import Context, Template
 from django.utils import translation
@@ -13,7 +17,17 @@ from xblock.fields import Scope, String
 from xblockutils.resources import ResourceLoader
 
 
-AWS_BUCKET_NAME = getattr(settings, "AWS_BUCKET_NAME", None)
+class MisconfiguredMindMapService(Exception):
+    """Exception raised when the MindMap service is misconfigured."""
+
+    def init__(self, message="Mind Map service is misconfigured"):
+        """
+        Initialize the exception.
+
+        Args:
+            message (str, optional): The error message for the misconfigured mind map service error.
+        """
+        super().__init__(message)
 
 
 @XBlock.wants("user")
@@ -27,10 +41,12 @@ class MindMapXBlock(XBlock):
         scope=Scope.settings,
     )
 
-    def anonymous_user_id(self, user) -> str:
+    def anonymous_user_id(self) -> str:
         """
         Return the anonymous user ID of the user.
         """
+        user_service = self.runtime.service(self, "user")
+        user = user_service.get_current_user()
         return user.opt_attrs.get("edx-platform.anonymous_user_id")
 
     def resource_string(self, path):
@@ -63,8 +79,9 @@ class MindMapXBlock(XBlock):
         Returns:
             Fragment: The fragment to render
         """
-        mind_map = self.get_mind_map()
-        js_context = {'mind_map': mind_map} if mind_map else None
+        anonymous_user_id = self.anonymous_user_id()
+        mind_map = self.get_current_mind_map(anonymous_user_id)
+        js_context = {'mind_map': mind_map}
 
         html = self.render_template("static/html/mindmap.html")
         frag = Fragment(html.format(self=self))
@@ -106,64 +123,80 @@ class MindMapXBlock(XBlock):
         frag.initialize_js("MindMapXBlock")
         return frag
 
-    def connect_to_s3(self):
+    @staticmethod
+    def connect_to_s3() -> Tuple[boto3.client, str]:
         """
         Create a connection to S3.
 
-        Returns:
-            boto3.client: The connection to S3.
-        """
-        AWS_ACCESS_KEY_ID = getattr(settings, "AWS_ACCESS_KEY_ID", None)
-        AWS_SECRET_ACCESS_KEY_ID = getattr(settings, "AWS_SECRET_ACCESS_KEY_ID", None)
+        Raises:
+            MisconfiguredMindMapService: If the AWS settings are not configured.
 
-        return boto3.client(
+        Returns:
+            Tuple[boto3.client, str]: The S3 client and the bucket name.
+        """
+        aws_access_key_id = getattr(settings, "AWS_ACCESS_KEY_ID", None)
+        aws_secret_access_key = getattr(settings, "AWS_SECRET_ACCESS_KEY", None)
+        aws_bucket_name = getattr(settings, "FILE_UPLOAD_STORAGE_BUCKET_NAME", None)
+
+        if not aws_access_key_id or not aws_secret_access_key or not aws_bucket_name:
+            raise MisconfiguredMindMapService("AWS settings not configured")
+
+        s3_client = boto3.client(
             "s3",
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_ACCESS_KEY_ID,
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
         )
 
-    def get_key(self) -> str:
+        return s3_client, aws_bucket_name
+
+    def get_file_key(self, anonymous_user_id: str) -> str:
         """
-        Return the key (path) to use in S3.
+        Return the key (path) to save and retrieve the file in S3.
 
         Returns:
             str: The key (path) to use in S3.
         """
-        user_service = self.runtime.service(self, "user")
-        user = user_service.get_current_user()
-        anonymous_user_id = self.anonymous_user_id(user)
         block_id = self.location.block_id # pylint: disable=no-member
         return f"{block_id}/{anonymous_user_id}/mindmap.json"
 
-    def file_exists(self) -> bool:
+    def file_exists_in_s3(self, anonymous_user_id: str) -> bool:
         """
         Check if the file exists in S3.
 
         Returns:
             bool: True if the file exists, False otherwise.
         """
-        s3_client = self.connect_to_s3()
+        s3_client, aws_bucket_name = self.connect_to_s3()
         try:
-            s3_client.head_object(Bucket=AWS_BUCKET_NAME, Key=self.get_key())
-        except s3_client.exceptions.ClientError as e:
-            if e.response["Error"]["Code"] == "404":
+            s3_client.head_object(
+                Bucket=aws_bucket_name,
+                Key=self.get_file_key(anonymous_user_id)
+            )
+        except s3_client.exceptions.ClientError as error:
+            if error.response["Error"]["Code"] == str(HTTPStatus.NOT_FOUND):
                 return False
-            raise e
+            raise s3_client.exceptions.ClientError(error)
         return True
 
-    def get_mind_map(self) -> dict:
+    def get_current_mind_map(self, anonymous_user_id: str) -> dict | None:
         """
-        Return the mind map content.
+        Return the current mind map content.
 
         Returns:
             dict: The mind map content.
         """
-        if not self.file_exists():
-            return {}
+        if not self.file_exists_in_s3(anonymous_user_id):
+            return None
 
-        s3_client = self.connect_to_s3()
-        response = s3_client.get_object(Bucket=AWS_BUCKET_NAME, Key=self.get_key())
-        json_data = response["Body"].read().decode("utf-8")
+        s3_client, aws_bucket_name = self.connect_to_s3()
+        try:
+            response = s3_client.get_object(
+                Bucket=aws_bucket_name,
+                Key=self.get_file_key(anonymous_user_id)
+            )
+            json_data = response["Body"].read().decode("utf-8")
+        except s3_client.exceptions.ClientError as error:
+            raise s3_client.exceptions.ClientError(error)
         return json.loads(json_data)
 
     @XBlock.json_handler
@@ -175,10 +208,10 @@ class MindMapXBlock(XBlock):
             data (dict): The data to upload
             suffix (str, optional): Defaults to "".
         """
-        s3_client = self.connect_to_s3()
+        s3_client, aws_bucket_name = self.connect_to_s3()
         s3_client.put_object(
-            Bucket=AWS_BUCKET_NAME,
-            Key=self.get_key(),
+            Bucket=aws_bucket_name,
+            Key=self.get_file_key(self.anonymous_user_id()),
             Body=data.get("mind_map")
         )
 
