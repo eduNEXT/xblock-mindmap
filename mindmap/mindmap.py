@@ -204,7 +204,7 @@ class MindMapXBlock(XBlock):
                 Key=self.get_file_key(anonymous_user_id)
             )
         except s3_client.exceptions.ClientError as error:
-            if error.response["Error"]["Code"] == str(HTTPStatus.NOT_FOUND):
+            if int(error.response["Error"]["Code"]) == HTTPStatus.NOT_FOUND:
                 return False
             log.error(error)
             raise error
