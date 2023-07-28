@@ -1,3 +1,4 @@
+// TODO: add notifications
 function MindMapXBlock(runtime, element, context) {
 
     const baseMind = {
