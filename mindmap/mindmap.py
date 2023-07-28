@@ -207,7 +207,7 @@ class MindMapXBlock(XBlock):
             if error.response["Error"]["Code"] == str(HTTPStatus.NOT_FOUND):
                 return False
             log.error(error)
-            raise s3_client.exceptions.ClientError(error)
+            raise error
         return True
 
     def get_current_mind_map(self, anonymous_user_id: str) -> dict | None:
@@ -228,7 +228,7 @@ class MindMapXBlock(XBlock):
             )
             json_data = response["Body"].read().decode("utf-8")
         except s3_client.exceptions.ClientError as error:
-            raise s3_client.exceptions.ClientError(error)
+            raise error
         return json.loads(json_data)
 
     @XBlock.json_handler
