@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from http import HTTPStatus
 from typing import Tuple
 
@@ -15,6 +16,8 @@ from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Scope, String
 from xblockutils.resources import ResourceLoader
+
+log = logging.getLogger(__name__)
 
 
 class MisconfiguredMindMapService(Exception):
@@ -106,6 +109,7 @@ class MindMapXBlock(XBlock):
                 mind_map = self.get_current_mind_map(anonymous_user_id)
                 js_context.update({"mind_map": mind_map})
             except Exception as error: # pylint: disable=broad-except
+                log.exception("Error while setting up student view of MindMapXBlock")
                 error_message = str(error)
 
         context = {"show_mindmap": show_mindmap, "error_message": error_message}
@@ -202,6 +206,7 @@ class MindMapXBlock(XBlock):
         except s3_client.exceptions.ClientError as error:
             if error.response["Error"]["Code"] == str(HTTPStatus.NOT_FOUND):
                 return False
+            log.error(error)
             raise s3_client.exceptions.ClientError(error)
         return True
 
