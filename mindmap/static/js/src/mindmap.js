@@ -1,7 +1,7 @@
 // TODO: add notifications
 function MindMapXBlock(runtime, element, context) {
 
-    function showMindMap() {
+    function showMindMap(jsMind) {
       const baseMind = {
         "meta": {
             "name": "Mind Map",
@@ -23,6 +23,7 @@ function MindMapXBlock(runtime, element, context) {
     };
 
     if (context.hasMindMap) {
+      // const jm = jsMind ? new jsMind(options): new window.jsMind(options);
       const jm = new jsMind(options);
       jm.show(mind);
     }
@@ -51,7 +52,7 @@ function MindMapXBlock(runtime, element, context) {
   }); */
   if (typeof require === "function") {
     require(["jsMind"], function (jsMind) {
-      showMindMap();
+      showMindMap(jsMind);
     });
   } else {
     // Example usage
@@ -62,7 +63,7 @@ function MindMapXBlock(runtime, element, context) {
     ];
 
     loadJSMind(function(){
-      showMindMap();
+      showMindMap(window.jsMind);
     });
 
    /* loadScripts(scriptUrls, function() {

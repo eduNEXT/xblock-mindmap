@@ -103,7 +103,7 @@ class MindMapXBlock(XBlock):
         show_mindmap = self.is_student(user) or self.user_is_staff(user)
         js_context = {
             "author": user.full_name,
-            "hasMindMap": show_mindmap
+            "hasMindMap": True
         }
   
         error_message = None
