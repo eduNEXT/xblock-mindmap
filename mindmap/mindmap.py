@@ -8,7 +8,6 @@ from http import HTTPStatus
 from typing import Tuple
 
 import boto3
-from botocore.exceptions import ClientError
 import pkg_resources
 from django.conf import settings
 from django.template import Context, Template
@@ -103,8 +102,10 @@ class MindMapXBlock(XBlock):
         anonymous_user_id = self.anonymous_user_id(user)
         show_mindmap = self.is_student(user) or self.user_is_staff(user)
         js_context = {
-            'hasMindMap': show_mindmap
+            "author": user.full_name,
+            "hasMindMap": show_mindmap
         }
+  
         error_message = None
 
         if show_mindmap:
@@ -192,8 +193,8 @@ class MindMapXBlock(XBlock):
         Returns:
             str: The key (path) to use in S3.
         """
-        block_id = self.scope_ids.usage_id.block_id
-        return f"{block_id}/{anonymous_user_id}/mindmap.json"
+        block_id = self.location.block_id # pylint: disable=no-member
+        return f"mindmaps/{block_id}/{anonymous_user_id}/mindmap.json"
 
     def file_exists_in_s3(self, anonymous_user_id: str) -> bool:
         """
@@ -208,7 +209,7 @@ class MindMapXBlock(XBlock):
                 Bucket=aws_bucket_name,
                 Key=self.get_file_key(anonymous_user_id)
             )
-        except ClientError as error:
+        except s3_client.exceptions.ClientError as error:
             if int(error.response["Error"]["Code"]) == HTTPStatus.NOT_FOUND:
                 return False
             log.error(error)
@@ -232,7 +233,7 @@ class MindMapXBlock(XBlock):
                 Key=self.get_file_key(anonymous_user_id)
             )
             json_data = response["Body"].read().decode("utf-8")
-        except ClientError as error:
+        except s3_client.exceptions.ClientError as error:
             raise error
         return json.loads(json_data)
 

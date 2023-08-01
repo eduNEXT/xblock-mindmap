@@ -1,18 +1,20 @@
 // TODO: add notifications
 function MindMapXBlock(runtime, element, context) {
-  console.log("context", context);
-   function showMindMap() {
-    const baseMind = {
-      meta: {
-        name: "Mind Map",
-        author: "eduNEXT",
-        version: "0.1",
-      },
-      format: "node_array",
-      data: [{ id: "root", isroot: true, topic: "Root" }],
+
+    function showMindMap() {
+      const baseMind = {
+        "meta": {
+            "name": "Mind Map",
+            "version": "0.1"
+        },
+        "format": "node_array",
+        "data": [
+            { "id": "root", "isroot": true, "topic": "Root" },
+        ]
     };
 
     const mind = context.mind_map || baseMind;
+    mind.meta.author = context.author;
 
     const options = {
       container: "jsmind_container",
@@ -41,8 +43,8 @@ function MindMapXBlock(runtime, element, context) {
             console.log("Error saving mind map");
           });
       });
-  };
-
+    }
+  
   /*require(["jsMind"], function (jsMind) {
     showMindMap();
     //runtime.jsMind = jsMind;
@@ -92,7 +94,7 @@ function MindMapXBlock(runtime, element, context) {
   }); */
   
   }
-}
+};
 
 function loadJSMind(callback) {
   if (window.jsMind) {
