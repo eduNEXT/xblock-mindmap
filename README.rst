@@ -100,7 +100,7 @@ Our real-time conversations are on Slack. You can request a `Slack invitation`_,
 For anything non-trivial, the best path is to open an issue in this repository with as many details
 about the issue you are facing as you can provide.
 
-https://github.com/eduNEXT/xblock-limesurvey/issues
+https://github.com/eduNEXT/xblock-mindmap/issues
 
 For more information about these options, see the `Getting Help`_ page.
 

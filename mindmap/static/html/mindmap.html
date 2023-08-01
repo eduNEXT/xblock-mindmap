@@ -1,5 +1,19 @@
-<link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css"/>
-<script type="text/javascript" src="https://unpkg.com/jsmind@latest/es6/jsmind.js"></script>
-<script type="text/javascript" src="https://unpkg.com/jsmind@latest/es6/jsmind.draggable-node.js"></script>
+{% if show_mindmap %}
+    {% if error_message %}
+        <p>The mind map can't be rendered due to the following error: <b>{{error_message}}</b></p>
+        <p>Please contact the instructor or an administrator.</p>
+    {% else %}
+        <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
+        <script type="text/javascript" src="https://unpkg.com/jsmind@latest/es6/jsmind.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/jsmind@latest/es6/jsmind.draggable-node.js"></script>
 
-<div id="jsmind_container"></div>
+        <div>
+            <button class="save-button">Save</button>
+            <div id="jsmind_container"></div>
+        </div>
+    {% endif %}
+{% else %}
+<div>
+    <p>The mind map is only visible from the LMS.</p>
+</div>
+{% endif %}

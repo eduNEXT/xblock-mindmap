@@ -16,6 +16,16 @@ astroid==2.15.6
     # via
     #   pylint
     #   pylint-celery
+boto3==1.7.0
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/test.txt
+botocore==1.10.84
+    # via
+    #   -c requirements/constraints.txt
+    #   -r requirements/test.txt
+    #   boto3
+    #   s3transfer
 click==8.1.6
     # via
     #   -r requirements/test.txt
@@ -32,7 +42,7 @@ coverage[toml]==7.2.7
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-dill==0.3.6
+dill==0.3.7
     # via pylint
 django==3.2.20
     # via
@@ -47,6 +57,10 @@ django-appconf==1.0.5
     #   django-statici18n
 django-statici18n==2.3.1
     # via -r requirements/test.txt
+docutils==0.20.1
+    # via
+    #   -r requirements/test.txt
+    #   botocore
 edx-i18n-tools==1.0.0
     # via -r requirements/test.txt
 edx-lint==5.3.4
@@ -71,6 +85,11 @@ jinja2==3.1.2
     # via
     #   -r requirements/test.txt
     #   code-annotations
+jmespath==0.10.0
+    # via
+    #   -r requirements/test.txt
+    #   boto3
+    #   botocore
 lazy-object-proxy==1.9.0
     # via astroid
 lxml==4.9.3
@@ -115,7 +134,7 @@ pycodestyle==2.10.0
     # via -r requirements/quality.in
 pydocstyle==6.3.0
     # via -r requirements/quality.in
-pylint==2.17.4
+pylint==2.17.5
     # via
     #   edx-lint
     #   pylint-celery
@@ -141,6 +160,7 @@ pytest-django==4.5.2
 python-dateutil==2.8.2
     # via
     #   -r requirements/test.txt
+    #   botocore
     #   xblock
 python-slugify==8.0.1
     # via
@@ -157,6 +177,10 @@ pyyaml==6.0.1
     #   code-annotations
     #   edx-i18n-tools
     #   xblock
+s3transfer==0.1.13
+    # via
+    #   -r requirements/test.txt
+    #   boto3
 simplejson==3.19.1
     # via
     #   -r requirements/test.txt
@@ -187,7 +211,7 @@ tomli==2.0.1
     #   coverage
     #   pylint
     #   pytest
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
 typing-extensions==4.7.1
     # via
@@ -210,7 +234,7 @@ xblock==1.6.2
     # via
     #   -r requirements/test.txt
     #   xblock-utils
-xblock-utils==3.2.0
+xblock-utils==3.3.0
     # via -r requirements/test.txt
 
 # The following packages are considered to be unsafe in a requirements file:

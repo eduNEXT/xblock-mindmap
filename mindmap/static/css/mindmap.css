@@ -9,5 +9,6 @@
 }
 
 #jsmind_container > .jsmind-inner {
-    min-height: 400px;
+    min-height: 700px;
+    margin-top: 10px;
 }
