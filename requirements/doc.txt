@@ -61,7 +61,7 @@ django-appconf==1.0.5
     # via
     #   -r requirements/test.txt
     #   django-statici18n
-django-statici18n==2.3.1
+django-statici18n==2.4.0
     # via -r requirements/test.txt
 doc8==1.1.1
     # via -r requirements/doc.in
@@ -216,7 +216,7 @@ restructuredtext-lint==1.4.0
     # via doc8
 rfc3986==2.0.0
     # via twine
-rich==13.4.2
+rich==13.5.2
     # via twine
 s3transfer==0.1.13
     # via

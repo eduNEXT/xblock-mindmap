@@ -94,7 +94,7 @@ django-appconf==1.0.5
     # via
     #   -r requirements/quality.txt
     #   django-statici18n
-django-statici18n==2.3.1
+django-statici18n==2.4.0
     # via -r requirements/quality.txt
 docutils==0.20.1
     # via
@@ -221,7 +221,7 @@ pkginfo==1.9.6
     # via
     #   -r requirements/ci.txt
     #   twine
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via
     #   -r requirements/ci.txt
     #   -r requirements/quality.txt
@@ -242,7 +242,7 @@ py==1.11.0
     # via
     #   -r requirements/ci.txt
     #   tox
-pycodestyle==2.10.0
+pycodestyle==2.11.0
     # via -r requirements/quality.txt
 pycparser==2.21
     # via
@@ -326,7 +326,7 @@ rfc3986==2.0.0
     # via
     #   -r requirements/ci.txt
     #   twine
-rich==13.4.2
+rich==13.5.2
     # via
     #   -r requirements/ci.txt
     #   twine

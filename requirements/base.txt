@@ -25,7 +25,7 @@ django==3.2.20
     #   edx-i18n-tools
 django-appconf==1.0.5
     # via django-statici18n
-django-statici18n==2.3.1
+django-statici18n==2.4.0
     # via -r requirements/base.in
 docutils==0.20.1
     # via botocore
