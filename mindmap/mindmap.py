@@ -101,7 +101,7 @@ class MindMapXBlock(XBlock):
         user = self.get_current_user()
         anonymous_user_id = self.anonymous_user_id(user)
         show_mindmap = self.is_student(user) or self.user_is_staff(user)
-        js_context = {}
+        js_context = {"author": user.full_name}
         error_message = None
 
         if show_mindmap:
@@ -188,7 +188,7 @@ class MindMapXBlock(XBlock):
             str: The key (path) to use in S3.
         """
         block_id = self.location.block_id # pylint: disable=no-member
-        return f"{block_id}/{anonymous_user_id}/mindmap.json"
+        return f"mindmaps/{block_id}/{anonymous_user_id}/mindmap.json"
 
     def file_exists_in_s3(self, anonymous_user_id: str) -> bool:
         """

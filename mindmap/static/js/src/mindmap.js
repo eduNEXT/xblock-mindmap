@@ -4,7 +4,6 @@ function MindMapXBlock(runtime, element, context) {
     const baseMind = {
         "meta": {
             "name": "Mind Map",
-            "author": "eduNEXT",
             "version": "0.1"
         },
         "format": "node_array",
@@ -14,6 +13,7 @@ function MindMapXBlock(runtime, element, context) {
     };
 
     const mind = context.mind_map || baseMind;
+    mind.meta.author = context.author;
 
     const options = {
         container: 'jsmind_container',
