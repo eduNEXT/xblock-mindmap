@@ -2,7 +2,7 @@
 
 // TODO: add notifications
 function MindMapXBlock(runtime, element) {
-
+  console.loog('Lms :D');
   $(element).find('.save-button').click(function () {
     const handlerUrl = runtime.handlerUrl(element, 'studio_submit');
     const data = {

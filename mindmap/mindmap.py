@@ -102,7 +102,9 @@ class MindMapXBlock(XBlock):
         user = self.get_current_user()
         anonymous_user_id = self.anonymous_user_id(user)
         show_mindmap = self.is_student(user) or self.user_is_staff(user)
-        js_context = {}
+        js_context = {
+            'hasMindMap': show_mindmap
+        }
         error_message = None
 
         if show_mindmap:
@@ -123,8 +125,10 @@ class MindMapXBlock(XBlock):
         statici18n_js_url = self._get_statici18n_js_url()
         if statici18n_js_url:
             frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
-
+        
+        frag.add_javascript(self.resource_string("static/js/src/requiredModules.js"))
         frag.add_javascript(self.resource_string("static/js/src/mindmap.js"))
+        
         frag.initialize_js('MindMapXBlock', json_args=js_context)
         return frag
 
