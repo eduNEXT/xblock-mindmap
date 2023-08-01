@@ -43,5 +43,13 @@ USE_TZ = True
 
 # AWS S3 settings
 AWS_ACCESS_KEY_ID = "test-aws-access-key-id"
+<<<<<<< HEAD
 AWS_SECRET_ACCESS_KEY = "test-aws-secret-access-key"
+=======
+<<<<<<< HEAD
+AWS_SECRET_ACCESS_KEY = "test-aws-secret-access-key-id"
+=======
+AWS_SECRET_ACCESS_KEY = "test-aws-secret-access-key"
+>>>>>>> 283f39d703da8728e4b410d5deb0b52841183c29
+>>>>>>> afc9e74... fix: update with main branch
 FILE_UPLOAD_STORAGE_BUCKET_NAME = "test-file-upload-storage-bucket-name"
