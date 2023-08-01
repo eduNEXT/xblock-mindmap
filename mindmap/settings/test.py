@@ -43,5 +43,5 @@ USE_TZ = True
 
 # AWS S3 settings
 AWS_ACCESS_KEY_ID = "test-aws-access-key-id"
-AWS_SECRET_ACCESS_KEY_ID = "test-aws-secret-access-key-id"
+AWS_SECRET_ACCESS_KEY = "test-aws-secret-access-key"
 FILE_UPLOAD_STORAGE_BUCKET_NAME = "test-file-upload-storage-bucket-name"
