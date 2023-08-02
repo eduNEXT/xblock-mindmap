@@ -221,11 +221,7 @@ pkginfo==1.9.6
     # via
     #   -r requirements/ci.txt
     #   twine
-<<<<<<< HEAD
 platformdirs==3.10.0
-=======
-platformdirs==3.9.1
->>>>>>> main
     # via
     #   -r requirements/ci.txt
     #   -r requirements/quality.txt
@@ -330,11 +326,7 @@ rfc3986==2.0.0
     # via
     #   -r requirements/ci.txt
     #   twine
-<<<<<<< HEAD
 rich==13.5.2
-=======
-rich==13.4.2
->>>>>>> main
     # via
     #   -r requirements/ci.txt
     #   twine
