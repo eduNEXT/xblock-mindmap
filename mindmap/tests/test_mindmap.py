@@ -23,11 +23,14 @@ class TestMindMapXBlock(TestCase):
         """
         Set up the test suite.
         """
-        self.xblock = MindMapXBlock(runtime=Mock(), field_data=Mock(), scope_ids=Mock())
+        self.xblock = MindMapXBlock(
+            runtime=Mock(), field_data=Mock(), scope_ids=Mock()
+        )
         self.student = Mock()
         self.anonymous_user_id = "test-anonymous-user-id"
-        self.xblock.is_student = Mock()
+        self.xblock.anonymous_user_id = Mock()
         self.xblock.user_is_staff = Mock()
+        self.xblock.is_student = Mock()
         self.xblock.get_current_user = Mock()
         self.xblock.get_current_mind_map = Mock()
         self.xblock.anonymous_user_id = Mock()
@@ -38,76 +41,135 @@ class TestMindMapXBlock(TestCase):
     @patch("mindmap.mindmap.Fragment.initialize_js")
     def test_student_view_with_mind_map(self, initialize_js_mock):
         """
-        Check student view is rendered correctly.
+        Check student view is rendered correctly with a mind map.
 
         Expected result:
             - The student view is set up for the render with the student.
         """
-        mind_map = {"data": "content"}
-        self.xblock.is_student.return_value = True
+        mind_map = {"data": [{ "id": "root", "isroot": True, "topic": "Root" }]}
+        self.xblock.is_static = False
         self.xblock.anonymous_user_id.return_value = self.anonymous_user_id
+        self.xblock.is_student.return_value = True
+        self.xblock.user_is_staff.return_value = False
         self.xblock.get_current_user.return_value = self.student
         self.xblock.get_current_mind_map.return_value = mind_map
-        context = {"show_mindmap": True, "error_message": None}
-        expected_js_context = {"mind_map": mind_map, "author": self.student.full_name}
+        expected_context = {
+            "in_student_view": True,
+            "is_static": False,
+            "error_message": None,
+        }
+        expected_js_context = {
+            "author": self.student.full_name,
+            "mind_map": mind_map,
+            "editable": True,
+        }
 
         self.xblock.student_view()
 
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context
+        )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
-        )
-        self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", context
         )
 
     @patch("mindmap.mindmap.Fragment.initialize_js")
     def test_student_view_empty_mind_map(self, initialize_js_mock):
         """
-        Check student view is rendered correctly.
+        Check student view is rendered correctly with an empty mind map (None)
 
         Expected result:
             - The student view is set up for the render with the student.
         """
-        self.xblock.is_student.return_value = True
-        self.xblock.get_current_mind_map.return_value = None
-        self.xblock.get_current_user.return_value = self.student
+        self.xblock.is_static = False
         self.xblock.anonymous_user_id.return_value = self.anonymous_user_id
-        context = {"show_mindmap": True, "error_message": None}
-        expected_js_context = {"mind_map": None, "author": self.student.full_name}
-
-        self.xblock.student_view()
-
-        initialize_js_mock.assert_called_once_with(
-            'MindMapXBlock', json_args=expected_js_context
-        )
-        self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", context
-        )
-
-    @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_not_show_mind_map(self, initialize_js_mock):
-        """
-        Check student view is rendered correctly when called from the Studio.
-
-        Expected result:
-            - The mind map is not set by the handler.
-            - A message is rendered instead.
-        """
-        self.xblock.is_student.return_value = False
+        self.xblock.is_student.return_value = True
         self.xblock.user_is_staff.return_value = False
         self.xblock.get_current_mind_map.return_value = None
         self.xblock.get_current_user.return_value = self.student
-        self.xblock.anonymous_user_id.return_value = self.anonymous_user_id
-        context = {"show_mindmap": False, "error_message": None}
-        expected_js_context = {"author": self.student.full_name}
+        expected_context = {
+            "in_student_view": True,
+            "is_static": False,
+            "error_message": None,
+        }
+        expected_js_context = {
+            "mind_map": None,
+            "author": self.student.full_name,
+            "editable": True,
+        }
 
         self.xblock.student_view()
 
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context
+        )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
         )
+
+    @patch("mindmap.mindmap.Fragment.initialize_js")
+    def test_student_view_from_studio_is_static(self, initialize_js_mock: Mock):
+        """
+        Check student view is rendered correctly in studio when the mind map is static.
+
+        Expected result:
+            - The student view is set up for the render with the student.
+        """
+        self.xblock.is_static = True
+        self.xblock.anonymous_user_id.return_value = self.anonymous_user_id
+        self.xblock.user_is_staff.return_value = False
+        self.xblock.is_student.return_value = False
+        self.xblock.get_current_user.return_value = self.student
+        self.xblock.get_current_mind_map.return_value = None
+        expect_context = {
+            "in_student_view": False,
+            "is_static": True,
+            "error_message": None,
+        }
+        expect_js_context = {
+            "author": self.student.full_name,
+            "mind_map": None,
+            "editable": True,
+        }
+
+        self.xblock.student_view()
+
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", context
+            "static/html/mindmap.html", expect_context
+        )
+        initialize_js_mock.assert_called_once_with(
+            "MindMapXBlock", json_args=expect_js_context
+        )
+
+    @patch("mindmap.mindmap.Fragment.initialize_js")
+    def test_student_view_from_studio_is_not_static(self, initialize_js_mock: Mock):
+        """
+        Check student view is rendered correctly in
+        studio when the mind map is not static.
+
+        Expected result:
+            - In studio a message is rendered instead of the mind map.
+        """
+        self.xblock.is_static = False
+        self.xblock.anonymous_user_id.return_value = self.anonymous_user_id
+        self.xblock.user_is_staff.return_value = False
+        self.xblock.is_student.return_value = False
+        self.xblock.get_current_user.return_value = self.student
+        expect_context = {
+            "in_student_view": False,
+            "is_static": False,
+            "error_message": None,
+        }
+        expect_js_context = {"author": self.student.full_name}
+
+        self.xblock.student_view()
+
+        self.xblock.get_current_mind_map.assert_not_called()
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expect_context
+        )
+        initialize_js_mock.assert_called_once_with(
+            "MindMapXBlock", json_args=expect_js_context
         )
 
     def test_studio_view(self):
@@ -117,8 +179,12 @@ class TestMindMapXBlock(TestCase):
         Expected result:
             - The studio view is set up for the render.
         """
-        self.xblock.fields = {"display_name": "Test Mind Map"}
-        expected_context = {"display_name": self.xblock.display_name}
+        self.xblock.fields = {"display_name": "Test Mind Map", "is_static": True}
+        expected_context = {
+            "display_name": self.xblock.display_name,
+            "is_static": self.xblock.is_static,
+            "is_static_field": self.xblock.fields["is_static"],
+        }
 
         self.xblock.studio_view()
 
@@ -136,8 +202,9 @@ class TestMindMapUtilities(TestCase):
         """
         Set up the test suite.
         """
-        self.xblock = MindMapXBlock(runtime=Mock(), field_data=Mock(), scope_ids=Mock())
-        self.anonymous_user_id = "test-anonymous-user-id"
+        self.xblock = MindMapXBlock(
+            runtime=Mock(), field_data=Mock(), scope_ids=Mock()
+        )
 
     @override_settings(
         AWS_ACCESS_KEY_ID=None,
@@ -155,7 +222,7 @@ class TestMindMapUtilities(TestCase):
             self.xblock.connect_to_s3()
 
     @patch("mindmap.mindmap.boto3.client")
-    def test_connect_to_s3_successful(self, s3_client_mock):
+    def test_connect_to_s3(self, s3_client_mock):
         """
         Check connecting to S3.
 
@@ -163,57 +230,26 @@ class TestMindMapUtilities(TestCase):
             - A connection is made to S3.
         """
         s3_client, bucket_name = self.xblock.connect_to_s3()
-
-        self.assertEqual(s3_client, s3_client_mock.return_value)
-        self.assertEqual(bucket_name, "test-file-upload-storage-bucket-name")
-
-    @patch("mindmap.mindmap.boto3.client")
-    def test_file_exists_in_s3_existing_file(self, s3_client_mock: Mock):
-        """
-        Check if the file exists in S3 when it does.
-
-        Expected result:
-            - True is returned.
-        """
-        s3_client_mock.return_value.head_object.return_value = {
-            'AcceptRanges': 'bytes',
-            'ContentLength': 913,
-            'ContentType': 'binary/octet-stream',
-        }
-
-        result = self.xblock.file_exists_in_s3(self.anonymous_user_id)
-
-        self.assertTrue(result, "The file should exist in S3")
-
-    @patch("mindmap.mindmap.boto3.client")
-    def test_file_does_not_exist(self, s3_client_mock: Mock):
-        """
-        Check if the file exists in S3 when it doesn't.
-
-        Expected result:
-            - False is returned.
-        """
-        s3_client_mock.head_object.side_effect = ClientError(
-            {'Error': {'Code': '404'}}, 'HeadObject'
-        )
-        self.xblock.connect_to_s3 = Mock(
-            return_value=(s3_client_mock, 'test-file-upload-storage-bucket-name')
+        expected_result = (
+            s3_client_mock.return_value, "test-file-upload-storage-bucket-name"
         )
 
-        result = self.xblock.file_exists_in_s3(self.anonymous_user_id)
+        self.assertEqual(expected_result, (s3_client, bucket_name))
 
-        self.assertFalse(result, "The file should not exist in S3")
-
-    def test_get_current_mind_map_file_not_found(self):
+    @patch("mindmap.mindmap.boto3.client")
+    def test_get_current_mind_map_file_not_found(self, s3_client_mock: Mock):
         """
         Check getting the current mind map when the file is not found.
 
         Expected result:
             - None is returned.
         """
-        self.xblock.file_exists_in_s3 = Mock(return_value=False)
+        suffix = 'test-anonymous-user-id'
+        s3_client_mock.return_value.get_object.side_effect = ClientError(
+            {'Error': {'Code': 'NoSuchKey'}}, 'HeadObject'
+        )
 
-        result = self.xblock.get_current_mind_map(self.anonymous_user_id)
+        result = self.xblock.get_current_mind_map(suffix)
 
         self.assertIsNone(result)
 
@@ -226,16 +262,11 @@ class TestMindMapUtilities(TestCase):
             - The mind map is returned.
         """
         mind_map = {"data": [{ "id": "root", "isroot": True, "topic": "Root" }]}
-        s3_client_mock.get_object.return_value = {
-            "Body": Mock(read=Mock(
-                return_value=json.dumps(mind_map).encode("utf-8"))
-            )
+        s3_client_mock.return_value.get_object.return_value = {
+            "Body": Mock(read=Mock(return_value=json.dumps(mind_map).encode("utf-8")))
         }
-        self.xblock.connect_to_s3 = Mock(
-            return_value=(s3_client_mock, 'test-file-upload-storage-bucket-name')
-        )
-        self.xblock.file_exists_in_s3 = Mock(return_value=True)
+        suffix = 'test-anonymous-user-id'
 
-        result = self.xblock.get_current_mind_map(self.anonymous_user_id)
+        result = self.xblock.get_current_mind_map(suffix)
 
         self.assertEqual(result, mind_map)
