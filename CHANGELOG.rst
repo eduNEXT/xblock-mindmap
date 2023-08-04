@@ -16,6 +16,16 @@ Unreleased
 
 *
 
+0.3.0 - 2023-08-04
+**********************************************
+
+Added
+=====
+
+* Add test suite for Mind Map class definition
+* Add functionality to create static mind maps from Studio
+
+
 0.2.0 - 2023-07-28
 **********************************************
 

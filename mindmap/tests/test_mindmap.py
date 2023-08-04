@@ -244,12 +244,12 @@ class TestMindMapUtilities(TestCase):
         Expected result:
             - None is returned.
         """
-        suffix = 'test-anonymous-user-id'
+        path_prefix = 'test-anonymous-user-id'
         s3_client_mock.return_value.get_object.side_effect = ClientError(
             {'Error': {'Code': 'NoSuchKey'}}, 'HeadObject'
         )
 
-        result = self.xblock.get_current_mind_map(suffix)
+        result = self.xblock.get_current_mind_map(path_prefix)
 
         self.assertIsNone(result)
 
@@ -265,8 +265,8 @@ class TestMindMapUtilities(TestCase):
         s3_client_mock.return_value.get_object.return_value = {
             "Body": Mock(read=Mock(return_value=json.dumps(mind_map).encode("utf-8")))
         }
-        suffix = 'test-anonymous-user-id'
+        path_prefix = 'test-anonymous-user-id'
 
-        result = self.xblock.get_current_mind_map(suffix)
+        result = self.xblock.get_current_mind_map(path_prefix)
 
         self.assertEqual(result, mind_map)
