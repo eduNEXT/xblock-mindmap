@@ -4,18 +4,17 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Tuple
 
-import boto3
 import pkg_resources
-from botocore.exceptions import ClientError
-from django.conf import settings
+from django.core.files.base import ContentFile
 from django.template import Context, Template
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Boolean, Scope, String
 from xblockutils.resources import ResourceLoader
+
+from mindmap.utils import get_mindmap_storage
 
 log = logging.getLogger(__name__)
 
@@ -204,32 +203,6 @@ class MindMapXBlock(XBlock):
         frag.initialize_js("MindMapXBlock")
         return frag
 
-    @staticmethod
-    def connect_to_s3() -> Tuple[boto3.client, str]:
-        """
-        Create a connection to S3.
-
-        Raises:
-            MisconfiguredMindMapService: If the AWS settings are not configured.
-
-        Returns:
-            Tuple[boto3.client, str]: The S3 client and the bucket name.
-        """
-        aws_access_key_id = getattr(settings, "AWS_ACCESS_KEY_ID", None)
-        aws_secret_access_key = getattr(settings, "AWS_SECRET_ACCESS_KEY", None)
-        aws_bucket_name = getattr(settings, "FILE_UPLOAD_STORAGE_BUCKET_NAME", None)
-
-        if not aws_access_key_id or not aws_secret_access_key or not aws_bucket_name:
-            raise MisconfiguredMindMapService("AWS settings not configured")
-
-        s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-        )
-
-        return s3_client, aws_bucket_name
-
     def get_file_key(self, path_prefix: str) -> str:
         """
         Return the key (path) to save and retrieve the file in S3.
@@ -254,18 +227,13 @@ class MindMapXBlock(XBlock):
             dict: The current mind map content.
             None: If the file does not exist.
         """
-        s3_client, aws_bucket_name = self.connect_to_s3()
+        mindmap_storage = get_mindmap_storage()
 
         try:
-            response = s3_client.get_object(
-                Bucket=aws_bucket_name,
-                Key=self.get_file_key(path_prefix)
-            )
-            json_data = response["Body"].read().decode("utf-8")
-        except ClientError as error:
-            if error.response["Error"]["Code"] == "NoSuchKey":
-                return None
-            raise error
+            file = mindmap_storage.open(self.get_file_key(path_prefix))
+            json_data = file.read().decode("utf-8")
+        except IOError:
+            return None
         return json.loads(json_data)
 
     @XBlock.json_handler
@@ -281,12 +249,11 @@ class MindMapXBlock(XBlock):
             user = self.get_current_user()
             data["path_prefix"] = self.anonymous_user_id(user)
 
-        s3_client, aws_bucket_name = self.connect_to_s3()
+        mindmap_storage = get_mindmap_storage()
 
-        s3_client.put_object(
-            Bucket=aws_bucket_name,
-            Key=self.get_file_key(data.get("path_prefix")),
-            Body=data.get("mind_map")
+        mindmap_storage.save(
+            self.get_file_key(data.get("path_prefix")),
+            ContentFile(data.get("mind_map").encode("utf-8"))
         )
 
     @XBlock.json_handler
