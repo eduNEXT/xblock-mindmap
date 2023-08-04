@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-from http import HTTPStatus
 from typing import Tuple
 
 import boto3
@@ -15,7 +14,7 @@ from django.template import Context, Template
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Scope, String
+from xblock.fields import Boolean, Scope, String
 from xblockutils.resources import ResourceLoader
 
 log = logging.getLogger(__name__)
@@ -42,6 +41,17 @@ class MindMapXBlock(XBlock):
     display_name = String(
         display_name="Display Name",
         default="Mind Map",
+        scope=Scope.settings,
+    )
+
+    is_static = Boolean(
+        help="""
+        Whether the mind map is static or not. If it is static, the instructor can
+        create a mind map and it will be the same for all students. If it is not
+        static, the students can create their own mind maps.
+        """,
+        display_name="Is a static mindmap?",
+        default=False,
         scope=Scope.settings,
     )
 
@@ -89,6 +99,31 @@ class MindMapXBlock(XBlock):
         template = Template(template_str)
         return template.render(Context(context))
 
+    def get_student_view_context(self, user):
+        """
+        Return the context for the student view.
+
+        Args:
+            user: The current user
+
+        Returns:
+            dict: The context for the student view
+        """
+        anonymous_user_id = self.anonymous_user_id(user)
+        in_student_view = self.is_student(user) or self.user_is_staff(user)
+        path_prefix = (
+            anonymous_user_id
+            if in_student_view and not self.is_static
+            else "instructor"
+        )
+        editable = in_student_view != self.is_static
+
+        return {
+            "in_student_view": in_student_view,
+            "path_prefix": path_prefix,
+            "editable": editable,
+        }
+
     def student_view(self, _context=None) -> Fragment:
         """
         The primary view of the MindMapXBlock, shown to students when viewing courses.
@@ -100,20 +135,27 @@ class MindMapXBlock(XBlock):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        anonymous_user_id = self.anonymous_user_id(user)
-        show_mindmap = self.is_student(user) or self.user_is_staff(user)
+        student_view_context = self.get_student_view_context(user)
         js_context = {"author": user.full_name}
         error_message = None
 
-        if show_mindmap:
+        if student_view_context["in_student_view"] or self.is_static:
             try:
-                mind_map = self.get_current_mind_map(anonymous_user_id)
-                js_context.update({"mind_map": mind_map})
+                mind_map = self.get_current_mind_map(
+                    student_view_context["path_prefix"]
+                )
+                js_context.update(
+                    {"mind_map": mind_map, "editable": student_view_context["editable"]}
+                )
             except Exception as error: # pylint: disable=broad-except
                 log.exception("Error while setting up student view of MindMapXBlock")
                 error_message = str(error)
 
-        context = {"show_mindmap": show_mindmap, "error_message": error_message}
+        context = {
+            "in_student_view": student_view_context["in_student_view"],
+            "is_static": self.is_static,
+            "error_message": error_message,
+        }
 
         html = self.render_template("static/html/mindmap.html", context)
         frag = Fragment(html.format(self=self))
@@ -122,8 +164,11 @@ class MindMapXBlock(XBlock):
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
         if statici18n_js_url:
-            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
+            frag.add_javascript_url(
+                self.runtime.local_resource_url(self, statici18n_js_url)
+            )
 
+        frag.add_javascript(self.resource_string("static/js/src/requiredModules.js"))
         frag.add_javascript(self.resource_string("static/js/src/mindmap.js"))
         frag.initialize_js('MindMapXBlock', json_args=js_context)
         return frag
@@ -140,6 +185,8 @@ class MindMapXBlock(XBlock):
         """
         context = {
             "display_name": self.display_name,
+            "is_static": self.is_static,
+            "is_static_field": self.fields["is_static"],
         }
 
         html = self.render_template("static/html/mindmap_edit.html", context)
@@ -149,7 +196,9 @@ class MindMapXBlock(XBlock):
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
         if statici18n_js_url:
-            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
+            frag.add_javascript_url(
+                self.runtime.local_resource_url(self, statici18n_js_url)
+            )
 
         frag.add_javascript(self.resource_string("static/js/src/mindmapEdit.js"))
         frag.initialize_js("MindMapXBlock")
@@ -181,82 +230,72 @@ class MindMapXBlock(XBlock):
 
         return s3_client, aws_bucket_name
 
-    def get_file_key(self, anonymous_user_id: str) -> str:
+    def get_file_key(self, path_prefix: str) -> str:
         """
         Return the key (path) to save and retrieve the file in S3.
+
+        Args:
+            path_prefix (str): The path prefix to use in the key (path).
 
         Returns:
             str: The key (path) to use in S3.
         """
         block_id = self.scope_ids.usage_id.block_id
-        return f"mindmaps/{block_id}/{anonymous_user_id}/mindmap.json"
+        return f"mindmaps/{block_id}/{path_prefix}/mindmap.json"
 
-    def file_exists_in_s3(self, anonymous_user_id: str) -> bool:
-        """
-        Check if the file exists in S3.
-
-        Returns:
-            bool: True if the file exists, False otherwise.
-        """
-        s3_client, aws_bucket_name = self.connect_to_s3()
-        try:
-            s3_client.head_object(
-                Bucket=aws_bucket_name,
-                Key=self.get_file_key(anonymous_user_id)
-            )
-        except ClientError as error:
-            if int(error.response["Error"]["Code"]) == HTTPStatus.NOT_FOUND:
-                return False
-            log.error(error)
-            raise error
-        return True
-
-    def get_current_mind_map(self, anonymous_user_id: str) -> dict | None:
+    def get_current_mind_map(self, path_prefix: str) -> dict | None:
         """
         Return the current mind map content.
 
-        Returns:
-            dict: The mind map content.
-        """
-        if not self.file_exists_in_s3(anonymous_user_id):
-            return None
+        Args:
+            path_prefix (str): The path prefix to use in the key (path).
 
+        Returns:
+            dict: The current mind map content.
+            None: If the file does not exist.
+        """
         s3_client, aws_bucket_name = self.connect_to_s3()
+
         try:
             response = s3_client.get_object(
                 Bucket=aws_bucket_name,
-                Key=self.get_file_key(anonymous_user_id)
+                Key=self.get_file_key(path_prefix)
             )
             json_data = response["Body"].read().decode("utf-8")
         except ClientError as error:
+            if error.response["Error"]["Code"] == "NoSuchKey":
+                return None
             raise error
         return json.loads(json_data)
 
     @XBlock.json_handler
-    def upload_file(self, data, suffix="") -> None: # pylint: disable=unused-argument
+    def upload_file(self, data, _suffix="") -> None:
         """
         Uploads a mind map file to S3.
 
         Args:
-            data (dict): The data to upload
-            suffix (str, optional): Defaults to "".
+            data (dict): The necessary data to upload the file
+            _suffix (str, optional): Defaults to "".
         """
-        user = self.get_current_user()
-        anonymous_user_id = self.anonymous_user_id(user)
+        if data.get("path_prefix") == "student":
+            user = self.get_current_user()
+            data["path_prefix"] = self.anonymous_user_id(user)
+
         s3_client, aws_bucket_name = self.connect_to_s3()
 
         s3_client.put_object(
             Bucket=aws_bucket_name,
-            Key=self.get_file_key(anonymous_user_id),
+            Key=self.get_file_key(data.get("path_prefix")),
             Body=data.get("mind_map")
         )
 
     @XBlock.json_handler
-    def studio_submit(self, data, suffix=""):  # pylint: disable=unused-argument
+    def studio_submit(self, data, _suffix=""):
         """
         Called when submitting the form in Studio.
         """
         self.display_name = data.get("display_name")
+        self.is_static = data.get("is_static")
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

@@ -7,6 +7,7 @@ function MindMapXBlock(runtime, element) {
     const handlerUrl = runtime.handlerUrl(element, 'studio_submit');
     const data = {
       display_name: $(element).find('input[name=mindmap_display_name]').val(),
+      is_static: Number($(element).find('select[name=mindmap_is_static]').val()),
     };
     $.post(handlerUrl, JSON.stringify(data)).done(function (response) {
       window.location.reload(false);
