@@ -45,8 +45,12 @@ class MindMapXBlock(XBlock):
     )
 
     is_static = Boolean(
-        help="Whether the mind map is static or not",
-        display_name="Is Static",
+        help="""
+        Whether the mind map is static or not. If it is static, the instructor can
+        create a mind map and it will be the same for all students. If it is not
+        static, the students can create their own mind maps.
+        """,
+        display_name="Is a static mindmap?",
         default=False,
         scope=Scope.settings,
     )
@@ -95,19 +99,19 @@ class MindMapXBlock(XBlock):
         template = Template(template_str)
         return template.render(Context(context))
 
-    def get_student_view_attrs(self, user):
+    def get_student_view_context(self, user):
         """
-        Return the attributes for the student view.
+        Return the context for the student view.
 
         Args:
             user: The current user
 
         Returns:
-            dict: The attributes for the student view
+            dict: The context for the student view
         """
         anonymous_user_id = self.anonymous_user_id(user)
         in_student_view = self.is_student(user) or self.user_is_staff(user)
-        suffix = (
+        path_prefix = (
             anonymous_user_id
             if in_student_view and not self.is_static
             else "instructor"
@@ -116,7 +120,7 @@ class MindMapXBlock(XBlock):
 
         return {
             "in_student_view": in_student_view,
-            "suffix": suffix,
+            "path_prefix": path_prefix,
             "editable": editable,
         }
 
@@ -131,22 +135,24 @@ class MindMapXBlock(XBlock):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        view_attrs = self.get_student_view_attrs(user)
+        student_view_context = self.get_student_view_context(user)
         js_context = {"author": user.full_name}
         error_message = None
 
-        if view_attrs["in_student_view"] or self.is_static:
+        if student_view_context["in_student_view"] or self.is_static:
             try:
-                mind_map = self.get_current_mind_map(view_attrs["suffix"])
+                mind_map = self.get_current_mind_map(
+                    student_view_context["path_prefix"]
+                )
                 js_context.update(
-                    {"mind_map": mind_map, "editable": view_attrs["editable"]}
+                    {"mind_map": mind_map, "editable": student_view_context["editable"]}
                 )
             except Exception as error: # pylint: disable=broad-except
                 log.exception("Error while setting up student view of MindMapXBlock")
                 error_message = str(error)
 
         context = {
-            "in_student_view": view_attrs["in_student_view"],
+            "in_student_view": student_view_context["in_student_view"],
             "is_static": self.is_static,
             "error_message": error_message,
         }
@@ -178,10 +184,8 @@ class MindMapXBlock(XBlock):
             Fragment: The fragment to render
         """
         context = {
-            # Field values
             "display_name": self.display_name,
             "is_static": self.is_static,
-            # Field attributes
             "is_static_field": self.fields["is_static"],
         }
 
@@ -226,25 +230,25 @@ class MindMapXBlock(XBlock):
 
         return s3_client, aws_bucket_name
 
-    def get_file_key(self, suffix: str) -> str:
+    def get_file_key(self, path_prefix: str) -> str:
         """
         Return the key (path) to save and retrieve the file in S3.
 
         Args:
-            suffix (str): The suffix to use in the key (path).
+            path_prefix (str): The path prefix to use in the key (path).
 
         Returns:
             str: The key (path) to use in S3.
         """
         block_id = self.scope_ids.usage_id.block_id
-        return f"mindmaps/{block_id}/{suffix}/mindmap.json"
+        return f"mindmaps/{block_id}/{path_prefix}/mindmap.json"
 
-    def get_current_mind_map(self, suffix: str) -> dict | None:
+    def get_current_mind_map(self, path_prefix: str) -> dict | None:
         """
         Return the current mind map content.
 
         Args:
-            suffix (str): The suffix to use in the key (path).
+            path_prefix (str): The path prefix to use in the key (path).
 
         Returns:
             dict: The current mind map content.
@@ -255,7 +259,7 @@ class MindMapXBlock(XBlock):
         try:
             response = s3_client.get_object(
                 Bucket=aws_bucket_name,
-                Key=self.get_file_key(suffix)
+                Key=self.get_file_key(path_prefix)
             )
             json_data = response["Body"].read().decode("utf-8")
         except ClientError as error:
@@ -265,38 +269,23 @@ class MindMapXBlock(XBlock):
         return json.loads(json_data)
 
     @XBlock.json_handler
-    def upload_file_student(self, data, _suffix="") -> None:
+    def upload_file(self, data, _suffix="") -> None:
         """
-        Uploads a mind map file to S3 as a student.
+        Uploads a mind map file to S3.
 
         Args:
-            data (dict): The data to upload
+            data (dict): The necessary data to upload the file
             _suffix (str, optional): Defaults to "".
         """
-        user = self.get_current_user()
-        anonymous_user_id = self.anonymous_user_id(user)
+        if data.get("path_prefix") == "student":
+            user = self.get_current_user()
+            data["path_prefix"] = self.anonymous_user_id(user)
+
         s3_client, aws_bucket_name = self.connect_to_s3()
 
         s3_client.put_object(
             Bucket=aws_bucket_name,
-            Key=self.get_file_key(anonymous_user_id),
-            Body=data.get("mind_map")
-        )
-
-    @XBlock.json_handler
-    def upload_file_instructor(self, data, _suffix="") -> None:
-        """
-        Uploads a mind map file to S3 as an instructor.
-
-        Args:
-            data (dict): The data to upload
-            _suffix (str, optional): Defaults to "".
-        """
-        s3_client, aws_bucket_name = self.connect_to_s3()
-
-        s3_client.put_object(
-            Bucket=aws_bucket_name,
-            Key=self.get_file_key("instructor"),
+            Key=self.get_file_key(data.get("path_prefix")),
             Body=data.get("mind_map")
         )
 

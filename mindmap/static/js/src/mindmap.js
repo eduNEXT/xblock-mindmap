@@ -20,23 +20,23 @@ function MindMapXBlock(runtime, element, context) {
             theme: "asphalt",
         };
 
-        const jm = new jsMind(options);
-        jm.show(mind);
+        const currentMindMap = new jsMind(options);
+        currentMindMap.show(mind);
 
         $(element).find(".save-button-student").click(function () {
-            saveMindMap(runtime, element, jm, "upload_file_student");
+            saveMindMap(runtime, element, currentMindMap, "student");
         });
 
         $(element).find(".save-button-instructor").click(function () {
-            saveMindMap(runtime, element, jm, "upload_file_instructor");
+            saveMindMap(runtime, element, currentMindMap, "instructor");
         });
     };
 
-    function saveMindMap(runtime, element, mindMap, functionName) {
+    function saveMindMap(runtime, element, mindMap, path_prefix) {
         const mindMapData = mindMap.get_data("node_array");
         const jsonMindMapData = JSON.stringify(mindMapData);
-        const handlerUrl = runtime.handlerUrl(element, functionName);
-        const data = { mind_map: jsonMindMapData };
+        const handlerUrl = runtime.handlerUrl(element, "upload_file");
+        const data = { mind_map: jsonMindMapData, path_prefix: path_prefix };
 
         $.post(handlerUrl, JSON.stringify(data))
             .done(function (response) {
