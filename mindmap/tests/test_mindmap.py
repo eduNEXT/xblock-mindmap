@@ -252,10 +252,6 @@ class TestUtils(TestCase):
         result = get_mindmap_storage()
         self.assertEqual(result, default_storage)
 
-    @override_settings(MINDMAP_BLOCK_STORAGE={
-        "storage_class": "custom_storage.CustomStorage",
-        "settings": {"option1": "value1", "option2": "value2"}
-    })
     @patch("mindmap.utils.get_storage_class", autospec=True)
     def test_get_mindmap_storage_custom(self, mock_get_storage_class):
         mock_get_storage_class.return_value = self.storage_class_mock
@@ -263,6 +259,4 @@ class TestUtils(TestCase):
         result = get_mindmap_storage()
 
         self.assertEqual(result, self.storage_mock)
-        self.storage_class_mock.assert_called_once_with(
-            option1="value1", option2="value2"
-        )
+        self.storage_class_mock.assert_called_once_with(bucket_name="test-bucket-name")

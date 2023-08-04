@@ -16,7 +16,11 @@ def plugin_settings(settings):
         "AWS_ACCESS_KEY_ID",
         settings.AWS_ACCESS_KEY_ID
     )
-    settings.FILE_UPLOAD_STORAGE_BUCKET_NAME = getattr(settings, "ENV_TOKENS", {}).get(
-        "FILE_UPLOAD_STORAGE_BUCKET_NAME",
-        settings.FILE_UPLOAD_STORAGE_BUCKET_NAME
+    settings.AWS_DEFAULT_ACL = getattr(settings, "ENV_TOKENS", {}).get(
+        "AWS_DEFAULT_ACL",
+        settings.AWS_DEFAULT_ACL
+    )
+    settings.MINDMAP_BLOCK_STORAGE = getattr(settings, "ENV_TOKENS", {}).get(
+        "MINDMAP_BLOCK_STORAGE",
+        settings.MINDMAP_BLOCK_STORAGE
     )
