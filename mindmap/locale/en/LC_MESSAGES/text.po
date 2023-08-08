@@ -1,0 +1,37 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+# Translators:
+# Bryann Valderrama <bryann.valderrama@edunext.co>, 2023
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-08 13:11-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Bryann Valderram <bryann.valderrama@edunext.co>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: mindmap.py:49
+msgid "Display name"
+msgstr ""
+
+#: mindmap.py:56
+msgid ""
+"Whether the mind map is static or not. If it is static, the instructor can "
+"create a mind map and it will be the same for all students. If it is not "
+"static, the students can create their own mind maps."
+msgstr ""
+
+#: mindmap.py:60
+msgid "Is a static mindmap?"
+msgstr ""

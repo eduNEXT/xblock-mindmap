@@ -14,7 +14,7 @@ from xblock.core import XBlock
 from xblock.fields import Boolean, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from mindmap.utils import get_mindmap_storage
+from mindmap.utils import get_mindmap_storage, _
 
 log = logging.getLogger(__name__)
 
@@ -33,23 +33,24 @@ class MisconfiguredMindMapService(Exception):
 
 
 @XBlock.wants("user")
+@XBlock.needs("i18n")
 class MindMapXBlock(XBlock):
     """
     Mind Map XBlock provides a way to create and save mind maps in a course.
     """
     display_name = String(
-        display_name="Display Name",
+        display_name=_("Display name"),
         default="Mind Map",
         scope=Scope.settings,
     )
 
     is_static = Boolean(
-        help="""
-        Whether the mind map is static or not. If it is static, the instructor can
-        create a mind map and it will be the same for all students. If it is not
-        static, the students can create their own mind maps.
-        """,
-        display_name="Is a static mindmap?",
+        help=_(
+            "Whether the mind map is static or not. If it is static, the instructor can "
+            "create a mind map and it will be the same for all students. If it is not "
+            "static, the students can create their own mind maps."
+        ),
+        display_name=_("Is a static mindmap?"),
         default=False,
         scope=Scope.settings,
     )
