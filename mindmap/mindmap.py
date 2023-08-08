@@ -208,13 +208,19 @@ class MindMapXBlock(XBlock):
         Return the key (path) to save and retrieve the file in S3.
 
         Args:
-            path_prefix (str): The path prefix to use in the key (path).
+            path_prefix (str):
+                The path prefix to use in the key (path).
+                In the case of students, it is the anonymous user ID.
 
         Returns:
             str: The key (path) to use in S3.
         """
         block_id = self.scope_ids.usage_id.block_id
-        return f"mindmaps/{block_id}/{path_prefix}/mindmap.json"
+
+        if path_prefix == "instructor":
+            return f"mindmaps/instructors/{block_id}/mindmap.json"
+
+        return f"mindmaps/students/{block_id}/{path_prefix}/mindmap.json"
 
     def get_current_mind_map(self, path_prefix: str) -> dict | None:
         """
