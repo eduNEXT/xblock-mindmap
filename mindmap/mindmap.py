@@ -41,7 +41,7 @@ class MindMapXBlock(XBlock):
     """
     display_name = String(
         display_name=_("Display name"),
-        default=_("Mind Map"),
+        default="Mind Map",
         scope=Scope.settings,
     )
 
@@ -158,9 +158,13 @@ class MindMapXBlock(XBlock):
             "error_message": error_message,
         }
 
-        html = self.render_template("static/html/mindmap.html", context)
-        frag = Fragment(html.format(self=self))
+        frag = Fragment()
         frag.add_css(self.resource_string("static/css/mindmap.css"))
+        frag.add_content(loader.render_django_template(
+            "static/html/mindmap.html",
+            context,
+            i18n_service=self.runtime.service(self, 'i18n')
+        ))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
@@ -190,12 +194,12 @@ class MindMapXBlock(XBlock):
             "is_static_field": self.fields["is_static"],
         }
 
-        # html = self.render_template("static/html/mindmap_edit.html", context)
         frag = Fragment()
         frag.add_content(loader.render_django_template(
-                "static/html/mindmap_edit.html", context, i18n_service=self.runtime.service(self, 'i18n')
-            )
-        )
+            "static/html/mindmap_edit.html",
+            context,
+            i18n_service=self.runtime.service(self, 'i18n')
+        ))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js

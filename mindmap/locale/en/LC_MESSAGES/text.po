@@ -21,17 +21,56 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindmap.py:49
+#: mindmap.py:43 static/html/mindmap_edit.html:7
 msgid "Display name"
 msgstr ""
 
-#: mindmap.py:56
+#: mindmap.py:50
 msgid ""
 "Whether the mind map is static or not. If it is static, the instructor can "
 "create a mind map and it will be the same for all students. If it is not "
 "static, the students can create their own mind maps."
 msgstr ""
 
-#: mindmap.py:60
+#: mindmap.py:54 static/html/mindmap_edit.html:14
 msgid "Is a static mindmap?"
+msgstr ""
+
+#: mindmap.py:324
+msgid "Dummy"
+msgstr ""
+
+#: static/html/mindmap.html:5
+msgid "The mind map cannot be rendered due to the following error"
+msgstr ""
+
+#: static/html/mindmap.html:6
+msgid "Please contact the instructor or an administrator"
+msgstr ""
+
+#: static/html/mindmap.html:11 static/html/mindmap.html:14
+#: static/html/mindmap_edit.html:27
+msgid "Save"
+msgstr ""
+
+#: static/html/mindmap.html:21
+msgid "The mind map is only visible from the LMS"
+msgstr ""
+
+#: static/html/mindmap.html:22
+msgid ""
+"If you want to create a static mind map set the 'Is a static mindmap?' field "
+"to True"
+msgstr ""
+
+#: static/html/mindmap_edit.html:16
+msgid "True"
+msgstr ""
+
+#: static/html/mindmap_edit.html:17
+msgid "False"
+msgstr ""
+
+#: static/html/mindmap_edit.html:30
+msgid "Cancel"
 msgstr ""
