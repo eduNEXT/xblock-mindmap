@@ -310,7 +310,6 @@ class MindMapXBlock(XBlock):
         text_js = 'public/js/translations/{locale_code}/text.js'
         lang_code = locale_code.split('-')[0]
         for code in (locale_code, lang_code, 'en'):
-            loader = ResourceLoader(__name__)
             if pkg_resources.resource_exists(
                     loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
