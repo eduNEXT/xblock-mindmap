@@ -17,6 +17,7 @@ from xblockutils.resources import ResourceLoader
 from mindmap.utils import get_mindmap_storage, _
 
 log = logging.getLogger(__name__)
+loader = ResourceLoader(__name__)
 
 
 class MisconfiguredMindMapService(Exception):
@@ -40,7 +41,7 @@ class MindMapXBlock(XBlock):
     """
     display_name = String(
         display_name=_("Display name"),
-        default="Mind Map",
+        default=_("Mind Map"),
         scope=Scope.settings,
     )
 
@@ -189,8 +190,12 @@ class MindMapXBlock(XBlock):
             "is_static_field": self.fields["is_static"],
         }
 
-        html = self.render_template("static/html/mindmap_edit.html", context)
-        frag = Fragment(html)
+        # html = self.render_template("static/html/mindmap_edit.html", context)
+        frag = Fragment()
+        frag.add_content(loader.render_django_template(
+                "static/html/mindmap_edit.html", context, i18n_service=self.runtime.service(self, 'i18n')
+            )
+        )
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js
