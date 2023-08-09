@@ -5,13 +5,11 @@ import json
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from botocore.exceptions import ClientError
+from django.core.files.storage import default_storage
 from django.test.utils import override_settings
 
-from mindmap.mindmap import (
-    MindMapXBlock,
-    MisconfiguredMindMapService,
-)
+from mindmap.mindmap import MindMapXBlock
+from mindmap.utils import get_mindmap_storage
 
 
 class TestMindMapXBlock(TestCase):
@@ -206,38 +204,8 @@ class TestMindMapUtilities(TestCase):
             runtime=Mock(), field_data=Mock(), scope_ids=Mock()
         )
 
-    @override_settings(
-        AWS_ACCESS_KEY_ID=None,
-        AWS_SECRET_ACCESS_KEY=None,
-        AWS_BUCKET_NAME=None,
-    )
-    def test_mindmap_service_not_configured(self):
-        """
-        When the Mind Map service is not configured, an exception is raised.
-
-        Expected result:
-            - An exception is raised.
-        """
-        with self.assertRaises(MisconfiguredMindMapService):
-            self.xblock.connect_to_s3()
-
-    @patch("mindmap.mindmap.boto3.client")
-    def test_connect_to_s3(self, s3_client_mock):
-        """
-        Check connecting to S3.
-
-        Expected result:
-            - A connection is made to S3.
-        """
-        s3_client, bucket_name = self.xblock.connect_to_s3()
-        expected_result = (
-            s3_client_mock.return_value, "test-file-upload-storage-bucket-name"
-        )
-
-        self.assertEqual(expected_result, (s3_client, bucket_name))
-
-    @patch("mindmap.mindmap.boto3.client")
-    def test_get_current_mind_map_file_not_found(self, s3_client_mock: Mock):
+    @patch("mindmap.mindmap.get_mindmap_storage")
+    def test_get_current_mind_map_file_not_found(self, mindmap_storage_mock: Mock):
         """
         Check getting the current mind map when the file is not found.
 
@@ -245,28 +213,50 @@ class TestMindMapUtilities(TestCase):
             - None is returned.
         """
         path_prefix = 'test-anonymous-user-id'
-        s3_client_mock.return_value.get_object.side_effect = ClientError(
-            {'Error': {'Code': 'NoSuchKey'}}, 'HeadObject'
-        )
+        mindmap_storage_mock.return_value.open.side_effect = IOError
 
         result = self.xblock.get_current_mind_map(path_prefix)
 
         self.assertIsNone(result)
 
-    @patch("mindmap.mindmap.boto3.client")
-    def test_get_current_mind_map_file_found(self, s3_client_mock: Mock):
+    @patch("mindmap.mindmap.get_mindmap_storage")
+    def test_get_current_mind_map_file_found(self, mindmap_storage_mock: Mock):
         """
-        Check getting the current mind map when the file is found.
+        Check getting the current mind map when the file is not found.
 
         Expected result:
-            - The mind map is returned.
+            - None is returned.
         """
         mind_map = {"data": [{ "id": "root", "isroot": True, "topic": "Root" }]}
-        s3_client_mock.return_value.get_object.return_value = {
-            "Body": Mock(read=Mock(return_value=json.dumps(mind_map).encode("utf-8")))
-        }
         path_prefix = 'test-anonymous-user-id'
+        mindmap_storage_mock.return_value.open.return_value = Mock(
+            read=Mock(return_value=json.dumps(mind_map).encode("utf-8"))
+        )
 
         result = self.xblock.get_current_mind_map(path_prefix)
 
         self.assertEqual(result, mind_map)
+
+
+class TestUtils(TestCase):
+    """
+    Test suite for utils of the MindMapXBlock.
+    """
+
+    def setUp(self):
+        self.storage_mock = Mock()
+        self.storage_class_mock = Mock(return_value=self.storage_mock)
+
+    @override_settings(MINDMAP_BLOCK_STORAGE=None)
+    def test_get_mindmap_storage_default(self):
+        result = get_mindmap_storage()
+        self.assertEqual(result, default_storage)
+
+    @patch("mindmap.utils.get_storage_class", autospec=True)
+    def test_get_mindmap_storage_custom(self, mock_get_storage_class):
+        mock_get_storage_class.return_value = self.storage_class_mock
+
+        result = get_mindmap_storage()
+
+        self.assertEqual(result, self.storage_mock)
+        self.storage_class_mock.assert_called_once_with(bucket_name="test-bucket-name")
