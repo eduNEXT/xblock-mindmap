@@ -16,13 +16,14 @@ Unreleased
 
 *
 
-0.4.0 - 2023-08-09
+0.4.0 - 2023-08-10
 **********************************************
 
 Added
 =====
 
 * Add functionality to use custom storage backends
+* Add translations of es_419 and es_ES in the xblock
 
 
 0.3.0 - 2023-08-04
