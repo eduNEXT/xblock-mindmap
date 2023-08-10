@@ -70,12 +70,19 @@ You can enable the Mind Map XBlock in the studio through the advanced settings.
 Configuring Component
 *********************
 
-.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/8a6da9d7-10d3-4803-a085-e84a68e2f066
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/33465240/268e97fc-9411-4581-aec6-5f949980442f
 
 Fields
 ======
 - **Display name (String)**: Name of the component.
+- **Is a static mindmap? (Boolean)**: If this option is enabled, the student will not be able to edit the mind map.
+- **Mindmap (String)**: A JSON string that represents the mind map. Instructors will use an editor to
+  create the mind map which will be converted to a JSON string and saved in this field.
 
+In the case an instructor define a mindmap and the student is allowed to edit it, the student will see the initial Mindmap
+as the defined by the instructor and will be able to edit it:
+
+.. image:: https://github.com/openedx/tutor-contrib-aspects/assets/33465240/471efdac-0449-4443-95c1-364e167efe1d
 
 View from Learning Management System (LMS)
 ******************************************
