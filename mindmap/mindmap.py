@@ -7,14 +7,13 @@ import logging
 
 import pkg_resources
 from django.core.files.base import ContentFile
-from django.template import Context, Template
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Boolean, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from mindmap.utils import get_mindmap_storage, _
+from mindmap.utils import _, get_mindmap_storage
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
@@ -85,9 +84,10 @@ class MindMapXBlock(XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def render_template(self, template_path: str, context=None) -> str:
+    def render_template(self, template_path, context=None) -> str:
         """
-        Render the template with the provided context.
+        Render a template with the given context. The template is translated
+        according to the user's language.
 
         Args:
             template_path (str): The path to the template
@@ -96,9 +96,9 @@ class MindMapXBlock(XBlock):
         Returns:
             str: The rendered template
         """
-        template_str = self.resource_string(template_path)
-        template = Template(template_str)
-        return template.render(Context(context))
+        return loader.render_django_template(
+            template_path, context, i18n_service=self.runtime.service(self, 'i18n')
+        )
 
     def get_student_view_context(self, user):
         """
@@ -159,12 +159,8 @@ class MindMapXBlock(XBlock):
         }
 
         frag = Fragment()
+        frag.add_content(self.render_template("static/html/mindmap.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
-        frag.add_content(loader.render_django_template(
-            "static/html/mindmap.html",
-            context,
-            i18n_service=self.runtime.service(self, 'i18n')
-        ))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
@@ -195,11 +191,7 @@ class MindMapXBlock(XBlock):
         }
 
         frag = Fragment()
-        frag.add_content(loader.render_django_template(
-            "static/html/mindmap_edit.html",
-            context,
-            i18n_service=self.runtime.service(self, 'i18n')
-        ))
+        frag.add_content(self.render_template("static/html/mindmap_edit.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js

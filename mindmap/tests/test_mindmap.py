@@ -36,11 +36,8 @@ class TestMindMapXBlock(TestCase):
         self.xblock.resource_string = Mock()
         self.xblock.display_name = "Test MindMap"
 
-    @patch("mindmap.mindmap.loader.render_django_template")
     @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_with_mind_map(
-        self, initialize_js_mock: Mock, render_mock: Mock
-    ):
+    def test_student_view_with_mind_map(self, initialize_js_mock: Mock):
         """
         Check student view is rendered correctly with a mind map.
 
@@ -64,24 +61,18 @@ class TestMindMapXBlock(TestCase):
             "mind_map": mind_map,
             "editable": True,
         }
-        render_mock.return_value = "<div>Mocked Content</div>"
 
         self.xblock.student_view()
 
-        render_mock.assert_called_once_with(
-            "static/html/mindmap.html",
-            expected_context,
-            i18n_service=self.xblock.runtime.service(self.xblock, "i18n"),
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
         )
 
-    @patch("mindmap.mindmap.loader.render_django_template")
     @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_empty_mind_map(
-        self, initialize_js_mock, render_mock: Mock
-    ):
+    def test_student_view_empty_mind_map(self, initialize_js_mock):
         """
         Check student view is rendered correctly with an empty mind map (None)
 
@@ -104,24 +95,18 @@ class TestMindMapXBlock(TestCase):
             "author": self.student.full_name,
             "editable": True,
         }
-        render_mock.return_value = "<div>Mocked Content</div>"
 
         self.xblock.student_view()
 
-        render_mock.assert_called_once_with(
-            "static/html/mindmap.html",
-            expected_context,
-            i18n_service=self.xblock.runtime.service(self.xblock, "i18n"),
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
         )
 
-    @patch("mindmap.mindmap.loader.render_django_template")
     @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_from_studio_is_static(
-        self, initialize_js_mock: Mock, render_mock: Mock
-    ):
+    def test_student_view_from_studio_is_static(self, initialize_js_mock: Mock):
         """
         Check student view is rendered correctly in studio when the mind map is static.
 
@@ -144,24 +129,18 @@ class TestMindMapXBlock(TestCase):
             "mind_map": None,
             "editable": True,
         }
-        render_mock.return_value = "<div>Mocked Content</div>"
 
         self.xblock.student_view()
 
-        render_mock.assert_called_once_with(
-            "static/html/mindmap.html",
-            expected_context,
-            i18n_service=self.xblock.runtime.service(self.xblock, "i18n"),
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             "MindMapXBlock", json_args=expect_js_context
         )
 
-    @patch("mindmap.mindmap.loader.render_django_template")
     @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_from_studio_is_not_static(
-        self, initialize_js_mock: Mock, render_mock: Mock
-    ):
+    def test_student_view_from_studio_is_not_static(self, initialize_js_mock: Mock):
         """
         Check student view is rendered correctly in
         studio when the mind map is not static.
@@ -180,22 +159,18 @@ class TestMindMapXBlock(TestCase):
             "error_message": None,
         }
         expect_js_context = {"author": self.student.full_name}
-        render_mock.return_value = "<div>Mocked Content</div>"
 
         self.xblock.student_view()
 
         self.xblock.get_current_mind_map.assert_not_called()
-        render_mock.assert_called_once_with(
-            "static/html/mindmap.html",
-            expected_context,
-            i18n_service=self.xblock.runtime.service(self.xblock, "i18n"),
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             "MindMapXBlock", json_args=expect_js_context
         )
 
-    @patch("mindmap.mindmap.loader.render_django_template")
-    def test_studio_view(self, render_mock: Mock):
+    def test_studio_view(self):
         """
         Check studio view is rendered correctly.
 
@@ -208,14 +183,11 @@ class TestMindMapXBlock(TestCase):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
         }
-        render_mock.return_value = "<div>Mocked Content</div>"
 
         self.xblock.studio_view()
 
-        render_mock.assert_called_once_with(
-            "static/html/mindmap_edit.html",
-            expected_context,
-            i18n_service=self.xblock.runtime.service(self.xblock, "i18n"),
+        self.xblock.render_template.assert_called_once_with(
+            "static/html/mindmap_edit.html", expected_context,
         )
 
 
