@@ -37,7 +37,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.display_name = "Test MindMap"
 
     @patch("mindmap.mindmap.Fragment.initialize_js")
-    def test_student_view_with_mind_map(self, initialize_js_mock):
+    def test_student_view_with_mind_map(self, initialize_js_mock: Mock):
         """
         Check student view is rendered correctly with a mind map.
 
@@ -65,7 +65,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
@@ -99,7 +99,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
@@ -119,7 +119,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.is_student.return_value = False
         self.xblock.get_current_user.return_value = self.student
         self.xblock.get_current_mind_map.return_value = None
-        expect_context = {
+        expected_context = {
             "in_student_view": False,
             "is_static": True,
             "error_message": None,
@@ -133,7 +133,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expect_context
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             "MindMapXBlock", json_args=expect_js_context
@@ -153,7 +153,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.user_is_staff.return_value = False
         self.xblock.is_student.return_value = False
         self.xblock.get_current_user.return_value = self.student
-        expect_context = {
+        expected_context = {
             "in_student_view": False,
             "is_static": False,
             "error_message": None,
@@ -164,7 +164,7 @@ class TestMindMapXBlock(TestCase):
 
         self.xblock.get_current_mind_map.assert_not_called()
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expect_context
+            "static/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             "MindMapXBlock", json_args=expect_js_context
@@ -187,7 +187,7 @@ class TestMindMapXBlock(TestCase):
         self.xblock.studio_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap_edit.html", expected_context
+            "static/html/mindmap_edit.html", expected_context,
         )
 
 

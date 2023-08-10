@@ -7,16 +7,16 @@ import logging
 
 import pkg_resources
 from django.core.files.base import ContentFile
-from django.template import Context, Template
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Boolean, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from mindmap.utils import get_mindmap_storage
+from mindmap.utils import _, get_mindmap_storage
 
 log = logging.getLogger(__name__)
+loader = ResourceLoader(__name__)
 
 
 class MisconfiguredMindMapService(Exception):
@@ -33,23 +33,24 @@ class MisconfiguredMindMapService(Exception):
 
 
 @XBlock.wants("user")
+@XBlock.needs("i18n")
 class MindMapXBlock(XBlock):
     """
     Mind Map XBlock provides a way to create and save mind maps in a course.
     """
     display_name = String(
-        display_name="Display Name",
+        display_name=_("Display name"),
         default="Mind Map",
         scope=Scope.settings,
     )
 
     is_static = Boolean(
-        help="""
-        Whether the mind map is static or not. If it is static, the instructor can
-        create a mind map and it will be the same for all students. If it is not
-        static, the students can create their own mind maps.
-        """,
-        display_name="Is a static mindmap?",
+        help=_(
+            "Whether the mind map is static or not. If it is static, the instructor can "
+            "create a mind map and it will be the same for all students. If it is not "
+            "static, the students can create their own mind maps."
+        ),
+        display_name=_("Is a static mindmap?"),
         default=False,
         scope=Scope.settings,
     )
@@ -83,9 +84,10 @@ class MindMapXBlock(XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def render_template(self, template_path: str, context=None) -> str:
+    def render_template(self, template_path, context=None) -> str:
         """
-        Render the template with the provided context.
+        Render a template with the given context. The template is translated
+        according to the user's language.
 
         Args:
             template_path (str): The path to the template
@@ -94,9 +96,9 @@ class MindMapXBlock(XBlock):
         Returns:
             str: The rendered template
         """
-        template_str = self.resource_string(template_path)
-        template = Template(template_str)
-        return template.render(Context(context))
+        return loader.render_django_template(
+            template_path, context, i18n_service=self.runtime.service(self, 'i18n')
+        )
 
     def get_student_view_context(self, user):
         """
@@ -156,8 +158,8 @@ class MindMapXBlock(XBlock):
             "error_message": error_message,
         }
 
-        html = self.render_template("static/html/mindmap.html", context)
-        frag = Fragment(html.format(self=self))
+        frag = Fragment()
+        frag.add_content(self.render_template("static/html/mindmap.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js
@@ -188,8 +190,8 @@ class MindMapXBlock(XBlock):
             "is_static_field": self.fields["is_static"],
         }
 
-        html = self.render_template("static/html/mindmap_edit.html", context)
-        frag = Fragment(html)
+        frag = Fragment()
+        frag.add_content(self.render_template("static/html/mindmap_edit.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js
@@ -300,7 +302,6 @@ class MindMapXBlock(XBlock):
         text_js = 'public/js/translations/{locale_code}/text.js'
         lang_code = locale_code.split('-')[0]
         for code in (locale_code, lang_code, 'en'):
-            loader = ResourceLoader(__name__)
             if pkg_resources.resource_exists(
                     loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)

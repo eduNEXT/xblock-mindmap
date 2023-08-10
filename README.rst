@@ -128,6 +128,14 @@ work, or new features.  However, please make sure to have a discussion about you
 the maintainers prior to beginning development to maximize the chances of your change being accepted.
 You can start a conversation by creating a new issue on this repo summarizing your idea.
 
+Translations
+============
+You can help by translating this project. Follow the steps below:
+
+1. Create a folder for the translations in ``locale/``, eg: ``locale/es_419/LC_MESSAGES/``, and create
+   your ``text.po`` file with all the translations.
+2. Run ``make compile_translations``, this will generate the ``.mo`` file.
+3. Create a pull request with your changes!
 
 The Open edX Code of Conduct
 ****************************
