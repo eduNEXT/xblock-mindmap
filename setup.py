@@ -152,5 +152,5 @@ setup(
             "mindmap = mindmap.apps:MindMapConfig",
         ],
     },
-    package_data=package_data("mindmap", ["static", "public"]),
+    package_data=package_data("mindmap", ["static", "public", "translations"]),
 )
