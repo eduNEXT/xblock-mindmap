@@ -40,14 +40,3 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_TZ = True
-
-# AWS S3 settings
-AWS_ACCESS_KEY_ID = "test-aws-access-key-id"
-AWS_SECRET_ACCESS_KEY = "test-aws-secret-access-key"
-AWS_DEFAULT_ACL = None
-MINDMAP_BLOCK_STORAGE = {
-  "storage_class": "custom_storage.CustomStorage",
-  "settings": {
-      "bucket_name": "test-bucket-name",
-  },
-}

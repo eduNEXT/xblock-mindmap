@@ -2,34 +2,19 @@
 
 from __future__ import annotations
 
-import json
 import logging
 
 import pkg_resources
-from django.core.files.base import ContentFile
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Boolean, Scope, String
+from xblock.fields import Boolean, Dict, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from mindmap.utils import _, get_mindmap_storage
+from mindmap.utils import _
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
-
-
-class MisconfiguredMindMapService(Exception):
-    """Exception raised when the MindMap service is misconfigured."""
-
-    def init__(self, message="Mind Map service is misconfigured"):
-        """
-        Initialize the exception.
-
-        Args:
-            message (str, optional): The error message for the misconfigured mind map service error.
-        """
-        super().__init__(message)
 
 
 @XBlock.wants("user")
@@ -55,19 +40,45 @@ class MindMapXBlock(XBlock):
         scope=Scope.settings,
     )
 
+    mindmap_body = Dict(
+        help=_(
+            "The body of the mind map. It is a dictionary with the following structure: "
+            "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
+        ),
+        display_name=_("Mindmap body"),
+        default={
+            "meta": {
+                "name": "Mind Map",
+                "version": "0.1",
+            },
+            "format": "node_array",
+            "data": [
+                {
+                    "id": "root",
+                    "isroot": "true",
+                    "topic": "Root"}
+                ]
+        },
+        scope=Scope.settings,
+    )
+
+    mindmap_student_body = Dict(
+        help=_(
+            "The body of the mind map. It is a dictionary with the following structure: "
+            "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
+        ),
+        display_name=_("Mindmap student body"),
+        default={},
+        scope=Scope.user_state,
+    )
+
     def get_current_user(self):
         """
         Get the current user.
         """
         return self.runtime.service(self, "user").get_current_user()
 
-    def anonymous_user_id(self, user) -> str:
-        """
-        Return the anonymous user ID of the user.
-        """
-        return user.opt_attrs.get("edx-platform.anonymous_user_id")
-
-    def user_is_staff(self, user) -> bool:
+    def is_course_staff(self, user) -> bool:
         """
         Check whether the user has course staff permissions for this XBlock.
         """
@@ -100,7 +111,7 @@ class MindMapXBlock(XBlock):
             template_path, context, i18n_service=self.runtime.service(self, 'i18n')
         )
 
-    def get_student_view_context(self, user):
+    def get_context(self, user):
         """
         Return the context for the student view.
 
@@ -110,20 +121,38 @@ class MindMapXBlock(XBlock):
         Returns:
             dict: The context for the student view
         """
-        anonymous_user_id = self.anonymous_user_id(user)
-        in_student_view = self.is_student(user) or self.user_is_staff(user)
-        path_prefix = (
-            anonymous_user_id
-            if in_student_view and not self.is_static
-            else "instructor"
-        )
-        editable = in_student_view != self.is_static
+        in_student_view = self.is_student(user) or self.is_course_staff(user)
+        if self.is_static:
+            editable = False
+        else:
+            editable = in_student_view
 
         return {
+            "display_name": self.display_name,
             "in_student_view": in_student_view,
-            "path_prefix": path_prefix,
             "editable": editable,
+            "xblock_id": self.scope_ids.usage_id.block_id,
+            "is_static": self.is_static,
+            "is_static_field": self.fields["is_static"],
         }
+
+    def get_js_context(self, user, context):
+        """
+        Return the context for the student view.
+
+        Args:
+            user: The current user
+
+        Returns:
+            dict: The context for the student view
+        """
+        return {
+            "author": user.full_name,
+            "mind_map": self.get_current_mind_map(),
+            "editable": context["editable"],
+            "xblock_id": self.scope_ids.usage_id.block_id,
+        }
+
 
     def student_view(self, _context=None) -> Fragment:
         """
@@ -136,42 +165,13 @@ class MindMapXBlock(XBlock):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        student_view_context = self.get_student_view_context(user)
-        js_context = {"author": user.full_name}
-        error_message = None
+        context = self.get_context(user)
 
-        if student_view_context["in_student_view"] or self.is_static:
-            try:
-                mind_map = self.get_current_mind_map(
-                    student_view_context["path_prefix"]
-                )
-                js_context.update(
-                    {"mind_map": mind_map, "editable": student_view_context["editable"]}
-                )
-            except Exception as error: # pylint: disable=broad-except
-                log.exception("Error while setting up student view of MindMapXBlock")
-                error_message = str(error)
-
-        context = {
-            "in_student_view": student_view_context["in_student_view"],
-            "is_static": self.is_static,
-            "error_message": error_message,
-        }
-
-        frag = Fragment()
-        frag.add_content(self.render_template("static/html/mindmap.html", context))
-        frag.add_css(self.resource_string("static/css/mindmap.css"))
-
-        # Add i18n js
-        statici18n_js_url = self._get_statici18n_js_url()
-        if statici18n_js_url:
-            frag.add_javascript_url(
-                self.runtime.local_resource_url(self, statici18n_js_url)
-            )
+        frag = self.load_fragment("mindmap", context)
 
         frag.add_javascript(self.resource_string("static/js/src/requiredModules.js"))
-        frag.add_javascript(self.resource_string("static/js/src/mindmap.js"))
-        frag.initialize_js('MindMapXBlock', json_args=js_context)
+        frag.initialize_js('MindMapXBlock', json_args=self.get_js_context(user, context))
+
         return frag
 
     def studio_view(self, context=None) -> Fragment:
@@ -184,14 +184,24 @@ class MindMapXBlock(XBlock):
         Returns:
             Fragment: The fragment to render
         """
-        context = {
-            "display_name": self.display_name,
-            "is_static": self.is_static,
-            "is_static_field": self.fields["is_static"],
-        }
+        user = self.get_current_user()
+        context = self.get_context(user)
+        context.update({
+            "editable": True
+        })
 
+        frag = self.load_fragment("mindmap_edit", context)
+
+        frag.initialize_js('MindMapXBlock', json_args=self.get_js_context(user, context))
+
+        return frag
+
+    def load_fragment(self, file_name, context):
+        """
+        Generic function to generate a fragment.
+        """
         frag = Fragment()
-        frag.add_content(self.render_template("static/html/mindmap_edit.html", context))
+        frag.add_content(self.render_template(f"static/html/{file_name}.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
 
         # Add i18n js
@@ -201,48 +211,24 @@ class MindMapXBlock(XBlock):
                 self.runtime.local_resource_url(self, statici18n_js_url)
             )
 
-        frag.add_javascript(self.resource_string("static/js/src/mindmapEdit.js"))
-        frag.initialize_js("MindMapXBlock")
+        frag.add_javascript(self.resource_string(f"static/js/src/{file_name}.js"))
+
         return frag
 
-    def get_file_key(self, path_prefix: str) -> str:
-        """
-        Return the key (path) to save and retrieve the file in S3.
-
-        Args:
-            path_prefix (str):
-                The path prefix to use in the key (path).
-                In the case of students, it is the anonymous user ID.
-
-        Returns:
-            str: The key (path) to use in S3.
-        """
-        block_id = self.scope_ids.usage_id.block_id
-
-        if path_prefix == "instructor":
-            return f"mindmaps/instructors/{block_id}/mindmap.json"
-
-        return f"mindmaps/students/{block_id}/{path_prefix}/mindmap.json"
-
-    def get_current_mind_map(self, path_prefix: str) -> dict | None:
+    def get_current_mind_map(self) -> dict:
         """
         Return the current mind map content.
 
         Args:
-            path_prefix (str): The path prefix to use in the key (path).
+
 
         Returns:
             dict: The current mind map content.
             None: If the file does not exist.
         """
-        mindmap_storage = get_mindmap_storage()
-
-        try:
-            file = mindmap_storage.open(self.get_file_key(path_prefix))
-            json_data = file.read().decode("utf-8")
-        except IOError:
-            return None
-        return json.loads(json_data)
+        if self.mindmap_student_body and not self.is_static:
+            return self.mindmap_student_body
+        return self.mindmap_body
 
     @XBlock.json_handler
     def upload_file(self, data, _suffix="") -> None:
@@ -253,16 +239,8 @@ class MindMapXBlock(XBlock):
             data (dict): The necessary data to upload the file
             _suffix (str, optional): Defaults to "".
         """
-        if data.get("path_prefix") == "student":
-            user = self.get_current_user()
-            data["path_prefix"] = self.anonymous_user_id(user)
-
-        mindmap_storage = get_mindmap_storage()
-
-        mindmap_storage.save(
-            self.get_file_key(data.get("path_prefix")),
-            ContentFile(data.get("mind_map").encode("utf-8"))
-        )
+        self.mindmap_student_body = data.get("mind_map")
+        return {"success": True}
 
     @XBlock.json_handler
     def studio_submit(self, data, _suffix=""):
@@ -271,6 +249,7 @@ class MindMapXBlock(XBlock):
         """
         self.display_name = data.get("display_name")
         self.is_static = data.get("is_static")
+        self.mindmap_body = data.get("mind_map")
 
     # TO-DO: change this to create the scenarios you'd like to see in the
     # workbench while developing your XBlock.

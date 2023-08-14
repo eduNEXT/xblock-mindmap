@@ -1,24 +1,15 @@
 {% load i18n %}
 
-{% if in_student_view or is_static %}
-    {% if error_message %}
-        <p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
-        <p>{% trans "Please contact the instructor or an administrator" %}.</p>
-    {% else %}
-        <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css"/>
-        <div>
-            {% if not in_student_view and is_static %}
-                <button class="save-button-instructor">{% trans "Save" %}</button>
-            {% endif %}
-            {% if not is_static %}
-                <button class="save-button-student">{% trans "Save" %}</button>
-            {% endif %}
-            <div id="jsmind_container"></div>
-        </div>
-    {% endif %}
+{% if error_message %}
+    <p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
+    <p>{% trans "Please contact the instructor or an administrator" %}.</p>
 {% else %}
+    <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css"/>
     <div>
-        <p>{% trans "The mind map is only visible from the LMS"%}.</p>
-        <p>{% trans "If you want to create a static mind map set the 'Is a static mindmap?' field to True" %}.</p>
+        <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
     </div>
+
+    {% if editable and in_student_view %}
+        <button id="save_button_{{xblock_id}}">{% trans "Save" %}</button>
+    {% endif %}
 {% endif %}

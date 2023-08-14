@@ -8,7 +8,7 @@
     cursor: pointer;
 }
 
-#jsmind_container > .jsmind-inner {
+.jsmind_container > .jsmind-inner {
     min-height: 700px;
     margin-top: 10px;
 }
