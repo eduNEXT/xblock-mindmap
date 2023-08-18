@@ -368,7 +368,24 @@ class MindMapXBlock(XBlock):
         self.weight = weight
 
     @XBlock.json_handler
-    def submit_assignment(self, request, _suffix="") -> dict:
+    def save_assignment(self, data, _suffix="") -> dict:
+        """
+        Save a mind map JSON structure into the block state for the user.
+
+        Args:
+            data (dict): The necessary data to upload the file
+            _suffix (str, optional): Defaults to "".
+
+        Returns:
+            dict: A dictionary containing the handler result.
+        """
+        self.mindmap_student_body = data.get("mind_map")
+        return {
+            "success": True,
+        }
+
+    @XBlock.json_handler
+    def submit_assignment(self, data, _suffix="") -> dict:
         # pylint: disable=unused-argument
         """
         Submit a student's saved submission. This prevents further saves for the
@@ -383,6 +400,7 @@ class MindMapXBlock(XBlock):
         """
         require(self.submit_allowed())
 
+        self.mindmap_student_body = data.get("mind_map")
         answer = {
             "mindmap_student_body": json.dumps(self.mindmap_student_body),
         }
@@ -440,23 +458,6 @@ class MindMapXBlock(XBlock):
             "assignments": list(get_student_data()),
             "max_score": self.max_score(),
             "display_name": self.display_name,
-        }
-
-    @XBlock.json_handler
-    def save_assignment(self, data, _suffix="") -> dict:
-        """
-        Save a mind map JSON structure into the block state for the user.
-
-        Args:
-            data (dict): The necessary data to upload the file
-            _suffix (str, optional): Defaults to "".
-
-        Returns:
-            dict: A dictionary containing the handler result.
-        """
-        self.mindmap_student_body = data.get("mind_map")
-        return {
-            "success": True,
         }
 
     @XBlock.json_handler
