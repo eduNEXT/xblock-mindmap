@@ -386,7 +386,6 @@ class MindMapXBlock(XBlock):
 
     @XBlock.json_handler
     def submit_assignment(self, data, _suffix="") -> dict:
-        # pylint: disable=unused-argument
         """
         Submit a student's saved submission. This prevents further saves for the
         given block, and makes the submission available to instructors for grading
