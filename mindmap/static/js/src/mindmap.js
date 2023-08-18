@@ -3,6 +3,10 @@ function MindMapXBlock(runtime, element, context) {
 
     const saveMindMapURL = runtime.handlerUrl(element, "save_assignment");
     const submitMindMapURL = runtime.handlerUrl(element, "submit_assignment");
+    const getGradingDataURL = runtime.handlerUrl(element, "get_instructor_grading_data");
+    const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
+    const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
+
     function showMindMap(jsMind, context) {
         const mind = context.mind_map
 
@@ -30,6 +34,47 @@ function MindMapXBlock(runtime, element, context) {
         $(element).find(`#submit_button_${context.xblock_id}`).click(function () {
             handleMindMap(runtime, element, currentMindMap, submitMindMapURL);
         });
+
+        $(element).find(`#get_submissions_button_${context.xblock_id}`).click(function () {
+            $.post(getGradingDataURL, JSON.stringify({}))
+            .done(function (response) {
+                console.log(response.assignments);
+            })
+            .fail(function () {
+                console.log("Error submitting mind map");
+            });
+        });
+
+        $(element).find(`#enter-grade-button_${context.xblock_id}`).click(function () {
+            const grade = $(element).find(`#grade-input_${context.xblock_id}`).val();
+            const submission_id = $(element).find(`#submission-id-input_${context.xblock_id}`).val();
+            const data = {
+                "grade": grade,
+                "submission_id": submission_id,
+            }
+            console.log(data);
+            $.post(enterGradeURL, JSON.stringify(data))
+            .done(function (response) {
+                console.log(response);
+            })
+            .fail(function (error) {
+                console.log(error);
+            });
+        });
+
+        $(element).find(`#remove-grade-button_${context.xblock_id}`).click(function () {
+            const student_id = $(element).find(`#student-id-input_${context.xblock_id}`).val();
+            const data = {
+                "student_id": student_id,
+            }
+            console.log(data);
+            $.post(removeGradeURL, JSON.stringify(data))
+            .done(function (response) {
+                console.log(response);
+            })
+            .fail(function (error) {
+                console.log(error);
+            });
         });
 
     };
