@@ -1,6 +1,8 @@
 // TODO: add notifications
 function MindMapXBlock(runtime, element, context) {
 
+    const saveMindMapURL = runtime.handlerUrl(element, "save_assignment");
+    const submitMindMapURL = runtime.handlerUrl(element, "submit_assignment");
     function showMindMap(jsMind, context) {
         const mind = context.mind_map
 
@@ -22,23 +24,27 @@ function MindMapXBlock(runtime, element, context) {
         currentMindMap.show(mind);
 
         $(element).find(`#save_button_${context.xblock_id}`).click(function () {
-            saveMindMap(runtime, element, currentMindMap, "student");
+            handleMindMap(runtime, element, currentMindMap, saveMindMapURL);
+        });
+
+        $(element).find(`#submit_button_${context.xblock_id}`).click(function () {
+            handleMindMap(runtime, element, currentMindMap, submitMindMapURL);
+        });
         });
 
     };
 
-    function saveMindMap(runtime, element, mindMap, path_prefix) {
+    function handleMindMap(runtime, element, mindMap, handlerUrl) {
         const mindMapData = mindMap.get_data("node_array");
         const jsonMindMapData = mindMapData;
-        const handlerUrl = runtime.handlerUrl(element, "upload_file");
-        const data = { mind_map: jsonMindMapData, path_prefix: path_prefix };
+        const data = { mind_map: jsonMindMapData };
 
         $.post(handlerUrl, JSON.stringify(data))
             .done(function (response) {
                 window.location.reload(false);
             })
             .fail(function () {
-                console.log("Error saving mind map");
+                console.log("Error submitting mind map");
             });
     }
 

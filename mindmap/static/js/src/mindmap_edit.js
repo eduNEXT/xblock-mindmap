@@ -11,6 +11,8 @@ function MindMapXBlock(runtime, element, context) {
       const handlerUrl = runtime.handlerUrl(element, "studio_submit");
       const data = {
         display_name: $(element).find("input[name=mindmap_display_name]").val(),
+        weight: Number($(element).find("input[name=mindmap_weight]").val()),
+        points: Number($(element).find("input[name=mindmap_points]").val()),
         is_static: Number($(element).find("select[name=mindmap_is_static]").val()),
         mind_map: currentMindMap.get_data("node_array"),
       };
