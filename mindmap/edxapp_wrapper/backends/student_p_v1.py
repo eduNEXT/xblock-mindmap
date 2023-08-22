@@ -2,7 +2,7 @@
 Student module definitions for Open edX Palm release.
 """
 
-from common.djangoapps.student.models import user_by_anonymous_id
+from common.djangoapps.student.models import user_by_anonymous_id  # pylint: disable=import-error
 
 
 def get_user_by_anonymous_id(*args, **kwargs):

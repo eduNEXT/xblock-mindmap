@@ -3,7 +3,7 @@ Settings for the Mind Map plugin.
 """
 
 
-def plugin_settings(settings): # pylint: disable=unused-argument
+def plugin_settings(settings):
     """
     Read / Update necessary project settings for production envs.
     """

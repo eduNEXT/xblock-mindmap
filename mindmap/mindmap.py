@@ -6,11 +6,9 @@ import json
 import logging
 
 import pkg_resources
-import pytz
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
 from web_fragments.fragment import Fragment
-from webob.response import Response
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
@@ -343,8 +341,8 @@ class MindMapXBlock(XBlock):
         points = data.get("points", self.points)
         try:
             points = int(points)
-        except ValueError:
-            raise JsonHandlerError(400, "Points must be an integer")
+        except ValueError as exc:
+            raise JsonHandlerError(400, "Points must be an integer") from exc
 
         if points < 0:
             raise JsonHandlerError(400, "Points must be a positive integer")
@@ -354,8 +352,8 @@ class MindMapXBlock(XBlock):
         if weight:
             try:
                 weight = float(weight)
-            except ValueError:
-                raise JsonHandlerError(400, "Weight must be a decimal number")
+            except ValueError as exc:
+                raise JsonHandlerError(400, "Weight must be a decimal number") from exc
             if weight < 0:
                 raise JsonHandlerError(400, "Weight must be a positive decimal number")
         self.weight = weight
@@ -391,7 +389,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import create_submission
+        from submissions.api import create_submission  # pylint: disable=import-outside-toplevel
 
         require(self.submit_allowed())
 
@@ -409,7 +407,7 @@ class MindMapXBlock(XBlock):
         }
 
     @XBlock.json_handler
-    def get_instructor_grading_data(self, request, _suffix="") -> dict:
+    def get_instructor_grading_data(self, _, _suffix="") -> dict:
         """Return student assignment information for display on the grading screen.
 
         Args:
@@ -428,7 +426,7 @@ class MindMapXBlock(XBlock):
             information will be used on grading screen
             """
             # Lazy import: import here to avoid app not ready errors
-            from submissions.models import StudentItem as SubmissionsStudent
+            from submissions.models import StudentItem as SubmissionsStudent  # pylint: disable=import-outside-toplevel
 
             students = SubmissionsStudent.objects.filter(
                 course_id=self.course_id, item_id=self.block_id
@@ -470,7 +468,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import set_score
+        from submissions.api import set_score  # pylint: disable=import-outside-toplevel
 
         require(self.is_instructor())
 
@@ -498,7 +496,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import reset_score
+        from submissions.api import reset_score  # pylint: disable=import-outside-toplevel
 
         require(self.is_instructor())
 
@@ -540,7 +538,7 @@ class MindMapXBlock(XBlock):
             int: The student's current score.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import get_score
+        from submissions.api import get_score  # pylint: disable=import-outside-toplevel
 
         score = get_score(self.get_student_item_dict(student_id))
         if score:
@@ -559,7 +557,7 @@ class MindMapXBlock(XBlock):
             dict: The student's most recent submission.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import get_submissions
+        from submissions.api import get_submissions  # pylint: disable=import-outside-toplevel
 
         submissions = get_submissions(
             self.get_student_item_dict(student_id)

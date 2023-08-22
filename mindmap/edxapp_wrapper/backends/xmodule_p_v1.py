@@ -1,7 +1,7 @@
 """
 Xmodule definitions for Open edX Palm release.
 """
-from xmodule.util.duedate import get_extended_due_date
+from xmodule.util.duedate import get_extended_due_date  # pylint: disable=import-error
 
 
 def get_extended_due_date_util(*args, **kwargs):
