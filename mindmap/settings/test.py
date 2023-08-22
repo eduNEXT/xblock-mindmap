@@ -40,3 +40,7 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_TZ = True
+
+# Mind Map plugin settings
+MINDMAP_XMODULE_BACKEND = 'mindmap.edxapp_wrapper.backends.xmodule_p_v1'
+MINDMAP_STUDENT_MODULE_BACKEND = 'mindmap.edxapp_wrapper.backends.student_p_v1'

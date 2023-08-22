@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import datetime
 import json
 import logging
 
@@ -73,8 +72,9 @@ class MindMapXBlock(XBlock):
                 {
                     "id": "root",
                     "isroot": "true",
-                    "topic": "Root"}
-                ]
+                    "topic": "Root",
+                }
+            ]
         },
         scope=Scope.settings,
     )
@@ -339,6 +339,7 @@ class MindMapXBlock(XBlock):
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
+
         points = data.get("points", self.points)
         try:
             points = int(points)
@@ -390,7 +391,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions import api as submissions_api
+        from submissions.api import create_submission
 
         require(self.submit_allowed())
 
@@ -399,7 +400,7 @@ class MindMapXBlock(XBlock):
             "mindmap_student_body": json.dumps(self.mindmap_student_body),
         }
         student_item_dict = self.get_student_item_dict()
-        submissions_api.create_submission(student_item_dict, answer)
+        create_submission(student_item_dict, answer)
 
         self.submitted = True
 
@@ -469,7 +470,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions import api as submissions_api
+        from submissions.api import set_score
 
         require(self.is_instructor())
 
@@ -478,7 +479,7 @@ class MindMapXBlock(XBlock):
         if not score or not uuid:
             raise JsonHandlerError(400, "Missing required parameters")
 
-        submissions_api.set_score(uuid, score, self.max_score())
+        set_score(uuid, score, self.max_score())
 
         return {
             "success": True,
@@ -497,7 +498,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions import api as submissions_api
+        from submissions.api import reset_score
 
         require(self.is_instructor())
 
@@ -505,7 +506,7 @@ class MindMapXBlock(XBlock):
         if not student_id:
             raise JsonHandlerError(400, "Missing required parameters")
 
-        submissions_api.reset_score(student_id, self.block_course_id, self.block_id)
+        reset_score(student_id, self.block_course_id, self.block_id)
 
         return {
             "success": True,
@@ -539,9 +540,9 @@ class MindMapXBlock(XBlock):
             int: The student's current score.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions import api as submissions_api
+        from submissions.api import get_score
 
-        score = submissions_api.get_score(self.get_student_item_dict(student_id))
+        score = get_score(self.get_student_item_dict(student_id))
         if score:
             return score["points_earned"]
 
@@ -558,9 +559,9 @@ class MindMapXBlock(XBlock):
             dict: The student's most recent submission.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions import api as submissions_api
+        from submissions.api import get_submissions
 
-        submissions = submissions_api.get_submissions(
+        submissions = get_submissions(
             self.get_student_item_dict(student_id)
         )
         if submissions:
