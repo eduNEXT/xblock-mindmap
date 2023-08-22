@@ -10,8 +10,6 @@ import pkg_resources
 import pytz
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
-from submissions import api as submissions_api
-from submissions.models import StudentItem as SubmissionsStudent
 from web_fragments.fragment import Fragment
 from webob.response import Response
 from xblock.core import XBlock
@@ -19,15 +17,9 @@ from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
+from mindmap.edxapp_wrapper.student import user_by_anonymous_id
+from mindmap.edxapp_wrapper.xmodule import get_extended_due_date
 from mindmap.utils import _, utcnow
-
-try:
-    from common.djangoapps.student.models import user_by_anonymous_id
-    from xmodule.util.duedate import get_extended_due_date
-except ImportError:
-    # This is a workaround for the fact that the above imports are not available during testing
-    user_by_anonymous_id = object
-    get_extended_due_date = object
 
 
 log = logging.getLogger(__name__)
@@ -397,6 +389,9 @@ class MindMapXBlock(XBlock):
         Returns:
             dict: A dictionary containing the handler result.
         """
+        # Lazy import: import here to avoid app not ready errors
+        from submissions import api as submissions_api
+
         require(self.submit_allowed())
 
         self.mindmap_student_body = data.get("mind_map")
@@ -431,7 +426,9 @@ class MindMapXBlock(XBlock):
             annotated file name, student id and module id, this
             information will be used on grading screen
             """
-            # Submissions doesn't have API for this, just use model directly.
+            # Lazy import: import here to avoid app not ready errors
+            from submissions.models import StudentItem as SubmissionsStudent
+
             students = SubmissionsStudent.objects.filter(
                 course_id=self.course_id, item_id=self.block_id
             )
@@ -471,6 +468,9 @@ class MindMapXBlock(XBlock):
         Returns:
             dict: A dictionary containing the handler result.
         """
+        # Lazy import: import here to avoid app not ready errors
+        from submissions import api as submissions_api
+
         require(self.is_instructor())
 
         score = int(data.get("grade"))
@@ -496,6 +496,9 @@ class MindMapXBlock(XBlock):
         Returns:
             dict: A dictionary containing the handler result.
         """
+        # Lazy import: import here to avoid app not ready errors
+        from submissions import api as submissions_api
+
         require(self.is_instructor())
 
         student_id = data.get("student_id")
@@ -535,6 +538,9 @@ class MindMapXBlock(XBlock):
         Returns:
             int: The student's current score.
         """
+        # Lazy import: import here to avoid app not ready errors
+        from submissions import api as submissions_api
+
         score = submissions_api.get_score(self.get_student_item_dict(student_id))
         if score:
             return score["points_earned"]
@@ -551,6 +557,9 @@ class MindMapXBlock(XBlock):
         Returns:
             dict: The student's most recent submission.
         """
+        # Lazy import: import here to avoid app not ready errors
+        from submissions import api as submissions_api
+
         submissions = submissions_api.get_submissions(
             self.get_student_item_dict(student_id)
         )

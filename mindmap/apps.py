@@ -10,6 +10,7 @@ class MindMapConfig(AppConfig):
     Configuration for the Mind Map Django application.
     """
     name = "mindmap"
+
     plugin_app = {
         "settings_config": {
             "lms.djangoapp": {
