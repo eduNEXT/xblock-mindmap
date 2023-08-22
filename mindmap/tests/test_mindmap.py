@@ -2,11 +2,11 @@
 Tests for the LimeSurveyXBlock definition class.
 """
 import datetime
-import ddt
 import json
-
 from unittest import TestCase
 from unittest.mock import Mock, patch
+
+import ddt
 from xblock.fields import DateTime
 
 from mindmap.mindmap import MindMapXBlock
@@ -469,7 +469,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         self.assertDictEqual(expected_result, response.json)
 
 
-class TestMindMapUtilities(MindMapXBlockTestMixin):
+class TestMindMapUtilities(TestCase):
     """
     Test suite for the MindMapXBlock utilities methods.
     """
