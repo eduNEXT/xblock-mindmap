@@ -338,6 +338,7 @@ class MindMapXBlock(XBlock):
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
+
         points = data.get("points", self.points)
         weight = data.get("weight", self.weight)
         self.points, self.weight = self.validate_score(points, weight)
