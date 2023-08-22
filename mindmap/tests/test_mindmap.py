@@ -466,7 +466,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         response = self.xblock.get_instructor_grading_data(self.request)
 
         self.assertEqual(200, response.status_code)
-        self.assertDictEqual(expected_result, response.json)
+        self.assertDictEqual(expected_result, response.json)  # pylint: disable=no-member
 
 
 class TestMindMapUtilities(TestCase):
