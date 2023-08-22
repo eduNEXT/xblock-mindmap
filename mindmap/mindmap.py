@@ -8,8 +8,6 @@ import logging
 import pkg_resources
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
-from submissions import api as submissions_api
-from submissions.models import StudentItem as SubmissionsStudent
 from web_fragments.fragment import Fragment
 from webob.response import Response
 from xblock.core import XBlock
