@@ -9,7 +9,6 @@ import pkg_resources
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
 from web_fragments.fragment import Fragment
-from webob.response import Response
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
