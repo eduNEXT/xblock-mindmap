@@ -459,6 +459,8 @@ class MindMapXBlock(XBlock):
         uuid = data.get("submission_id")
         if not score or not uuid:
             raise JsonHandlerError(400, "Missing required parameters")
+        if score > self.max_score():
+            raise JsonHandlerError(400, "Score cannot be greater than max score")
 
         set_score(uuid, score, self.max_score())
 
