@@ -337,26 +337,9 @@ class MindMapXBlock(XBlock):
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
-
         points = data.get("points", self.points)
-        try:
-            points = int(points)
-        except ValueError as exc:
-            raise JsonHandlerError(400, "Points must be an integer") from exc
-
-        if points < 0:
-            raise JsonHandlerError(400, "Points must be a positive integer")
-        self.points = points
-
         weight = data.get("weight", self.weight)
-        if weight:
-            try:
-                weight = float(weight)
-            except ValueError as exc:
-                raise JsonHandlerError(400, "Weight must be a decimal number") from exc
-            if weight < 0:
-                raise JsonHandlerError(400, "Weight must be a positive decimal number")
-        self.weight = weight
+        self.points, self.weight = self.validate_score(points, weight)
 
     @XBlock.json_handler
     def save_assignment(self, data, _suffix="") -> dict:
@@ -509,6 +492,33 @@ class MindMapXBlock(XBlock):
         return {
             "success": True,
         }
+
+    @staticmethod
+    def validate_score(points: int, weight: int) -> None:
+        """
+        Validate a score.
+
+        Args:
+            score (int): The score to validate.
+            max_score (int): The maximum score.
+        """
+        try:
+            points = int(points)
+        except ValueError as exc:
+            raise JsonHandlerError(400, "Points must be an integer") from exc
+
+        if points < 0:
+            raise JsonHandlerError(400, "Points must be a positive integer")
+
+        if weight:
+            try:
+                weight = float(weight)
+            except ValueError as exc:
+                raise JsonHandlerError(400, "Weight must be a decimal number") from exc
+            if weight < 0:
+                raise JsonHandlerError(400, "Weight must be a positive decimal number")
+
+        return points, weight
 
     def submit_allowed(self) -> bool:
         """
