@@ -3,6 +3,7 @@ Tests for the LimeSurveyXBlock definition class.
 """
 import datetime
 import json
+from http import HTTPStatus
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
@@ -288,7 +289,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         self.request = Mock(
             body=json.dumps(self.data).encode("utf-8"),
             method="POST",
-            status_code_success=200,
+            status_code_success=HTTPStatus.OK,
         )
         self.student_id = "test-student-id"
         self.grade = 100
@@ -331,7 +332,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
 
         response = self.xblock.studio_submit(self.request)
 
-        self.assertEqual(400, response.status_code)
+        self.assertEqual(HTTPStatus.BAD_REQUEST, response.status_code)
 
     def test_save_assignment(self):
         """
@@ -343,7 +344,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         """
         response = self.xblock.save_assignment(self.request)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertEqual(self.data["mind_map"], self.xblock.mindmap_student_body)
 
     @patch("submissions.api.create_submission")
@@ -366,7 +367,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
 
         response = self.xblock.submit_assignment(self.request)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         create_submission_mock.assert_called_once_with(
             expected_student_item_dict,
             expected_answer,
@@ -390,7 +391,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
 
         response = self.xblock.enter_grade(self.request)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         set_score_mock.assert_called_once_with(
             self.submission_id,
             self.grade,
@@ -410,7 +411,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
 
         response = self.xblock.remove_grade(self.request)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         reset_score_mock.assert_called_once_with(
             self.student_id,
             self.xblock.block_course_id,
@@ -465,7 +466,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
 
         response = self.xblock.get_instructor_grading_data(self.request)
 
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(HTTPStatus.OK, response.status_code)
         self.assertDictEqual(expected_result, response.json)  # pylint: disable=no-member
 
 
