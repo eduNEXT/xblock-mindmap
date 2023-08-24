@@ -43,6 +43,8 @@ coverage[toml]==7.3.0
     # via
     #   -r requirements/test.txt
     #   pytest-cov
+ddt==1.6.0
+    # via -r requirements/test.txt
 dill==0.3.7
     # via pylint
 django==3.2.20
