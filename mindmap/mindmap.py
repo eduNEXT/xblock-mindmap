@@ -235,6 +235,11 @@ class MindMapXBlock(XBlock):
         """
         user = self.get_current_user()
         context = self.get_context(user)
+        js_context = self.get_js_context(user, context)
+
+        if not context["can_submit_assignment"]:
+            context["editable"] = False
+            js_context["editable"] = False
 
         if self.show_staff_grading_interface():
             context["is_instructor"] = True
@@ -242,7 +247,7 @@ class MindMapXBlock(XBlock):
         frag = self.load_fragment("mindmap", context)
 
         frag.add_javascript(self.resource_string("static/js/src/requiredModules.js"))
-        frag.initialize_js('MindMapXBlock', json_args=self.get_js_context(user, context))
+        frag.initialize_js('MindMapXBlock', json_args=js_context)
 
         return frag
 
