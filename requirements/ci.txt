@@ -12,7 +12,7 @@ cffi==1.15.1
     # via cryptography
 charset-normalizer==3.2.0
     # via requests
-cryptography==41.0.2
+cryptography==41.0.3
     # via secretstorage
 distlib==0.3.7
     # via virtualenv
@@ -28,7 +28,7 @@ importlib-metadata==6.8.0
     # via
     #   keyring
     #   twine
-importlib-resources==6.0.0
+importlib-resources==6.0.1
     # via keyring
 jaraco-classes==3.3.0
     # via keyring
@@ -42,13 +42,13 @@ markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
-more-itertools==10.0.0
+more-itertools==10.1.0
     # via jaraco-classes
 packaging==23.1
     # via tox
 pkginfo==1.9.6
     # via twine
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via virtualenv
 pluggy==1.2.0
     # via tox
@@ -56,11 +56,11 @@ py==1.11.0
     # via tox
 pycparser==2.21
     # via cffi
-pygments==2.15.1
+pygments==2.16.1
     # via
     #   readme-renderer
     #   rich
-readme-renderer==40.0
+readme-renderer==41.0
     # via twine
 requests==2.31.0
     # via
@@ -70,7 +70,7 @@ requests-toolbelt==1.0.0
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==13.4.2
+rich==13.5.2
     # via twine
 secretstorage==3.3.3
     # via keyring
@@ -85,7 +85,7 @@ tox==3.28.0
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/ci.in
     #   tox-battery
-tox-battery==0.6.1
+tox-battery==0.6.2
     # via -r requirements/ci.in
 twine==4.0.2
     # via -r requirements/ci.in
@@ -95,7 +95,7 @@ urllib3==2.0.4
     # via
     #   requests
     #   twine
-virtualenv==20.24.2
+virtualenv==20.24.3
     # via tox
 webencodings==0.5.1
     # via bleach

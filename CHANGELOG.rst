@@ -14,7 +14,7 @@ Change Log
 Unreleased
 **********
 
-*
+* Add support for grading mindmap components using submissions API.
 
 0.5.0 - 2023-08-11
 **********************************************

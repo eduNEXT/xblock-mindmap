@@ -151,6 +151,9 @@ setup(
         'lms.djangoapp': [
             "mindmap = mindmap.apps:MindMapConfig",
         ],
+        'cms.djangoapp': [
+            "mindmap = mindmap.apps:MindMapConfig",
+        ],
     },
     package_data=package_data("mindmap", ["static", "public", "translations"]),
 )

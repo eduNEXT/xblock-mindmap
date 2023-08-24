@@ -9,7 +9,35 @@
         <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
     </div>
 
-    {% if editable and in_student_view %}
-        <button id="save_button_{{xblock_id}}">{% trans "Save" %}</button>
+    {% if editable and in_student_view and can_submit_assignment %}
+        <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
+        <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
     {% endif %}
+    {% if score  %}
+        <p>{% trans "Your score is:" %} {{ score }}.</p>
+    {% endif %}
+{% endif %}
+
+
+{% if is_instructor %}
+
+<button id="get_submissions_button_{{xblock_id}}">{% trans "Get submissions" %}</button>
+
+<div class="inner-wrapper" style="color: black">
+    <header><h2>
+      {% trans "Enter Grade" %}
+    </h2></header>
+    <br/>
+    <div style="display: block;">
+        <input id="submission-id-input_{{xblock_id}}" name="submission_id"/>
+        <label for="submission-id-input_{{xblock_id}}"> Submission ID </label>
+        <input id="grade-input_{{xblock_id}}" name="grade"/>
+        <label for="grade-input_{{xblock_id}}"> Grade </label>
+        <input id="student-id-input_{{xblock_id}}" name="student_id"/>
+        <label for="student-id-input_{{xblock_id}}"> Student ID </label>
+        <button id="enter-grade-button_{{xblock_id}}" type="submit">{% trans "Submit" %}</button>
+        <button id="remove-grade-button_{{xblock_id}}" type="button"> {% trans "Remove grade" %} </button>
+    </div>
+</div>
+
 {% endif %}
