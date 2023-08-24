@@ -57,7 +57,7 @@ function MindMapXBlock(runtime, element, context) {
           showMindMap(jsMind, context);
         });
       }
-      
+
     });
   } else {
     loadJSMind(function () {
