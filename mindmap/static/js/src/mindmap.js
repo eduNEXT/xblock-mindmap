@@ -92,7 +92,7 @@ function MindMapXBlock(runtime, element, context) {
       });
 
     $(element)
-      .find(`#get_submissions_button_${context.xblock_id}`)
+      .find(`#get_grade_submissions_button_${context.xblock_id}`)
       .click(function () {
         $.post(getGradingDataURL, JSON.stringify({}))
           .done(function (response) {
@@ -169,12 +169,12 @@ function MindMapXBlock(runtime, element, context) {
                             <input type="number" name="grade" class="inputs-styles" /> 
                           </div>
                           <div class="grade-assessment_form-control">
-                          <label for="comment">Comment</label>
-                          <textarea rows="4" cols="50" name="comment" class="text-area-styles" placeholder="optional"></textarea>
+                            <label for="comment">Comment</label>
+                            <textarea rows="4" cols="50" name="comment" class="text-area-styles" placeholder="optional"></textarea>
                           </div>
                           <div class="grade-assessment_form-buttons">
-                          <button type="submit" class="grade-assessment__button-submit">Submit</button>
-                          <button type="submit" class="grade-assessment__button-submit">Remove grade</button>
+                            <button type="submit" class="grade-assessment__button-submit">Submit</button>
+                            <button type="submit" class="grade-assessment__button-submit">Remove grade</button>
                           </div>
                         </form>
                       </div>

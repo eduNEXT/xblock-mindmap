@@ -33,6 +33,8 @@
     max-width: 90%;
     background: #fff;
     padding: 1em 2em;
+    max-height: 90%;
+    overflow-y: auto;
 }
 
 .modal__footer {
