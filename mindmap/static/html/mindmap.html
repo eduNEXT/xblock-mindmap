@@ -1,43 +1,48 @@
-{% load i18n %}
-
-{% if error_message %}
-    <p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
-    <p>{% trans "Please contact the instructor or an administrator" %}.</p>
+{% load i18n %} {% if error_message %}
+<p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
+<p>{% trans "Please contact the instructor or an administrator" %}.</p>
 {% else %}
-    <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css"/>
-    <div>
-        <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
-    </div>
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
 
-    {% if editable and in_student_view and can_submit_assignment %}
-        <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
-        <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
-    {% endif %}
-    {% if score  %}
-        <p>{% trans "Your score is:" %} {{ score }}.</p>
-    {% endif %}
-{% endif %}
+<div>
+    <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
+</div>
 
+{% if editable and in_student_view and can_submit_assignment %}
+<button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
+<button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
+{% endif %} {% if score %}
+<p>{% trans "Your score is:" %} {{ score }}.</p>
+{% endif %} {% endif %} {% if is_instructor %}
 
-{% if is_instructor %}
-
+{% if in_student_view %}
 <button id="get_submissions_button_{{xblock_id}}">{% trans "Get submissions" %}</button>
 
-<div class="inner-wrapper" style="color: black">
-    <header><h2>
-      {% trans "Enter Grade" %}
-    </h2></header>
-    <br/>
-    <div style="display: block;">
-        <input id="submission-id-input_{{xblock_id}}" name="submission_id"/>
-        <label for="submission-id-input_{{xblock_id}}"> Submission ID </label>
-        <input id="grade-input_{{xblock_id}}" name="grade"/>
-        <label for="grade-input_{{xblock_id}}"> Grade </label>
-        <input id="student-id-input_{{xblock_id}}" name="student_id"/>
-        <label for="student-id-input_{{xblock_id}}"> Student ID </label>
-        <button id="enter-grade-button_{{xblock_id}}" type="submit">{% trans "Submit" %}</button>
-        <button id="remove-grade-button_{{xblock_id}}" type="button"> {% trans "Remove grade" %} </button>
+<div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">
+    <div class="modal__content">
+        <h1 id="modal_title"></h1>
+        <div class="modal__data"></div>
+        <div class="modal__footer"></div>
+        <button type="button" class="modal__close">&times;</button>
     </div>
 </div>
 
+<div class="inner-wrapper" style="color: black">
+    <header>
+        <h2>{% trans "Enter Grade" %}</h2>
+    </header>
+    <br />
+    <div style="display: block">
+        <input id="submission-id-input_{{xblock_id}}" name="submission_id" />
+        <label for="submission-id-input_{{xblock_id}}"> Submission ID </label>
+        <input id="grade-input_{{xblock_id}}" name="grade" />
+        <label for="grade-input_{{xblock_id}}"> Grade </label>
+        <input id="student-id-input_{{xblock_id}}" name="student_id" />
+        <label for="student-id-input_{{xblock_id}}"> Student ID </label>
+        <button id="enter-grade-button_{{xblock_id}}" type="submit">{% trans "Submit" %}</button>
+        <button id="remove-grade-button_{{xblock_id}}" type="button">{% trans "Remove grade" %}</button>
+    </div>
+</div>
+{% endif %}
 {% endif %}
