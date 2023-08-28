@@ -104,7 +104,7 @@ function MindMapXBlock(runtime, element, context) {
             function showDataTable() {
               const dataTableHeaderColumns = ["Username", "Uploaded", "Submitted", "Grade", "Actions"];
               const dataTableHeaderColumnsHTML = dataTableHeaderColumns.reduce(
-                (prevColumn, column) => `${prevColumn}<th>${column}</th>`,
+                (prevColumn, currentColumn) => `${prevColumn}<th>${currentColumn}</th>`,
                 ""
               );
               const dataTableHTML = `
@@ -153,8 +153,8 @@ function MindMapXBlock(runtime, element, context) {
                   e.preventDefault();
                   const target = $(e.target);
                   const link = target;
-                  const tr = link.closest("tr");
-                  const submissionData = dataTable.row(tr).data();
+                  const rowReview = link.closest("tr");
+                  const submissionData = dataTable.row(rowReview).data();
                   const answerMindMap = submissionData.answer_body.mindmap_student_body;
                   const answerMindMapFormat = JSON.parse(answerMindMap);
 
