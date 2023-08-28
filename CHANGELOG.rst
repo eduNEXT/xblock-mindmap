@@ -14,10 +14,21 @@ Change Log
 Unreleased
 **********
 
+0.6.1 - 2023-08-28
+**********************************************
+
+Changed
+=======
+
+* Fix non-draggable nodes in mindmap component when in Studio.
+
 0.6.0 - 2023-08-24
 **********************************************
 
-* Add support for grading mindmap components using submissions API.
+Added
+=====
+
+* Support for grading mindmap components using submissions API.
 
 0.5.0 - 2023-08-11
 **********************************************
