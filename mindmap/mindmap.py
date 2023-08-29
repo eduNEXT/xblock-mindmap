@@ -203,6 +203,7 @@ class MindMapXBlock(XBlock):
             "is_static_field": self.fields["is_static"],
             "can_submit_assignment": self.submit_allowed(),
             "score": self.score,
+            "max_score": self.max_score(),
         }
 
     def get_js_context(self, user, context):
