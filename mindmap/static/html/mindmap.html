@@ -1,31 +1,34 @@
-{% load i18n %} {% if error_message %}
-<p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
-<p>{% trans "Please contact the instructor or an administrator" %}.</p>
+{% load i18n %}
+{% if error_message %}
+  <p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
+  <p>{% trans "Please contact the instructor or an administrator" %}.</p>
 {% else %}
-<link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
+  <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
 
-<div>
+  <div>
     <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
-</div>
+  </div>
 
-{% if editable and in_student_view and can_submit_assignment %}
-<button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
-<button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
-{% endif %} {% if score %}
-<p>{% trans "Your score is:" %} {{ score }}.</p>
-{% endif %} {% endif %} {% if is_instructor %}
+  {% if editable and in_student_view and can_submit_assignment %}
+    <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
+    <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
+  {% endif %}
 
-{% if in_student_view %}
-<button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Get submissions" %}</button>
+  {% if score %}
+    <p>{% trans "Your score is:" %} {{ score }}.</p>
+  {% endif %}
+  {% endif %}
 
-<div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">
-    <div class="modal__content">
-        <h1 id="modal_title"></h1>
+{% if is_instructor and in_student_view  %}
+    <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>
+
+    <div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">
+      <div class="modal__content">
+        <h2 id="modal_title"></h2>
         <div class="modal__data"></div>
         <div class="modal__footer"></div>
         <button type="button" class="modal__close">&times;</button>
+      </div>
     </div>
-</div>
-{% endif %}
 {% endif %}

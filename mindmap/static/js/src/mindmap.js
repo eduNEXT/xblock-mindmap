@@ -6,7 +6,7 @@ function MindMapXBlock(runtime, element, context) {
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
 
-  /* 
+  /*
     Usually serializeArray gives us
     values of the form like this:
     doc https://api.jquery.com/serializearray/
@@ -98,12 +98,14 @@ function MindMapXBlock(runtime, element, context) {
           .done(function (response) {
             const { assignments } = response;
             $(element).find("#modal-submissions").addClass("modal_opened");
-           
+
             showDataTable();
 
             function showDataTable() {
-              const dataTableHeaderColumns = ["Username", "Uploaded", "Submitted", "Grade", "Actions"];
-              const dataTableHeaderColumnsHTML = dataTableHeaderColumns.reduce(
+              // TODO: add Submitted when submission issue is fixed
+              const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
+              const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) => gettext(currentColumn));
+              const dataTableHeaderColumnsHTML = dataTableHeaderColumnsTranslated.reduce(
                 (prevColumn, currentColumn) => `${prevColumn}<th>${currentColumn}</th>`,
                 ""
               );
@@ -120,8 +122,10 @@ function MindMapXBlock(runtime, element, context) {
                 </table>
               `;
 
+              console.log('gettext ->', gettext);
+
               $(element).find(".modal__data").html(dataTableHTML);
-              $(element).find("#modal_title").html("Mindmap submissions");
+              $(element).find("#modal_title").html(gettext("Mindmap submissions"));
 
               const dataTable = $("#dataTable").DataTable({
                 data: assignments,
@@ -132,15 +136,19 @@ function MindMapXBlock(runtime, element, context) {
                 columns: [
                   { data: "username" },
                   { data: "timestamp" },
-                  { data: "submitted" },
+                  // TODO: add this line { data: "submitted" },
                   { data: "score" },
                   {
                     data: null,
-                    render: function () {
-                      return '<button class="review_button button-link" type="button">Review</button>';
+                    render: () => {
+                      return `<button class="review_button button-link" type="button">${gettext("Review")}</button>`;
                     },
                   },
                 ],
+                language: {
+                  info: gettext("Showing _START_ to _END_ of _TOTAL_ entries"),
+                  search: gettext("Search"),
+                }
               });
 
               handleRowDataTableClick(dataTable);
@@ -158,29 +166,31 @@ function MindMapXBlock(runtime, element, context) {
                   const answerMindMap = submissionData.answer_body.mindmap_student_body;
                   const answerMindMapFormat = JSON.parse(answerMindMap);
 
+                  console.log('gettext', gettext('Remove grade'));
+
                   const mindMapReviewContainer = `
                     <div class="review_mindmap_container">
-                      <button class="button-link back-review">&larr;&nbsp; Back</button>
+                      <button class="button-link back-review">&larr;&nbsp; ${gettext('Back')}</button>
                       <div id="review-mindmap"></div>
                       <div class="grade-assessment">
                         <form id="grade-assessment-form">
                           <div class="grade-assessment_form-control">
-                            <label for="grade">Grade</label>
-                            <input type="number" name="grade" class="inputs-styles" /> 
+                            <label for="grade">${gettext('Grade')}</label>
+                            <input type="number" name="grade" class="inputs-styles" />
                           </div>
                           <div class="grade-assessment_form-control">
-                            <label for="comment">Comment</label>
-                            <textarea rows="4" cols="50" name="comment" class="text-area-styles" placeholder="optional"></textarea>
+                            <label for="comment">${gettext('Comment')}</label>
+                            <textarea rows="4" cols="50" name="comment" class="text-area-styles" placeholder="${gettext('optional')}"></textarea>
                           </div>
                           <div class="grade-assessment_form-buttons">
-                            <button type="submit" class="grade-assessment__button-submit">Submit</button>
-                            <button type="submit" class="grade-assessment__button-submit">Remove grade</button>
+                            <button type="submit" class="grade-assessment__button-submit">${gettext('Submit')}</button>
+                            <button type="submit" class="grade-assessment__button-submit">${gettext('Remove grade')}</button>
                           </div>
                         </form>
                       </div>
                     </div>`;
 
-                  const modalTitle = `Reviewing ${submissionData.username}'s Mindmap`;
+                  const modalTitle = gettext('Reviewing Mindmap for student:') + submissionData.username;
                   $(element).find(".modal__data").html(mindMapReviewContainer);
                   $(element).find("#modal_title").html(modalTitle);
                   const [mindMapReviewContent] = $(element).find("#review-mindmap");

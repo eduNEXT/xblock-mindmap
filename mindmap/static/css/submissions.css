@@ -37,6 +37,10 @@
     overflow-y: auto;
 }
 
+#modal_title {
+    color: #000 !important;
+}
+
 .modal__footer {
     text-align: right;
 }

@@ -39,11 +39,11 @@ msgstr ""
 msgid "Is a static mindmap?"
 msgstr "¿Es un mapa mental estático?"
 
-#: static/html/mindmap.html:5
+#: static/html/mindmap.html:3
 msgid "The mind map cannot be rendered due to the following error"
 msgstr "El mapa mental no se puede renderizar debido al siguiente error"
 
-#: static/html/mindmap.html:6
+#: static/html/mindmap.html:4
 msgid "Please contact the instructor or an administrator"
 msgstr "Por favor, contacte al instructor o a un administrador"
 
@@ -75,3 +75,63 @@ msgstr "Falso"
 #: static/html/mindmap_edit.html:30
 msgid "Cancel"
 msgstr "Cancelar"
+
+#: static/js/src/mindmap.js:128
+msgid "Mindmap submissions"
+msgstr "Envíos de mapas mentales"
+
+#: static/js/src/mindmap.js:107
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: static/js/src/mindmap.js:107
+msgid "Uploaded"
+msgstr "Subido"
+
+#: static/js/src/mindmap.js:107
+msgid "Submitted"
+msgstr "Enviado"
+
+#: static/js/src/mindmap.js:107
+msgid "Grade"
+msgstr "Calificación"
+
+#: static/js/src/mindmap.js:107
+msgid "Actions"
+msgstr "Acciones"
+
+#: static/js/src/mindmap.js:150
+msgid "Search"
+msgstr "Buscar"
+
+#: static/js/src/mindmap.js:193
+msgid "Reviewing Mindmap for student:"
+msgstr "Revisando Mindmap para el estudiante:"
+
+#:  static/js/src/mindmap.js:173
+msgid "Back"
+msgstr "Volver"
+
+#:  static/js/src/mindmap.js:182
+msgid "Comment"
+msgstr "Comentario"
+
+#:  static/js/src/mindmap.js:183
+msgid "optional"
+msgstr "opcional"
+
+#:  static/js/src/mindmap.js:187
+msgid "Remove grade"
+msgstr "Eliminar calificación"
+
+
+#:  static/js/src/mindmap.js:144
+msgid "Review"
+msgstr "Revisar"
+
+#:  static/js/src/mindmap.js:149
+msgid "Showing _START_ to _END_ of _TOTAL_ entries"
+msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros"
+
+
+

@@ -40,11 +40,11 @@ msgstr ""
 msgid "Dummy"
 msgstr ""
 
-#: static/html/mindmap.html:5
+#: static/html/mindmap.html:3
 msgid "The mind map cannot be rendered due to the following error"
 msgstr ""
 
-#: static/html/mindmap.html:6
+#: static/html/mindmap.html:4
 msgid "Please contact the instructor or an administrator"
 msgstr ""
 
@@ -74,3 +74,62 @@ msgstr ""
 #: static/html/mindmap_edit.html:30
 msgid "Cancel"
 msgstr ""
+
+#: static/js/src/mindmap.js:128
+msgid "Mindmap submissions"
+msgstr ""
+
+#: static/js/src/mindmap.js:107
+msgid "Username"
+msgstr ""
+
+#: static/js/src/mindmap.js:107
+msgid "Uploaded"
+msgstr ""
+
+#: static/js/src/mindmap.js:107
+msgid "Submitted"
+msgstr ""
+
+#: static/js/src/mindmap.js:107
+msgid "Grade"
+msgstr ""
+
+#: static/js/src/mindmap.js:107
+msgid "Actions"
+msgstr ""
+
+#: static/js/src/mindmap.js:150
+msgid "Search"
+msgstr ""
+
+#: static/js/src/mindmap.js:193
+msgid "Reviewing Mindmap for student:"
+msgstr ""
+
+#:  static/js/src/mindmap.js:173
+msgid "Back"
+msgstr ""
+
+#:  static/js/src/mindmap.js:182
+msgid "Comment"
+msgstr ""
+
+#:  static/js/src/mindmap.js:183
+msgid "optional"
+msgstr ""
+
+#:  static/js/src/mindmap.js:187
+msgid "Remove grade"
+msgstr ""
+
+#:  static/js/src/mindmap.js:144
+msgid "Review"
+msgstr ""
+
+#:  static/js/src/mindmap.js:149
+msgid "Showing _START_ to _END_ of _TOTAL_ entries"
+msgstr ""
+
+
+
