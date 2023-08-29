@@ -122,8 +122,6 @@ function MindMapXBlock(runtime, element, context) {
                 </table>
               `;
 
-              console.log('gettext ->', gettext);
-
               $(element).find(".modal__data").html(dataTableHTML);
               $(element).find("#modal_title").html(gettext("Mindmap submissions"));
 
@@ -165,8 +163,6 @@ function MindMapXBlock(runtime, element, context) {
                   const submissionData = dataTable.row(rowReview).data();
                   const answerMindMap = submissionData.answer_body.mindmap_student_body;
                   const answerMindMapFormat = JSON.parse(answerMindMap);
-
-                  console.log('gettext', gettext('Remove grade'));
 
                   const mindMapReviewContainer = `
                     <div class="review_mindmap_container">
