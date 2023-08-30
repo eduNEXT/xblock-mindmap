@@ -14,6 +14,20 @@ Change Log
 Unreleased
 **********
 
+0.7.0 - 2023-08-30
+**********************************************
+
+Added
+=====
+
+* Support for grading mindmap components in LMS instructor view.
+* Better grading message.
+
+Changed
+=======
+
+* Students can't edit mindmaps after submissions.
+
 0.6.1 - 2023-08-28
 **********************************************
 
