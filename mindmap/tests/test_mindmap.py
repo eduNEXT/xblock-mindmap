@@ -80,6 +80,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "mind_map": self.mind_map,
             "editable": self.editable_mind_map,
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
+            "max_points": self.xblock.points,
         }
 
         self.xblock.student_view()
@@ -117,6 +118,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "mind_map": None,
             "editable": self.editable_mind_map,
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
+            "max_points": self.xblock.points,
         }
 
         self.xblock.student_view()
@@ -257,6 +259,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "mind_map": self.mind_map,
             "editable": self.editable_mind_map,
             "xblock_id": block_id,
+            "max_points": self.xblock.points,
         }
 
         self.xblock.student_view()
