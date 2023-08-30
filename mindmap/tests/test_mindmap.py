@@ -74,6 +74,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
             "score": 0,
+            "max_score": self.xblock.max_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -112,6 +113,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
             "score": 0,
+            "max_score": self.xblock.max_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -150,6 +152,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
             "score": 0,
+            "max_score": self.xblock.max_score(),
         }
 
         self.xblock.student_view()
@@ -179,6 +182,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
             "score": 0,
+            "max_score": self.xblock.max_score(),
             "is_instructor": True,
         }
 
@@ -216,6 +220,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "points_field": self.xblock.fields["points"],
             "weight": 1,
             "weight_field": self.xblock.fields["weight"],
+            "max_score": self.xblock.max_score(),
         }
 
         self.xblock.studio_view()
@@ -253,6 +258,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": False,
             "score": 0,
+            "max_score": self.xblock.max_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
