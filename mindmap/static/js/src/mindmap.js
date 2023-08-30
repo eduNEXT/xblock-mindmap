@@ -101,7 +101,7 @@ function MindMapXBlock(runtime, element, context) {
 
             showDataTable();
 
-            function showDataTable() {
+            function showDataTable(newData) {
               // TODO: add Submitted when submission issue is fixed
               const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
               const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) => gettext(currentColumn));
@@ -126,7 +126,7 @@ function MindMapXBlock(runtime, element, context) {
               $(element).find("#modal_title").html(gettext("Mindmap submissions"));
 
               const dataTable = $("#dataTable").DataTable({
-                data: assignments,
+                data: newData || assignments,
                 scrollY: "50vh",
                 dom: "Bfrtip",
                 bPaginate: false,
@@ -176,11 +176,10 @@ function MindMapXBlock(runtime, element, context) {
                           </div>
                           <div class="grade-assessment_form-control">
                             <label for="comment">${gettext('Comment')}</label>
-                            <textarea rows="4" cols="50" name="comment" class="text-area-styles" placeholder="${gettext('optional')}"></textarea>
                           </div>
                           <div class="grade-assessment_form-buttons">
-                            <button type="submit" class="grade-assessment__button-submit">${gettext('Submit')}</button>
-                            <button type="submit" class="grade-assessment__button-submit">${gettext('Remove grade')}</button>
+                            <button type="submit" class="grade-assessment__button-submit" data-type="add_grade">${gettext('Submit')}</button>
+                            <button type="submit" class="grade-assessment__button-submit" data-type="remove_grade">${gettext('Remove grade')}</button>
                           </div>
                         </form>
                       </div>
@@ -202,12 +201,58 @@ function MindMapXBlock(runtime, element, context) {
                   $(element)
                     .find(".back-review")
                     .click(function () {
-                      showDataTable();
+                      $.post(getGradingDataURL)
+                        .done(function (response) {
+                          const { assignments } = response;
+                          showDataTable(assignments);
+                        })
+                        .fail(function () {
+                          console.log("Error listing MIndmap submissions");
+                        });
+                    });
+
+                    $(".grade-assessment__button-submit").on("click", function() {
+                      // Get the custom data-type attribute of the clicked button
+                      const typeButton = $(this).attr("data-type");
+                      $("#grade-assessment-form").attr("data-type", typeButton);
                     });
 
                   $("#grade-assessment-form").on("submit", function (e) {
                     e.preventDefault();
+                    const typeAction = $(this).attr("data-type");
                     const formValues = $(this).serializeArrayToObject();
+                    const { grade } = formValues;
+                    const { submission_id, student_id } = submissionData;
+
+                    if (typeAction === "add_grade") {
+                      const data = {
+                        grade: grade,
+                        submission_id: submission_id,
+                      };
+
+                      $.post(enterGradeURL, JSON.stringify(data))
+                        .done(function (response) {
+                          console.log(response);
+                        })
+                        .fail(function (error) {
+                          console.log(error);
+                        });
+                    }
+
+                    if (typeAction === "remove_grade") {
+                      const data = {
+                        student_id: student_id,
+                      };
+
+                      $.post(removeGradeURL, JSON.stringify(data))
+                        .done(function (response) {
+                          console.log(response);
+                        })
+                        .fail(function (error) {
+                          console.log(error);
+                        });
+                    }
+
                     console.log("grade-assessment-form -> formValues", formValues);
                     console.log("submissionData ->", submissionData);
                   });
