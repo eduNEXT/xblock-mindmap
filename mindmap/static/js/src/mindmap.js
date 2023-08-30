@@ -6,45 +6,6 @@ function MindMapXBlock(runtime, element, context) {
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
 
-  /*
-    Usually serializeArray gives us
-    values of the form like this:
-    doc https://api.jquery.com/serializearray/
-    [
-      {
-        name: "field1",
-        value: "value1"
-      },
-      {
-        name: "field2",
-        value: "value2"
-      },
-      ...
-    ]
-    This converts to an object with key value
-    {
-      field1: value1,
-      field2: value2
-    }
-  */
-  $.fn.serializeArrayToObject = function () {
-    const objectSerialize = {};
-    const arrayFields = this.serializeArray();
-    arrayFields.forEach(function (item) {
-      const { name, value } = item;
-
-      if (objectSerialize[name] === undefined) {
-        objectSerialize[name] = value || "";
-      } else {
-        if (!Array.isArray(objectSerialize[name])) {
-          objectSerialize[name] = [objectSerialize[name]];
-        }
-        objectSerialize[name].push(value || "");
-      }
-    });
-
-    return objectSerialize;
-  };
 
   $(document).keydown(function (event) {
     // 'Esc' key was pressed
@@ -122,8 +83,12 @@ function MindMapXBlock(runtime, element, context) {
                 </table>
               `;
 
+              const modalTitleSubmissions = gettext("Mindmap submissions");
+              const reviewButtonText = gettext("Review");
+              const dataTableSearchText = gettext("Search");
+              const dataTableEntriesText = gettext("Showing _START_ to _END_ of _TOTAL_ entries");
               $(element).find(".modal__data").html(dataTableHTML);
-              $(element).find("#modal_title").html(gettext("Mindmap submissions"));
+              $(element).find("#modal_title").html(modalTitleSubmissions);
 
               const dataTable = $("#dataTable").DataTable({
                 data: newAssignments || assignments,
@@ -139,13 +104,13 @@ function MindMapXBlock(runtime, element, context) {
                   {
                     data: null,
                     render: () => {
-                      return `<button class="review_button button-link" type="button">${gettext("Review")}</button>`;
+                      return `<button class="review_button button-link" type="button">${reviewButtonText}</button>`;
                     },
                   },
                 ],
                 language: {
-                  info: gettext("Showing _START_ to _END_ of _TOTAL_ entries"),
-                  search: gettext("Search"),
+                  info: dataTableEntriesText,
+                  search: dataTableSearchText,
                 }
               });
 
@@ -163,23 +128,26 @@ function MindMapXBlock(runtime, element, context) {
                   const submissionData = dataTable.row(rowReview).data();
                   const answerMindMap = submissionData.answer_body.mindmap_student_body;
                   const answerMindMapFormat = JSON.parse(answerMindMap);
+                  const submitGradeButtonText = gettext('Submit');
+                  const removeGradeButtonText = gettext('Remove grade');
+                  const loadingButtonText = gettext('Loading...');
+                  const reviewGoBackButtonText = gettext('Back');
+                  const gradeLabelText = gettext('Grade');
 
                   const mindMapReviewContainer = `
                     <div class="review_mindmap_container">
-                      <button class="button-link back-review">&larr;&nbsp; ${gettext('Back')}</button>
+                      <button class="button-link back-review">&larr;&nbsp; ${reviewGoBackButtonText}</button>
                       <div id="review-mindmap"></div>
                       <div class="grade-assessment">
                         <form id="grade-assessment-form">
                           <div class="grade-assessment_form-control">
-                            <label for="grade">${gettext('Grade')}</label>
-                            <input type="number" name="grade" class="inputs-styles" />
-                          </div>
-                          <div class="grade-assessment_form-control">
-                            <label for="comment">${gettext('Comment')}</label>
+                            <label for="grade">${gradeLabelText}</label>
+                            <input type="number" name="grade" required class="inputs-styles" id="grade_value" />
+                            <span class="error-message" id="error-grade"></span>
                           </div>
                           <div class="grade-assessment_form-buttons">
-                            <button type="submit" class="grade-assessment__button-submit" data-type="add_grade">${gettext('Submit')}</button>
-                            <button type="submit" class="grade-assessment__button-submit" data-type="remove_grade">${gettext('Remove grade')}</button>
+                            <button type="submit" class="grade-assessment__button-submit" data-type="add_grade">${submitGradeButtonText}</button>
+                            <button type="submit" class="grade-assessment__button-submit" data-type="remove_grade">${removeGradeButtonText}</button>
                           </div>
                         </form>
                       </div>
@@ -201,7 +169,7 @@ function MindMapXBlock(runtime, element, context) {
                   $(element)
                     .find(".back-review")
                     .click(function () {
-                      $.post(getGradingDataURL)
+                      $.post(getGradingDataURL, JSON.stringify({}))
                         .done(function (response) {
                           const { assignments } = response;
                           showDataTable(assignments);
@@ -213,48 +181,68 @@ function MindMapXBlock(runtime, element, context) {
 
                     $(".grade-assessment__button-submit").on("click", function() {
                       // Get the custom data-type attribute of the clicked button
-                      const typeButton = $(this).attr("data-type");
-                      $("#grade-assessment-form").attr("data-type", typeButton);
+                      const typeAction = $(this).attr("data-type");
+                      $("#grade-assessment-form").attr("data-type", typeAction);
                     });
+
 
                   $("#grade-assessment-form").on("submit", function (e) {
                     e.preventDefault();
                     const typeAction = $(this).attr("data-type");
-                    const formValues = $(this).serializeArrayToObject();
-                    const { grade } = formValues;
+                    const grade = $('#grade_value').val();
                     const { submission_id, student_id } = submissionData;
+                    const invalidGradeMessage = gettext('Invalid grade must be a number');
+
+                    const onlyNumberRegex = /^[0-9]*$/g;
+
+                    if (!onlyNumberRegex.test(grade)) {
+                      $("#error-grade").html(invalidGradeMessage);
+                      return;
+                    }
+
+                    $("#error-grade").html('');
+
+                    let data;
+                    let apiUrl;
 
                     if (typeAction === "add_grade") {
-                      const data = {
+                      apiUrl = enterGradeURL;
+                      data = {
                         grade: grade,
                         submission_id: submission_id,
                       };
 
-                      $.post(enterGradeURL, JSON.stringify(data))
-                        .done(function (response) {
-                          console.log(response);
-                        })
-                        .fail(function (error) {
-                          console.log(error);
-                        });
                     }
 
                     if (typeAction === "remove_grade") {
-                      const data = {
+                      apiUrl = removeGradeURL;
+                      data = {
                         student_id: student_id,
                       };
 
-                      $.post(removeGradeURL, JSON.stringify(data))
+                    }
+
+                    if (grade.length) {
+                      $(".grade-assessment__button-submit").attr("disabled", "disabled");
+                      $(".grade-assessment__button-submit").html(
+                        `<i class="fa fa-spinner fa-spin"></i>${loadingButtonText}`
+                      );
+                      $.post(apiUrl, JSON.stringify(data))
                         .done(function (response) {
                           console.log(response);
                         })
                         .fail(function (error) {
                           console.log(error);
+                        })
+                        .always(function () {
+                          $(".grade-assessment__button-submit").removeAttr("disabled");
+                          const submitGradeButton = $('.grade-assessment__button-submit[data-type="add_grade"]');
+                          const removeGradeButton = $('.grade-assessment__button-submit[data-type="remove_grade"]');
+                          submitGradeButton.html(submitGradeButtonText);
+                          removeGradeButton.html(removeGradeButtonText);
                         });
                     }
 
-                    console.log("grade-assessment-form -> formValues", formValues);
-                    console.log("submissionData ->", submissionData);
                   });
                 });
             }

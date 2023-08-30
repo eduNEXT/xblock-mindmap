@@ -75,7 +75,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: static/js/src/mindmap.js:128
+#: static/js/src/mindmap.js:87
 msgid "Mindmap submissions"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Submitted"
 msgstr ""
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:135
 msgid "Grade"
 msgstr ""
 
@@ -99,15 +99,15 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: static/js/src/mindmap.js:150
+#: static/js/src/mindmap.js:88
 msgid "Search"
 msgstr ""
 
-#: static/js/src/mindmap.js:193
+#: static/js/src/mindmap.js:156
 msgid "Reviewing Mindmap for student:"
 msgstr ""
 
-#:  static/js/src/mindmap.js:173
+#:  static/js/src/mindmap.js:134
 msgid "Back"
 msgstr ""
 
@@ -119,15 +119,22 @@ msgstr ""
 msgid "optional"
 msgstr ""
 
-#:  static/js/src/mindmap.js:187
+#:  static/js/src/mindmap.js:132
 msgid "Remove grade"
 msgstr ""
 
-#:  static/js/src/mindmap.js:144
+#:  static/js/src/mindmap.js:87
 msgid "Review"
 msgstr ""
 
-#:  static/js/src/mindmap.js:149
+#:  static/js/src/mindmap.js:89
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr ""
 
+#:  static/js/src/mindmap.js:194
+msgid "Invalid grade must be a number"
+msgstr ""
+
+#:  static/js/src/mindmap.js:133
+msgid "Loading..."
+msgstr ""
