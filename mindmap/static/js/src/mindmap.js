@@ -6,7 +6,6 @@ function MindMapXBlock(runtime, element, context) {
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
 
-
   $(document).keydown(function (event) {
     // 'Esc' key was pressed
     if (event.key === "Escape") {
@@ -65,7 +64,9 @@ function MindMapXBlock(runtime, element, context) {
             function showDataTable(newAssignments) {
               // TODO: add Submitted when submission issue is fixed
               const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
-              const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) => gettext(currentColumn));
+              const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) =>
+                gettext(currentColumn)
+              );
               const dataTableHeaderColumnsHTML = dataTableHeaderColumnsTranslated.reduce(
                 (prevColumn, currentColumn) => `${prevColumn}<th>${currentColumn}</th>`,
                 ""
@@ -111,7 +112,7 @@ function MindMapXBlock(runtime, element, context) {
                 language: {
                   info: dataTableEntriesText,
                   search: dataTableSearchText,
-                }
+                },
               });
 
               handleRowDataTableClick(dataTable);
@@ -128,11 +129,11 @@ function MindMapXBlock(runtime, element, context) {
                   const submissionData = dataTable.row(rowReview).data();
                   const answerMindMap = submissionData.answer_body.mindmap_student_body;
                   const answerMindMapFormat = JSON.parse(answerMindMap);
-                  const submitGradeButtonText = gettext('Submit');
-                  const removeGradeButtonText = gettext('Remove grade');
-                  const loadingButtonText = gettext('Loading...');
-                  const reviewGoBackButtonText = gettext('Back');
-                  const gradeLabelText = gettext('Grade');
+                  const submitGradeButtonText = gettext("Submit");
+                  const removeGradeButtonText = gettext("Remove grade");
+                  const loadingButtonText = gettext("Loading...");
+                  const reviewGoBackButtonText = gettext("Back");
+                  const gradeLabelText = gettext("Grade");
 
                   const mindMapReviewContainer = `
                     <div class="review_mindmap_container">
@@ -153,7 +154,7 @@ function MindMapXBlock(runtime, element, context) {
                       </div>
                     </div>`;
 
-                  const modalTitle = gettext('Reviewing Mindmap for student:') + submissionData.username;
+                  const modalTitle = gettext("Reviewing Mindmap for student:") + submissionData.username;
                   $(element).find(".modal__data").html(mindMapReviewContainer);
                   $(element).find("#modal_title").html(modalTitle);
                   const [mindMapReviewContent] = $(element).find("#review-mindmap");
@@ -179,19 +180,25 @@ function MindMapXBlock(runtime, element, context) {
                         });
                     });
 
-                    $(".grade-assessment__button-submit").on("click", function() {
-                      // Get the custom data-type attribute of the clicked button
-                      const typeAction = $(this).attr("data-type");
-                      $("#grade-assessment-form").attr("data-type", typeAction);
-                    });
-
+                  $(".grade-assessment__button-submit").on("click", function () {
+                    // Get the custom data-type attribute of the clicked button
+                    const typeAction = $(this).attr("data-type");
+                    $("#grade-assessment-form").attr("data-type", typeAction);
+                    if (typeAction === "remove_grade") {
+                      $("#grade_value").removeAttr("required");
+                      $("#grade_value").attr("type", "text");
+                    } else {
+                      $("#grade_value").attr("required");
+                      $("#grade_value").attr("type", "number");
+                    }
+                  });
 
                   $("#grade-assessment-form").on("submit", function (e) {
                     e.preventDefault();
                     const typeAction = $(this).attr("data-type");
-                    const grade = $('#grade_value').val();
+                    const grade = $("#grade_value").val();
                     const { submission_id, student_id } = submissionData;
-                    const invalidGradeMessage = gettext('Invalid grade must be a number');
+                    const invalidGradeMessage = gettext("Invalid grade must be a number");
 
                     const onlyNumberRegex = /^[0-9]*$/g;
 
@@ -200,7 +207,7 @@ function MindMapXBlock(runtime, element, context) {
                       return;
                     }
 
-                    $("#error-grade").html('');
+                    $("#error-grade").html("");
 
                     let data;
                     let apiUrl;
@@ -211,7 +218,6 @@ function MindMapXBlock(runtime, element, context) {
                         grade: grade,
                         submission_id: submission_id,
                       };
-
                     }
 
                     if (typeAction === "remove_grade") {
@@ -219,30 +225,26 @@ function MindMapXBlock(runtime, element, context) {
                       data = {
                         student_id: student_id,
                       };
-
                     }
 
-                    if (grade.length) {
-                      $(".grade-assessment__button-submit").attr("disabled", "disabled");
-                      $(".grade-assessment__button-submit").html(
-                        `<i class="fa fa-spinner fa-spin"></i>${loadingButtonText}`
-                      );
-                      $.post(apiUrl, JSON.stringify(data))
-                        .done(function (response) {
-                          console.log(response);
-                        })
-                        .fail(function (error) {
-                          console.log(error);
-                        })
-                        .always(function () {
-                          $(".grade-assessment__button-submit").removeAttr("disabled");
-                          const submitGradeButton = $('.grade-assessment__button-submit[data-type="add_grade"]');
-                          const removeGradeButton = $('.grade-assessment__button-submit[data-type="remove_grade"]');
-                          submitGradeButton.html(submitGradeButtonText);
-                          removeGradeButton.html(removeGradeButtonText);
-                        });
-                    }
-
+                    $(".grade-assessment__button-submit").attr("disabled", "disabled");
+                    $(".grade-assessment__button-submit").html(
+                      `<i class="fa fa-spinner fa-spin"></i>${loadingButtonText}`
+                    );
+                    $.post(apiUrl, JSON.stringify(data))
+                      .done(function (response) {
+                        console.log(response);
+                      })
+                      .fail(function (error) {
+                        console.log(error);
+                      })
+                      .always(function () {
+                        $(".grade-assessment__button-submit").removeAttr("disabled");
+                        const submitGradeButton = $('.grade-assessment__button-submit[data-type="add_grade"]');
+                        const removeGradeButton = $('.grade-assessment__button-submit[data-type="remove_grade"]');
+                        submitGradeButton.html(submitGradeButtonText);
+                        removeGradeButton.html(removeGradeButtonText);
+                      });
                   });
                 });
             }

@@ -103,7 +103,7 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: static/js/src/mindmap.js:156
+#: static/js/src/mindmap.js:157
 msgid "Reviewing Mindmap for student:"
 msgstr ""
 
@@ -131,7 +131,7 @@ msgstr ""
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr ""
 
-#:  static/js/src/mindmap.js:194
+#:  static/js/src/mindmap.js:201
 msgid "Invalid grade must be a number"
 msgstr ""
 
