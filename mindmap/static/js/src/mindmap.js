@@ -204,7 +204,7 @@ function MindMapXBlock(runtime, element, context) {
                     const gradeParsed = parseInt(grade, 10);
 
                     if (gradeParsed > maxPointsAllowed) {
-                      $("#error-grade").html(maxGradeMessage);
+                      $("#error-grade").html(`${maxGradeMessage} ${maxPointsAllowed}`);
                       return;
                     }
 
