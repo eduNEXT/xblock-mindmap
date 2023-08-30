@@ -1,24 +1,66 @@
 {% load i18n %}
-{% if error_message %}
-  <p>{% trans "The mind map cannot be rendered due to the following error" %}: <b>{{error_message}}</b></p>
-  <p>{% trans "Please contact the instructor or an administrator" %}.</p>
-{% else %}
-  <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
 
-  <div>
-    <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
+{% if editable and can_submit_assignment or not in_student_view %}
+<div>
+  <div class="card">
+    <div class="pgn__card-header">
+      <div>
+        <div>{% trans "Instructions for use" %}</div>
+        <div class="collapse-container">
+          <p class="title-list"><b>{% trans "With the mouse" %}</b></p>
+          <ul class="list-container">
+            <li>
+              <span>{% trans "→ Double-click the node to edit it." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ Drag the node to move it." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ Click the circle to expand or collapse the child nodes." %}</span>
+            </li>
+          </ul>
+
+          <p class="title-list"><b>{% trans "With the keyboard" %}</b></p>
+          <ul class="list-container">
+            <li>
+              <span>{% trans "→ Ctrl + Enter: Create a new child node for the selected node." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ Enter: Create a new brother node for the selected node." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ F2: Edit the selected node." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ Delete/Supr: Delete the selected node." %}</span>
+            </li>
+            <li>
+              <span>{% trans "→ Space: Expand or collapse the selected node." %}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="pgn__card-header-actions">
+        <span class="icon-collapsible"></span>
+      </div>
+    </div>
   </div>
+</div>
+{% endif %}
 
-  {% if editable and in_student_view and can_submit_assignment %}
-    <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
-    <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
-  {% endif %}
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css" />
 
-  {% if score %}
-    <p>{% trans "Your score is:" %} {{ score }}.</p>
-  {% endif %}
-  {% endif %}
+<div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
+
+{% if editable and in_student_view and can_submit_assignment %}
+  <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
+  <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
+{% endif %}
+
+{% if score %}
+  <p>{% trans "Your score is:" %} {{ score }}.</p>
+{% endif %}
 
 {% if is_instructor and in_student_view and not is_static  %}
     <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>

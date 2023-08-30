@@ -56,8 +56,8 @@ class MindMapXBlock(XBlock):
 
     mindmap_body = Dict(
         help=_(
-            "The body of the mind map. It is a dictionary with the following structure: "
-            "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
+            "The mind map that will be shown to students if the"
+            '"Is a static mindmap?" field is set to "True"'
         ),
         display_name=_("Mindmap body"),
         default={
@@ -224,7 +224,6 @@ class MindMapXBlock(XBlock):
             "xblock_id": self.scope_ids.usage_id.block_id,
         }
 
-
     def student_view(self, _context=None) -> Fragment:
         """
         The primary view of the MindMapXBlock, shown to students when viewing courses.
@@ -265,6 +264,8 @@ class MindMapXBlock(XBlock):
         """
         user = self.get_current_user()
         context = self.get_context(user)
+        js_context = self.get_js_context(user, context)
+
         context.update({
             "editable": True,
             "points": self.points,
@@ -275,7 +276,7 @@ class MindMapXBlock(XBlock):
 
         frag = self.load_fragment("mindmap_edit", context)
 
-        frag.initialize_js('MindMapXBlock', json_args=self.get_js_context(user, context))
+        frag.initialize_js('MindMapXBlock', json_args=js_context)
 
         return frag
 

@@ -36,14 +36,14 @@
       <span class="tip setting-help">{% trans is_static_field.help %}</span>
     </li>
     <li class="field comp-setting-entry is-set">
-        <div class="wrapper-comp-setting">
-          <link type="text/css" rel="stylesheet" href="https://unpkg.com/jsmind@latest/style/jsmind.css"/>
-            <div>
-                <div id="jsmind_container" class="jsmind_container"></div>
-            </div>
+      <div class="wrapper-comp-setting">
+        <div class="setting-wrapper">
+          <label class="label setting-label setting-label-wrapper" for="mindmap_is_static">{% trans "Mind map" %}</label>
+          <span class="tip setting-help">{% trans mindmap_body_field.help %}</span>
         </div>
+        <div id="jsmind_container" class="jsmind_container"></div>
+      </div>
     </li>
-
   </ul>
 
   <div class="xblock-actions">

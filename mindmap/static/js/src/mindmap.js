@@ -7,6 +7,11 @@ function MindMapXBlock(runtime, element, context) {
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
   const maxPointsAllowed = context.max_points;
 
+  $(".card, .icon-collapsible").on("click", function () {
+    $(".icon-collapsible").toggleClass("active");
+    $(".collapse-container").slideToggle(200);
+  });
+
   $(document).keydown(function (event) {
     // 'Esc' key was pressed
     if (event.key === "Escape") {
