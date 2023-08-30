@@ -217,6 +217,7 @@ class MindMapXBlock(XBlock):
         """
         return {
             "author": user.full_name,
+            "max_points": self.points,
             "mind_map": self.get_current_mind_map(),
             "editable": context["editable"],
             "xblock_id": self.scope_ids.usage_id.block_id,
@@ -279,6 +280,7 @@ class MindMapXBlock(XBlock):
         frag = Fragment()
         frag.add_content(self.render_template(f"static/html/{file_name}.html", context))
         frag.add_css(self.resource_string("static/css/mindmap.css"))
+        frag.add_css(self.resource_string("static/css/submissions.css"))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()

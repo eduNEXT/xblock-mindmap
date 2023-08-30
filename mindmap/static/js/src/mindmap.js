@@ -5,6 +5,14 @@ function MindMapXBlock(runtime, element, context) {
   const getGradingDataURL = runtime.handlerUrl(element, "get_instructor_grading_data");
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
+  const maxPointsAllowed = context.max_points;
+
+  $(document).keydown(function (event) {
+    // 'Esc' key was pressed
+    if (event.key === "Escape") {
+      $(element).find("#modal-submissions").removeClass("modal_opened");
+    }
+  });
 
   function showMindMap(jsMind, context) {
     const mind = context.mind_map;
@@ -39,11 +47,215 @@ function MindMapXBlock(runtime, element, context) {
       });
 
     $(element)
-      .find(`#get_submissions_button_${context.xblock_id}`)
+      .find(".modal__close")
+      .click(function () {
+        $(element).find("#modal-submissions").removeClass("modal_opened");
+      });
+
+    $(element)
+      .find(`#get_grade_submissions_button_${context.xblock_id}`)
       .click(function () {
         $.post(getGradingDataURL, JSON.stringify({}))
           .done(function (response) {
-            console.log(response.assignments);
+            const { assignments } = response;
+            $(element).find("#modal-submissions").addClass("modal_opened");
+
+            showDataTable();
+
+            function showDataTable(newAssignments) {
+              // TODO: add Submitted when submission issue is fixed
+              const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
+              const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) =>
+                gettext(currentColumn)
+              );
+              const dataTableHeaderColumnsHTML = dataTableHeaderColumnsTranslated.reduce(
+                (prevColumn, currentColumn) => `${prevColumn}<th>${currentColumn}</th>`,
+                ""
+              );
+              const dataTableHTML = `
+                <table id="dataTable">
+                  <thead>
+                    <tr>
+                      ${dataTableHeaderColumnsHTML}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Data rows will be added here using DataTables -->
+                  </tbody>
+                </table>
+              `;
+
+              const modalTitleSubmissions = gettext("Mindmap submissions");
+              const reviewButtonText = gettext("Review");
+              const dataTableSearchText = gettext("Search");
+              const dataTableEntriesText = gettext("Showing _START_ to _END_ of _TOTAL_ entries");
+              $(element).find(".modal__data").html(dataTableHTML);
+              $(element).find("#modal_title").html(modalTitleSubmissions);
+
+              const dataTable = $("#dataTable").DataTable({
+                data: newAssignments || assignments,
+                scrollY: "50vh",
+                dom: "Bfrtip",
+                bPaginate: false,
+                destroy: true,
+                columns: [
+                  { data: "username" },
+                  { data: "timestamp" },
+                  // TODO: add this line { data: "submitted" },
+                  { data: "score" },
+                  {
+                    data: null,
+                    render: () => {
+                      return `<button class="review_button button-link" type="button">${reviewButtonText}</button>`;
+                    },
+                  },
+                ],
+                language: {
+                  info: dataTableEntriesText,
+                  search: dataTableSearchText,
+                },
+              });
+
+              handleRowDataTableClick(dataTable);
+            }
+
+            function handleRowDataTableClick(dataTable) {
+              $(element)
+                .find("#dataTable")
+                .on("click", ".review_button", function (e) {
+                  e.preventDefault();
+                  const target = $(e.target);
+                  const link = target;
+                  const rowReview = link.closest("tr");
+                  const submissionData = dataTable.row(rowReview).data();
+                  const answerMindMap = submissionData.answer_body.mindmap_student_body;
+                  const answerMindMapFormat = JSON.parse(answerMindMap);
+                  const submitGradeButtonText = gettext("Submit");
+                  const removeGradeButtonText = gettext("Remove grade");
+                  const loadingButtonText = gettext("Loading...");
+                  const reviewGoBackButtonText = gettext("Back");
+                  const gradeLabelText = gettext("Grade");
+
+                  const mindMapReviewContainer = `
+                    <div class="review_mindmap_container">
+                      <button class="button-link back-review">&larr;&nbsp; ${reviewGoBackButtonText}</button>
+                      <div id="review-mindmap"></div>
+                      <div class="grade-assessment">
+                        <form id="grade-assessment-form">
+                          <div class="grade-assessment_form-control">
+                            <label for="grade">${gradeLabelText}</label>
+                            <input type="number" name="grade" required class="inputs-styles" id="grade_value" />
+                            <span class="error-message" id="error-grade"></span>
+                          </div>
+                          <div class="grade-assessment_form-buttons">
+                            <button type="submit" class="grade-assessment__button-submit" data-type="add_grade">${submitGradeButtonText}</button>
+                            <button type="submit" class="grade-assessment__button-submit" data-type="remove_grade">${removeGradeButtonText}</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>`;
+
+                  const modalTitle = gettext("Reviewing Mindmap for student:") + submissionData.username;
+                  $(element).find(".modal__data").html(mindMapReviewContainer);
+                  $(element).find("#modal_title").html(modalTitle);
+                  const [mindMapReviewContent] = $(element).find("#review-mindmap");
+                  const reviewMindMapOptions = {
+                    container: mindMapReviewContent,
+                    editable: false,
+                    theme: "asphalt",
+                  };
+
+                  const currentMindMapReview = new jsMind(reviewMindMapOptions);
+                  currentMindMapReview.show(answerMindMapFormat);
+
+                  $(element)
+                    .find(".back-review")
+                    .click(function () {
+                      $.post(getGradingDataURL, JSON.stringify({}))
+                        .done(function (response) {
+                          const { assignments } = response;
+                          showDataTable(assignments);
+                        })
+                        .fail(function () {
+                          console.log("Error listing Mindmap submissions");
+                        });
+                    });
+
+                  $(".grade-assessment__button-submit").on("click", function () {
+                    // Get the custom data-type attribute of the clicked button
+                    const typeAction = $(this).attr("data-type");
+                    $("#grade-assessment-form").attr("data-type", typeAction);
+                    if (typeAction === "remove_grade") {
+                      $("#grade_value").removeAttr("required");
+                      $("#grade_value").attr("type", "text");
+                    } else {
+                      $("#grade_value").attr("required");
+                      $("#grade_value").attr("type", "number");
+                    }
+                  });
+
+                  $("#grade-assessment-form").on("submit", function (e) {
+                    e.preventDefault();
+                    const typeAction = $(this).attr("data-type");
+                    const grade = $("#grade_value").val();
+                    const { submission_id, student_id } = submissionData;
+                    const invalidGradeMessage = gettext("Invalid grade must be a number");
+                    const maxGradeMessage = gettext("Please enter a lower grade, maximum grade allowed is:");
+                    const gradeParsed = parseInt(grade, 10);
+
+                    if (gradeParsed > maxPointsAllowed) {
+                      $("#error-grade").html(`${maxGradeMessage} ${maxPointsAllowed}`);
+                      return;
+                    }
+
+                    const onlyNumberRegex = /^[0-9]*$/g;
+
+                    if (!onlyNumberRegex.test(grade)) {
+                      $("#error-grade").html(invalidGradeMessage);
+                      return;
+                    }
+
+                    $("#error-grade").html("");
+
+                    let data;
+                    let apiUrl;
+
+                    if (typeAction === "add_grade") {
+                      apiUrl = enterGradeURL;
+                      data = {
+                        grade: grade,
+                        submission_id: submission_id,
+                      };
+                    }
+
+                    if (typeAction === "remove_grade") {
+                      apiUrl = removeGradeURL;
+                      data = {
+                        student_id: student_id,
+                      };
+                    }
+
+                    $(".grade-assessment__button-submit").attr("disabled", "disabled");
+                    $(".grade-assessment__button-submit").html(
+                      `<i class="fa fa-spinner fa-spin"></i>${loadingButtonText}`
+                    );
+                    $.post(apiUrl, JSON.stringify(data))
+                      .done(function (response) {
+                        console.log(response);
+                      })
+                      .fail(function (error) {
+                        console.log(error);
+                      })
+                      .always(function () {
+                        $(".grade-assessment__button-submit").removeAttr("disabled");
+                        const submitGradeButton = $('.grade-assessment__button-submit[data-type="add_grade"]');
+                        const removeGradeButton = $('.grade-assessment__button-submit[data-type="remove_grade"]');
+                        submitGradeButton.html(submitGradeButtonText);
+                        removeGradeButton.html(removeGradeButtonText);
+                      });
+                  });
+                });
+            }
           })
           .fail(function () {
             console.log("Error submitting mind map");
@@ -87,18 +299,23 @@ function MindMapXBlock(runtime, element, context) {
       });
   }
 
-  function handleMindMap(runtime, element, mindMap, handlerUrl) {
+  function handleMindMap(_, _, mindMap, handlerUrl) {
     const mindMapData = mindMap.get_data("node_array");
     const jsonMindMapData = mindMapData;
     const data = { mind_map: jsonMindMapData };
 
     $.post(handlerUrl, JSON.stringify(data))
-      .done(function (response) {
+      .done(function () {
         window.location.reload(false);
       })
       .fail(function () {
         console.log("Error submitting mind map");
       });
+  }
+
+  // Allows us to add a script to the DOM
+  function loadScript(script) {
+    $("<script>").attr("type", "text/javascript").attr("src", script).appendTo(element);
   }
 
   if (typeof require === "function") {
@@ -109,6 +326,8 @@ function MindMapXBlock(runtime, element, context) {
     loadJSMind(function () {
       showMindMap(window.jsMind, context);
     });
+
+    loadScript("https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js");
   }
 }
 
