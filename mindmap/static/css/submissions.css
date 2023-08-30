@@ -33,7 +33,7 @@
     max-width: 90%;
     background: #fff;
     padding: 1em 2em;
-    max-height: 90%;
+    max-height: 80%;
     overflow-y: auto;
 }
 
@@ -162,10 +162,11 @@
 .grade-assessment_form-buttons {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .error-message {
     color: red;
     font-weight: 600;
+    margin: 10px 0px 10px 0px;
 }

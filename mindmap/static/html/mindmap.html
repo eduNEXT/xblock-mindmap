@@ -20,7 +20,7 @@
   {% endif %}
   {% endif %}
 
-{% if is_instructor and in_student_view  %}
+{% if is_instructor and in_student_view and not is_static  %}
     <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>
 
     <div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">

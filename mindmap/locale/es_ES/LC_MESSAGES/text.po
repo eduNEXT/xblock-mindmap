@@ -76,39 +76,39 @@ msgstr "Falso"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: static/js/src/mindmap.js:86
+#: static/js/src/mindmap.js:88
 msgid "Mindmap submissions"
 msgstr "Envíos de mapas mentales"
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:69
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:69
 msgid "Uploaded"
 msgstr "Subido"
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:69
 msgid "Submitted"
 msgstr "Enviado"
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:69
 msgid "Grade"
 msgstr "Calificación"
 
-#: static/js/src/mindmap.js:107
+#: static/js/src/mindmap.js:69
 msgid "Actions"
 msgstr "Acciones"
 
-#: static/js/src/mindmap.js:88
+#: static/js/src/mindmap.js:90
 msgid "Search"
 msgstr "Buscar"
 
-#: static/js/src/mindmap.js:157
+#: static/js/src/mindmap.js:158
 msgid "Reviewing Mindmap for student:"
 msgstr "Revisando Mindmap para el estudiante:"
 
-#:  static/js/src/mindmap.js:134
+#:  static/js/src/mindmap.js:136
 msgid "Back"
 msgstr "Volver"
 
@@ -120,24 +120,27 @@ msgstr "Comentario"
 msgid "optional"
 msgstr "opcional"
 
-#:  static/js/src/mindmap.js:132
+#:  static/js/src/mindmap.js:134
 msgid "Remove grade"
 msgstr "Eliminar calificación"
 
 
-#:  static/js/src/mindmap.js:87
+#:  static/js/src/mindmap.js:89
 msgid "Review"
 msgstr "Revisar"
 
-#:  static/js/src/mindmap.js:89
+#:  static/js/src/mindmap.js:91
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros"
 
-#:  static/js/src/mindmap.js:201
+#:  static/js/src/mindmap.js:202
 msgid "Invalid grade must be a number"
 msgstr "Calificación inválida debe ser un número"
 
-#:  static/js/src/mindmap.js:133
+#:  static/js/src/mindmap.js:135
 msgid "Loading..."
 msgstr "Cargando..."
 
+#:  static/js/src/mindmap.js:205
+msgid "Please enter a lower grade, maximum grade allowed is:"
+msgstr "Por favor ingresa una calificación menor, la calificación máxima permitida es:"

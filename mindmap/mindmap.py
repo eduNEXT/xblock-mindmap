@@ -217,6 +217,7 @@ class MindMapXBlock(XBlock):
         """
         return {
             "author": user.full_name,
+            "max_points": self.points,
             "mind_map": self.get_current_mind_map(),
             "editable": context["editable"],
             "xblock_id": self.scope_ids.usage_id.block_id,

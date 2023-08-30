@@ -5,6 +5,7 @@ function MindMapXBlock(runtime, element, context) {
   const getGradingDataURL = runtime.handlerUrl(element, "get_instructor_grading_data");
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
+  const maxPointsAllowed = context.max_points;
 
   $(document).keydown(function (event) {
     // 'Esc' key was pressed
@@ -199,6 +200,13 @@ function MindMapXBlock(runtime, element, context) {
                     const grade = $("#grade_value").val();
                     const { submission_id, student_id } = submissionData;
                     const invalidGradeMessage = gettext("Invalid grade must be a number");
+                    const maxGradeMessage = gettext("Please enter a lower grade, maximum grade allowed is:");
+                    const gradeParsed = parseInt(grade, 10);
+
+                    if (gradeParsed > maxPointsAllowed) {
+                      $("#error-grade").html(maxGradeMessage);
+                      return;
+                    }
 
                     const onlyNumberRegex = /^[0-9]*$/g;
 
