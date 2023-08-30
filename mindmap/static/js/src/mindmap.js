@@ -101,7 +101,7 @@ function MindMapXBlock(runtime, element, context) {
 
             showDataTable();
 
-            function showDataTable(newData) {
+            function showDataTable(newAssignments) {
               // TODO: add Submitted when submission issue is fixed
               const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
               const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) => gettext(currentColumn));
@@ -126,7 +126,7 @@ function MindMapXBlock(runtime, element, context) {
               $(element).find("#modal_title").html(gettext("Mindmap submissions"));
 
               const dataTable = $("#dataTable").DataTable({
-                data: newData || assignments,
+                data: newAssignments || assignments,
                 scrollY: "50vh",
                 dom: "Bfrtip",
                 bPaginate: false,
@@ -207,7 +207,7 @@ function MindMapXBlock(runtime, element, context) {
                           showDataTable(assignments);
                         })
                         .fail(function () {
-                          console.log("Error listing MIndmap submissions");
+                          console.log("Error listing Mindmap submissions");
                         });
                     });
 
