@@ -5,6 +5,7 @@
 #
 # Translators:
 # Bryann Valderrama <bryann.valderrama@edunext.co>, 2023
+# Jhon Vente <jhon.vente@edunext.co>, 2023
 #
 #, fuzzy
 msgid ""
@@ -21,124 +22,199 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindmap.py:43 static/html/mindmap_edit.html:7
+#: mindmap.py:41 static/html/mindmap_edit.html:7
 msgid "Display name"
 msgstr ""
 
-#: mindmap.py:50
+#: mindmap.py:48
 msgid ""
 "Whether the mind map is static or not. If it is static, the instructor can "
 "create a mind map and it will be the same for all students. If it is not "
 "static, the students can create their own mind maps."
 msgstr ""
 
-#: mindmap.py:54 static/html/mindmap_edit.html:14
+#: mindmap.py:52 static/html/mindmap_edit.html:30
 msgid "Is a static mindmap?"
 msgstr ""
 
-#: mindmap.py:324
-msgid "Dummy"
-msgstr ""
-
-#: static/html/mindmap.html:3
-msgid "The mind map cannot be rendered due to the following error"
-msgstr ""
-
-#: static/html/mindmap.html:4
-msgid "Please contact the instructor or an administrator"
-msgstr ""
-
-#: static/html/mindmap.html:11 static/html/mindmap.html:14
-#: static/html/mindmap_edit.html:27
-msgid "Save"
-msgstr ""
-
-#: static/html/mindmap.html:21
-msgid "The mind map is only visible from the LMS"
-msgstr ""
-
-#: static/html/mindmap.html:22
+#: mindmap.py:59
 msgid ""
-"If you want to create a static mind map set the 'Is a static mindmap?' field "
-"to True"
+"The mind map that will be shown to students if the\"Is a static mindmap?\" "
+"field is set to \"True\""
 msgstr ""
 
-#: static/html/mindmap_edit.html:16
-msgid "True"
+#: mindmap.py:62
+msgid "Mindmap body"
 msgstr ""
 
-#: static/html/mindmap_edit.html:17
-msgid "False"
+#: mindmap.py:82
+msgid ""
+"The body of the mind map. It is a dictionary with the following structure: "
+"{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
 msgstr ""
 
-#: static/html/mindmap_edit.html:30
-msgid "Cancel"
+#: mindmap.py:85
+msgid "Mindmap student body"
 msgstr ""
 
-#: static/js/src/mindmap.js:88
-msgid "Mindmap submissions"
+#: mindmap.py:91
+msgid "Problem Weight"
 msgstr ""
 
-#: static/js/src/mindmap.js:69
-msgid "Username"
+#: mindmap.py:93
+msgid ""
+"Defines the number of points each problem is worth. If the value is not set, "
+"the problem is worth the sum of the option point values."
 msgstr ""
 
-#: static/js/src/mindmap.js:69
-msgid "Uploaded"
+#: mindmap.py:102
+msgid "Maximum score"
 msgstr ""
 
-#: static/js/src/mindmap.js:69
+#: mindmap.py:103
+msgid "Maximum grade score given to assignment by instructors."
+msgstr ""
+
+#: mindmap.py:109
 msgid "Submitted"
 msgstr ""
 
-#: static/js/src/mindmap.js:69
-msgid "Grade"
+#: mindmap.py:110
+msgid "Whether the student has submitted their submission."
 msgstr ""
 
-#: static/js/src/mindmap.js:69
-msgid "Actions"
+#: mindmap.py:677
+msgid "Dummy"
 msgstr ""
 
-#: static/js/src/mindmap.js:90
-msgid "Search"
+#: static/html/mindmap.html:8
+msgid "Instructions for use"
 msgstr ""
 
-#: static/js/src/mindmap.js:158
-msgid "Reviewing Mindmap for student:"
+#: static/html/mindmap.html:10
+msgid "With the mouse"
 msgstr ""
 
-#:  static/js/src/mindmap.js:136
-msgid "Back"
+#: static/html/mindmap.html:13
+msgid "→ Double-click the node to edit it."
 msgstr ""
 
-#:  static/js/src/mindmap.js:182
-msgid "Comment"
+#: static/html/mindmap.html:16
+msgid "→ Drag the node to move it."
 msgstr ""
 
-#:  static/js/src/mindmap.js:183
-msgid "optional"
+#: static/html/mindmap.html:19
+msgid "→ Click the circle to expand or collapse the child nodes."
 msgstr ""
 
-#:  static/js/src/mindmap.js:134
-msgid "Remove grade"
+#: static/html/mindmap.html:23
+msgid "With the keyboard"
 msgstr ""
 
-#:  static/js/src/mindmap.js:89
+#: static/html/mindmap.html:26
+msgid "→ Ctrl + Enter: Create a new child node for the selected node."
+msgstr ""
+
+#: static/html/mindmap.html:29
+msgid "→ Enter: Create a new brother node for the selected node."
+msgstr ""
+
+#: static/html/mindmap.html:32
+msgid "→ F2: Edit the selected node."
+msgstr ""
+
+#: static/html/mindmap.html:35
+msgid "→ Delete/Supr: Delete the selected node."
+msgstr ""
+
+#: static/html/mindmap.html:38
+msgid "→ Space: Expand or collapse the selected node."
+msgstr ""
+
+#: static/html/mindmap.html:57
+msgid "Save assignment"
+msgstr ""
+
+#: static/html/mindmap.html:58
+msgid "Submit"
+msgstr ""
+
+#: static/html/mindmap.html:62
+msgid "Your score is:"
+msgstr ""
+
+#: static/html/mindmap.html:66
+msgid "Grade submissions"
+msgstr ""
+
+#: static/html/mindmap_edit.html:14
+msgid "Weight"
+msgstr ""
+
+#: static/html/mindmap_edit.html:22
+msgid "Points"
+msgstr ""
+
+#: static/html/mindmap_edit.html:32
+msgid "True"
+msgstr ""
+
+#: static/html/mindmap_edit.html:33
+msgid "False"
+msgstr ""
+
+#: static/html/mindmap_edit.html:41
+msgid "Mind map"
+msgstr ""
+
+#: static/html/mindmap_edit.html:52
+msgid "Save"
+msgstr ""
+
+#: static/html/mindmap_edit.html:55
+msgid "Cancel"
+msgstr ""
+
+#: static/js/src/mindmap.js:93
+msgid "Mindmap submissions"
+msgstr ""
+
+#: static/js/src/mindmap.js:94
 msgid "Review"
 msgstr ""
 
-#:  static/js/src/mindmap.js:91
+#: static/js/src/mindmap.js:95
+msgid "Search"
+msgstr ""
+
+#: static/js/src/mindmap.js:96
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr ""
 
-#:  static/js/src/mindmap.js:202
-msgid "Invalid grade must be a number"
+#: static/js/src/mindmap.js:139
+msgid "Remove grade"
 msgstr ""
 
-#:  static/js/src/mindmap.js:135
+#: static/js/src/mindmap.js:140
 msgid "Loading..."
 msgstr ""
 
-#:  static/js/src/mindmap.js:205
+#: static/js/src/mindmap.js:141
+msgid "Back"
+msgstr ""
+
+#: static/js/src/mindmap.js:142
+msgid "Grade"
+msgstr ""
+
+#: static/js/src/mindmap.js:163
+msgid "Reviewing Mindmap for student: "
+msgstr ""
+
+#: static/js/src/mindmap.js:207
+msgid "Invalid grade must be a number"
+msgstr ""
+
+#: static/js/src/mindmap.js:208
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr ""

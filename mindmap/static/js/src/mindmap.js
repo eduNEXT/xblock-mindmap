@@ -160,7 +160,7 @@ function MindMapXBlock(runtime, element, context) {
                       </div>
                     </div>`;
 
-                  const modalTitle = gettext("Reviewing Mindmap for student:") + submissionData.username;
+                  const modalTitle = gettext("Reviewing Mindmap for student: ") + submissionData.username;
                   $(element).find(".modal__data").html(mindMapReviewContainer);
                   $(element).find("#modal_title").html(modalTitle);
                   const [mindMapReviewContent] = $(element).find("#review-mindmap");
