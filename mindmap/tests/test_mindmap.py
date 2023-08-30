@@ -247,7 +247,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         expected_context = {
             "display_name": self.xblock.display_name,
             "in_student_view": True,
-            "editable": self.editable_mind_map,
+            "editable": False,
             "xblock_id": block_id,
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
@@ -257,7 +257,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         expected_js_context = {
             "author": self.student.full_name,
             "mind_map": self.mind_map,
-            "editable": self.editable_mind_map,
+            "editable": False,
             "xblock_id": block_id,
             "max_points": self.xblock.points,
         }
