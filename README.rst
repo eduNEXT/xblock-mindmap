@@ -14,11 +14,7 @@ It leverages the `jsMind`_ open source javascript library to visualize and edit 
 
 The Mind Map Xblock component can be used to build and display a mind map for learners to explore a particular concept, or to have learners build their own Mind map which can then be graded by course staff members.
 
-This Xblock has been created as an open source contribution to the Open edX platform and has been funded by the Unidigital project 2023. 
-
-`XBlock`_ is the Open edX component architecture for building custom learning interactives.
-
-.. _XBlock: https://openedx.org/r/xblock
+This Xblock has been created as an open source contribution to the Open edX platform and has been funded by the Unidigital project from the Spanish Government - 2023. 
 
 
 Enabling the XBlock in a course
@@ -82,8 +78,15 @@ Grading a submitted Mind Map
 Course instructors can provide a grade for each submitted Mind Map in a course, by accessing the grading interface directly from the LMS view.
 
 
+
 Experimenting with this Xblock in the Workbench
 ************************************************
+
+`XBlock`_ is the Open edX component architecture for building custom learning interactives.
+
+.. _XBlock: https://openedx.org/r/xblock
+
+
 You can see the Mind Map in action in the XBlock Workbench. Running the Workbench requires having docker running.
 
 .. code:: bash
@@ -101,8 +104,9 @@ For details regarding how to deploy this or any other XBlock in the Open edX pla
 
 .. _installing-the-xblock: https://edx.readthedocs.io/projects/xblock-tutorial/en/latest/edx_platform/devstack.html#installing-the-xblock
 
+
 Getting Help
-=============
+*************
 
 If you're having trouble, the Open edX community has active discussion forums available at https://discuss.openedx.org where you can connect with others in the community.
 
@@ -111,10 +115,6 @@ Also, real-time conversations are always happening on the Open edX community Sla
 For anything non-trivial, the best path is to open an issue in this repository with as many details about the issue you are facing as you can provide.
 
 https://github.com/eduNEXT/xblock-mindmap/issues
-
-
-Documentation
-=============
 
 
 For more information about these options, see the `Getting Help`_ page.
@@ -142,11 +142,12 @@ work, or new features.  However, please make sure to have a discussion about you
 the maintainers prior to beginning development to maximize the chances of your change being accepted.
 You can start a conversation by creating a new issue on this repo summarizing your idea.
 
+
 Translations
 ============
-You can help by translating this component. Follow the steps below:
+This Xblock is initially available in english and Spanish. You can help by translating this component to other languages. Follow the steps below:
 
-1. Create a folder for the translations in ``locale/``, eg: ``locale/es_419/LC_MESSAGES/``, and create
+1. Create a folder for the translations in ``locale/``, eg: ``locale/fr_FR/LC_MESSAGES/``, and create
    your ``text.po`` file with all the translations.
 2. Run ``make compile_translations``, this will generate the ``.mo`` file.
 3. Create a pull request with your changes!
@@ -155,7 +156,7 @@ You can help by translating this component. Follow the steps below:
 Reporting Security Issues
 *************************
 
-Please do not report a potential security issues in public. Please email security@edunext.co.
+Please do not report a potential security issue in public. Please email security@edunext.co.
 
 .. |pypi-badge| image:: https://img.shields.io/pypi/v/xblock-mindmap.svg
     :target: https://pypi.python.org/pypi/xblock-mindmap/
