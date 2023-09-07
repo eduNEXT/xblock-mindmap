@@ -38,6 +38,8 @@ Adding a Mind map Component to a course unit
 Fields
 ======
 - **Display name (String)**: Name of the component.
+- **Problem Weight (Integer)**: Defines the number of points each problem is worth.
+- **Maximum score (Integer)**: Maximum grade score given to assignment by instructors.
 - **Is a static mind map? (Boolean)**: If this option is set to True, the course creator will provide the Mind map and learners will only be able to explore them but not edit them.  If set to False, the course creator can provide an initial version of the Mind map that learners will be able to modify and submit for grading.
 - **Mind map**: Instructors will be able to use a visual editor to create the mind map.
 
