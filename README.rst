@@ -6,17 +6,90 @@ Mind Map XBlock
 Purpose
 *******
 
-`XBlock`_ is the Open edX component architecture for building custom learning interactives.
+Mind Map XBlock is a pluggable extension to the Open edX platform that allows course creators to build a learning experience in which students can visualize and easily edit Mind Maps within a course unit.
+
+It leverages the `jsMind`_ open source JavaScript library to visualize and edit mind maps on htmls canvas and svg.
+
+.. _jsMind: https://github.com/hizzgdev/jsmind
+
+The Mind Map Xblock component can be used to build and display a mind map for learners to explore a particular concept, or to have learners build their own Mind map which can then be graded by course staff members.
+
+This Xblock has been created as an open source contribution to the Open edX platform and has been funded by the Unidigital project from the Spanish Government - 2023. 
+
+
+Enabling the XBlock in a course
+*******************************
+
+When the Xblock has been installed, you can enable the Mind Map XBlock for a particular course in STUDIO through the advanced settings.
+
+1. From the main page of a specific course, navigate to ``Settings → Advanced Settings`` from the top menu.
+2. Check for the ``Advanced Module List`` policy key, and add ``"mindmap"`` to the policy value list.
+3. Click the "Save changes" button.
+
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/52b644de-4cd4-4971-abba-83f08e7aacdb
+
+
+
+Adding a Mind map Component to a course unit
+********************************************
+
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/33465240/268e97fc-9411-4581-aec6-5f949980442f
+
+Fields
+======
+- **Display name (String)**: Name of the component.
+- **Problem Weight (Integer)**: Defines the number of points each problem is worth.
+- **Maximum score (Integer)**: Maximum grade score given to assignment by instructors.
+- **Is a static mind map? (Boolean)**: If this option is set to True, the course creator will provide the Mind map and learners will only be able to explore them but not edit them.  If set to False, the course creator can provide an initial version of the Mind map that learners will be able to modify and submit for grading.
+- **Mind map**: Instructors will be able to use a visual editor to create the mind map.
+
+
+Using the jsMind interface
+**************************
+Each Mind Map can be explored or edited using the mouse or with keyboard shortcuts.
+
+Using the mouse
+===============
+- Click on a node to select it.
+- Double-click on a node to change the legend and click elsewhere to apply the changes.
+- Drag the node to move it to a different part of the structure.
+- Click the circle next to one node to expand or collapse its child nodes.
+
+With the keyboard
+=================
+- ``Enter``: Create a new brother node for the selected node.
+- ``Ctrl + Enter``: Create a new child node for the selected node.
+- ``F2``: Edit the legend for the selected node and hit Enter to apply the changes.
+- ``Delete``: Delete the selected node.
+- ``Space``: Expand or collapse any children of the selected node.
+
+
+
+View from Learning Management System (LMS)
+******************************************
+
+Learners can explore the Mind Map and when configured to be graded they can also edit it and submit it to be graded by the course instructors.
+
+.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/67be4ebf-4d0e-44c8-ac61-173756da01d1
+
+
+
+Grading a submitted Mind Map
+*****************************
+
+Course instructors can provide a grade for each submitted Mind Map in a course, by accessing the grading interface directly from the LMS view.
+
+
+
+Experimenting with this Xblock in the Workbench
+************************************************
+
+`XBlock`_ is the Open edX component architecture for building custom learning interactive components.
 
 .. _XBlock: https://openedx.org/r/xblock
 
-Mind Map XBlock allows students to create and edit Mind Maps in a course.
 
-
-Getting Started
-***************
-You can see the Mind Map in action in the XBlock Workbench. Running the Workbench requires
-having docker running.
+You can see the Mind Map in action in the XBlock Workbench. Running the Workbench requires having docker running.
 
 .. code:: bash
 
@@ -27,87 +100,24 @@ having docker running.
     make install
     make dev.run
 
-You can interact with the MindMapXBlock in the Workbench by navigating to http://localhost:8000
+Once the process is done, you can interact with the Mind Map XBlock in the Workbench by navigating to http://localhost:8000
 
-For details regarding how to deploy this or any other XBlock in the LMS instance, see the `installing-the-xblock`_ documentation.
+For details regarding how to deploy this or any other XBlock in the Open edX platform, see the `installing-the-xblock`_ documentation.
 
 .. _installing-the-xblock: https://edx.readthedocs.io/projects/xblock-tutorial/en/latest/edx_platform/devstack.html#installing-the-xblock
 
 
-Using the jsMind library
-************************
-jsMind library can be used with the mouse or with certain keyboard shortcuts, which allow you to
-interact with the mind map.
-
-With the mouse
-==============
-- Click the node to select it.
-- Double-click the node to edit it.
-- Drag the node to move it.
-- Click the circle to expand or collapse the child nodes.
-
-With the keyboard
-=================
-- ``Ctrl + Enter``: Create a new child node for the selected node.
-- ``Enter``: Create a new brother node for the selected node.
-- ``F2``: Edit the selected node.
-- ``Delete``: Delete the selected node.
-- ``Space``: Expand or collapse the selected node.
-
-
-Enabling in Studio
-******************
-
-You can enable the Mind Map XBlock in the studio through the advanced settings.
-
-.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/52b644de-4cd4-4971-abba-83f08e7aacdb
-
-1. From the main page of a specific course, navigate to ``Settings → Advanced Settings`` from the top menu.
-2. Check for the ``Advanced Module List`` policy key, and add ``"mindmap"`` to the policy value list.
-3. Click the "Save changes" button.
-
-
-Configuring Component
-*********************
-
-.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/33465240/268e97fc-9411-4581-aec6-5f949980442f
-
-Fields
-======
-- **Display name (String)**: Name of the component.
-- **Is a static mindmap? (Boolean)**: If this option is enabled, the student will not be able to edit the mind map.
-- **Mindmap (String)**: A JSON string that represents the mind map. Instructors will use an editor to
-  create the mind map which will be converted to a JSON string and saved in this field.
-
-In the case an instructor define a mindmap and the student is allowed to edit it, the student will see the initial Mindmap
-as the defined by the instructor and will be able to edit it:
-
-.. image:: https://github.com/openedx/tutor-contrib-aspects/assets/33465240/471efdac-0449-4443-95c1-364e167efe1d
-
-View from Learning Management System (LMS)
-******************************************
-
-.. image:: https://github.com/eduNEXT/xblock-mindmap/assets/64033729/67be4ebf-4d0e-44c8-ac61-173756da01d1
-
-The student observes the component from the LMS and will be able to create, save and edit a mind map.
-
-
 Getting Help
-************
+*************
 
-Documentation
-=============
+If you're having trouble, the Open edX community has active discussion forums available at https://discuss.openedx.org where you can connect with others in the community.
 
-If you're having trouble, we have discussion forums at https://discuss.openedx.org where you can
-connect with others in the community.
+Also, real-time conversations are always happening on the Open edX community Slack channel. You can request a `Slack invitation`_, then join the `community Slack workspace`_.
 
-Our real-time conversations are on Slack. You can request a `Slack invitation`_, then join our
-`community Slack workspace`_.
-
-For anything non-trivial, the best path is to open an issue in this repository with as many details
-about the issue you are facing as you can provide.
+For anything non-trivial, the best path is to open an issue in this repository with as many details about the issue you are facing as you can provide.
 
 https://github.com/eduNEXT/xblock-mindmap/issues
+
 
 For more information about these options, see the `Getting Help`_ page.
 
@@ -128,34 +138,27 @@ Contributing
 ************
 
 Contributions are very welcome.
-Please read `How To Contribute <https://openedx.org/r/how-to-contribute>`_ for details.
 
 This project is currently accepting all types of contributions, bug fixes, security fixes, maintenance
 work, or new features.  However, please make sure to have a discussion about your new feature idea with
 the maintainers prior to beginning development to maximize the chances of your change being accepted.
 You can start a conversation by creating a new issue on this repo summarizing your idea.
 
+
 Translations
 ============
-You can help by translating this project. Follow the steps below:
+This Xblock is initially available in English and Spanish. You can help by translating this component to other languages. Follow the steps below:
 
-1. Create a folder for the translations in ``locale/``, eg: ``locale/es_419/LC_MESSAGES/``, and create
+1. Create a folder for the translations in ``locale/``, eg: ``locale/fr_FR/LC_MESSAGES/``, and create
    your ``text.po`` file with all the translations.
 2. Run ``make compile_translations``, this will generate the ``.mo`` file.
 3. Create a pull request with your changes!
-
-The Open edX Code of Conduct
-****************************
-
-All community members are expected to follow the `Open edX Code of Conduct`_.
-
-.. _Open edX Code of Conduct: https://openedx.org/code-of-conduct/
 
 
 Reporting Security Issues
 *************************
 
-Please do not report security issues in public. Please email security@edunext.co.
+Please do not report a potential security issue in public. Please email security@edunext.co.
 
 .. |pypi-badge| image:: https://img.shields.io/pypi/v/xblock-mindmap.svg
     :target: https://pypi.python.org/pypi/xblock-mindmap/
@@ -178,7 +181,7 @@ Please do not report security issues in public. Please email security@edunext.co
     :alt: License
 
 .. TODO: Choose one of the statuses below and remove the other status-badge lines.
-.. |status-badge| image:: https://img.shields.io/badge/Status-Experimental-yellow
-.. .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
+.. .. |status-badge| image:: https://img.shields.io/badge/Status-Experimental-yellow
+.. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
 .. .. |status-badge| image:: https://img.shields.io/badge/Status-Deprecated-orange
 .. .. |status-badge| image:: https://img.shields.io/badge/Status-Unsupported-red
