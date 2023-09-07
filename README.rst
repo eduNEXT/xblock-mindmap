@@ -8,7 +8,7 @@ Purpose
 
 Mind Map XBlock is a pluggable extension to the Open edX platform that allows course creators to build a learning experience in which students can visualize and easily edit Mind Maps within a course unit.
 
-It leverages the `jsMind`_ open source javascript library to visualize and edit mind maps on htmls canvas and svg.
+It leverages the `jsMind`_ open source JavaScript library to visualize and edit mind maps on htmls canvas and svg.
 
 .. _jsMind: https://github.com/hizzgdev/jsmind
 
@@ -20,7 +20,7 @@ This Xblock has been created as an open source contribution to the Open edX plat
 Enabling the XBlock in a course
 *******************************
 
-When the xblock has been installed, you can enable the Mind Map XBlock for a particular course in STUDIO through the advanced settings.
+When the Xblock has been installed, you can enable the Mind Map XBlock for a particular course in STUDIO through the advanced settings.
 
 1. From the main page of a specific course, navigate to ``Settings → Advanced Settings`` from the top menu.
 2. Check for the ``Advanced Module List`` policy key, and add ``"mindmap"`` to the policy value list.
@@ -38,8 +38,8 @@ Adding a Mind map Component to a course unit
 Fields
 ======
 - **Display name (String)**: Name of the component.
-- **Is a static mindmap? (Boolean)**: If this option is set to True, the course creator will provide the Mind map and learners will only be able to explore them but not edit them.  If set to False, the course creator can provide an initial version of the Mind map that learners will be able to modify and submit for grading.
-- **Mindmap**: Instructors will be able to use a visual editor to create the mind map.
+- **Is a static mind map? (Boolean)**: If this option is set to True, the course creator will provide the Mind map and learners will only be able to explore them but not edit them.  If set to False, the course creator can provide an initial version of the Mind map that learners will be able to modify and submit for grading.
+- **Mind map**: Instructors will be able to use a visual editor to create the mind map.
 
 
 Using the jsMind interface
@@ -82,7 +82,7 @@ Course instructors can provide a grade for each submitted Mind Map in a course, 
 Experimenting with this Xblock in the Workbench
 ************************************************
 
-`XBlock`_ is the Open edX component architecture for building custom learning interactives.
+`XBlock`_ is the Open edX component architecture for building custom learning interactive components.
 
 .. _XBlock: https://openedx.org/r/xblock
 
@@ -145,7 +145,7 @@ You can start a conversation by creating a new issue on this repo summarizing yo
 
 Translations
 ============
-This Xblock is initially available in english and Spanish. You can help by translating this component to other languages. Follow the steps below:
+This Xblock is initially available in English and Spanish. You can help by translating this component to other languages. Follow the steps below:
 
 1. Create a folder for the translations in ``locale/``, eg: ``locale/fr_FR/LC_MESSAGES/``, and create
    your ``text.po`` file with all the translations.
