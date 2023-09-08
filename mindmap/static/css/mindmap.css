@@ -12,3 +12,68 @@
     min-height: 700px;
     margin-top: 10px;
 }
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, .125);
+    padding: 16px;
+}
+
+.collapse-container {
+    display: none;
+    overflow: hidden;
+}
+
+.icon-collapsible:after {
+    /* Unicode character for "plus" sign (+) */
+    content: "\02795";
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    /* Unicode character for "minus" sign (-) */
+    content: "\2796";
+}
+
+.pgn__card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.list-container {
+    line-height: 1.5em;
+    list-style: none !important;
+}
+
+.title-list {
+    margin-bottom: 0.5rem;
+    margin-top: 16px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #000;
+}
+
+.list-container li {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color: #454545;
+    text-align: left;
+}
+
+.setting-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.setting-label-wrapper {
+    margin-bottom: 5px;
+}
