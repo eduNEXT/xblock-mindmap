@@ -7,6 +7,22 @@ function MindMapXBlock(runtime, element, context) {
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
   const maxPointsAllowed = context.max_points;
 
+  var gettext;
+  if ("MindMapI18N" in window) {
+    console.log("Using MindMapI18N local translations");
+    // Use MindMapI18N local translations
+    gettext = window.MindMapI18N.gettext;
+  } else if ("gettext" in window) {
+    // Use edxapp's global translations
+    gettext = window.gettext;
+  }
+  if (typeof gettext == "undefined") {
+    // No translations -- used by test environment
+    gettext = function (string) {
+      return string;
+    };
+  }
+
   $(".card, .icon-collapsible").on("click", function () {
     $(".icon-collapsible").toggleClass("active");
     $(".collapse-container").slideToggle(200);
@@ -69,7 +85,12 @@ function MindMapXBlock(runtime, element, context) {
 
             function showDataTable(newAssignments) {
               // TODO: add Submitted when submission issue is fixed
-              const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
+              const dataTableHeaderColumns = [
+                gettext("Username"),
+                gettext("Uploaded"),
+                gettext("Grade"),
+                gettext("Actions"),
+              ];
               const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) =>
                 gettext(currentColumn)
               );

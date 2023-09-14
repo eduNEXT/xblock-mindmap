@@ -247,7 +247,7 @@ class MindMapXBlock(XBlock):
 
         frag = self.load_fragment("mindmap", context)
 
-        frag.add_javascript(self.resource_string("static/js/src/requiredModules.js"))
+        frag.add_javascript(self.resource_string("public/js/src/requiredModules.js"))
         frag.initialize_js('MindMapXBlock', json_args=js_context)
 
         return frag
@@ -285,9 +285,9 @@ class MindMapXBlock(XBlock):
         Generic function to generate a fragment.
         """
         frag = Fragment()
-        frag.add_content(self.render_template(f"static/html/{file_name}.html", context))
-        frag.add_css(self.resource_string("static/css/mindmap.css"))
-        frag.add_css(self.resource_string("static/css/submissions.css"))
+        frag.add_content(self.render_template(f"public/html/{file_name}.html", context))
+        frag.add_css(self.resource_string("public/css/mindmap.css"))
+        frag.add_css(self.resource_string("public/css/submissions.css"))
 
         # Add i18n js
         statici18n_js_url = self._get_statici18n_js_url()
@@ -296,7 +296,7 @@ class MindMapXBlock(XBlock):
                 self.runtime.local_resource_url(self, statici18n_js_url)
             )
 
-        frag.add_javascript(self.resource_string(f"static/js/src/{file_name}.js"))
+        frag.add_javascript(self.resource_string(f"public/js/src/{file_name}.js"))
 
         return frag
 

@@ -59,7 +59,7 @@
 {% endif %}
 
 {% if score %}
-  <p>{% trans "Your score is:" %} {{ score }}.</p>
+  <p>{% trans "Your score is:" %} {{ score }} / {{ max_score }}.</p>
 {% endif %}
 
 {% if is_instructor and in_student_view and not is_static  %}
