@@ -11,7 +11,7 @@ EXTRACT_DIR := $(PACKAGE_NAME)/locale/en/LC_MESSAGES
 EXTRACTED_DJANGO := $(EXTRACT_DIR)/django-partial.po
 EXTRACTED_DJANGOJS := $(EXTRACT_DIR)/djangojs-partial.po
 EXTRACTED_TEXT := $(EXTRACT_DIR)/text.po
-JS_TARGET := public/js/translations
+JS_TARGET := $(PACKAGE_NAME)/public/js/translations
 TRANSLATIONS_DIR := $(PACKAGE_NAME)/translations
 
 help:
@@ -76,8 +76,8 @@ extract_translations: symlink_translations ## extract strings to be translated, 
 	if [ -f "$(EXTRACTED_DJANGOJS)" ]; then cat $(EXTRACTED_DJANGOJS) >> $(EXTRACTED_TEXT); rm $(EXTRACTED_DJANGOJS); fi
 
 compile_translations: symlink_translations ## compile translation files, outputting .mo files for each supported language
-	cd $(PACKAGE_NAME) && i18n_tool generate
-	python manage.py compilejsi18n --namespace $(PACKAGE_NAME)i18n --output $(JS_TARGET)
+	cd $(PACKAGE_NAME) && i18n_tool generate -v
+	python manage.py compilejsi18n --namespace MindMapI18N --output $(JS_TARGET)
 
 detect_changed_source_translations:
 	cd $(PACKAGE_NAME) && i18n_tool changed
