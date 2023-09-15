@@ -7,20 +7,14 @@ function MindMapXBlock(runtime, element, context) {
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
   const maxPointsAllowed = context.max_points;
 
-  var gettext;
-  if ("MindMapI18N" in window) {
-    console.log("Using MindMapI18N local translations");
-    // Use MindMapI18N local translations
-    gettext = window.MindMapI18N.gettext;
-  } else if ("gettext" in window) {
-    // Use edxapp's global translations
-    gettext = window.gettext;
+  let gettext;
+  if ("MindMapI18N" in window || "gettext" in window) {
+    gettext = window.MindMapI18N?.gettext || window.gettext;
   }
+
   if (typeof gettext == "undefined") {
     // No translations -- used by test environment
-    gettext = function (string) {
-      return string;
-    };
+    gettext = (string) => string;
   }
 
   $(".card, .icon-collapsible").on("click", function () {
