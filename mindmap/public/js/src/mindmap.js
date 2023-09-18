@@ -109,6 +109,10 @@ function MindMapXBlock(runtime, element, context) {
               const reviewButtonText = gettext("Review");
               const dataTableSearchText = gettext("Search");
               const dataTableEntriesText = gettext("Showing _START_ to _END_ of _TOTAL_ entries");
+              const dataTableEmptyText = gettext("No data available in table");
+              const dataTableInfoEmptyText = gettext("Showing 0 to 0 of 0 entries");
+              const dataTableZeroRecordsText = gettext("No matching records found");
+              const dataTableInfoFilteredText = gettext("(filtered from _MAX_ total entries)");
               $(element).find(".modal__data").html(dataTableHTML);
               $(element).find("#modal_title").html(modalTitleSubmissions);
 
@@ -133,6 +137,10 @@ function MindMapXBlock(runtime, element, context) {
                 language: {
                   info: dataTableEntriesText,
                   search: dataTableSearchText,
+                  emptyTable: dataTableEmptyText,
+                  infoEmpty: dataTableInfoEmptyText,
+                  zeroRecords: dataTableZeroRecordsText,
+                  infoFiltered: dataTableInfoFilteredText,
                 },
               });
 

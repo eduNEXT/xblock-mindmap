@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 16:56-0500\n"
+"POT-Creation-Date: 2023-09-18 11:39-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -81,10 +81,6 @@ msgstr ""
 
 #: mindmap.py:110
 msgid "Whether the student has submitted their submission."
-msgstr ""
-
-#: mindmap.py:681
-msgid "Dummy"
 msgstr ""
 
 #: public/html/mindmap.html:8
@@ -180,54 +176,70 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: public/js/src/mindmap.js:90
+#: public/js/src/mindmap.js:84
 msgid "Uploaded"
 msgstr ""
 
-#: public/js/src/mindmap.js:91 public/js/src/mindmap.js:163
+#: public/js/src/mindmap.js:85 public/js/src/mindmap.js:165
 msgid "Grade"
 msgstr ""
 
-#: public/js/src/mindmap.js:92
+#: public/js/src/mindmap.js:86
 msgid "Actions"
 msgstr ""
 
-#: public/js/src/mindmap.js:114
+#: public/js/src/mindmap.js:108
 msgid "Mindmap submissions"
 msgstr ""
 
-#: public/js/src/mindmap.js:115
+#: public/js/src/mindmap.js:109
 msgid "Review"
 msgstr ""
 
-#: public/js/src/mindmap.js:116
+#: public/js/src/mindmap.js:110
 msgid "Search"
 msgstr ""
 
-#: public/js/src/mindmap.js:117
+#: public/js/src/mindmap.js:111
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr ""
 
-#: public/js/src/mindmap.js:160
-msgid "Remove grade"
+#: public/js/src/mindmap.js:112
+msgid "No data available in table"
 msgstr ""
 
-#: public/js/src/mindmap.js:161
-msgid "Loading..."
+#: public/js/src/mindmap.js:113
+msgid "Showing 0 to 0 of 0 entries"
+msgstr ""
+
+#: public/js/src/mindmap.js:114
+msgid "No matching records found"
+msgstr ""
+
+#: public/js/src/mindmap.js:115
+msgid "(filtered from _MAX_ total entries)"
 msgstr ""
 
 #: public/js/src/mindmap.js:162
+msgid "Remove grade"
+msgstr ""
+
+#: public/js/src/mindmap.js:163
+msgid "Loading..."
+msgstr ""
+
+#: public/js/src/mindmap.js:164
 msgid "Back"
 msgstr ""
 
-#: public/js/src/mindmap.js:184
+#: public/js/src/mindmap.js:186
 msgid "Reviewing Mindmap for student: "
 msgstr ""
 
-#: public/js/src/mindmap.js:228
+#: public/js/src/mindmap.js:230
 msgid "Invalid grade must be a number"
 msgstr ""
 
-#: public/js/src/mindmap.js:229
+#: public/js/src/mindmap.js:231
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr ""

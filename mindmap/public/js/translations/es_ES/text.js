@@ -25,6 +25,7 @@
   django.catalog = django.catalog || {};
   
   const newcatalog = {
+    "(filtered from _MAX_ total entries)": "(filtrado de un total de _MAX_ registros)",
     "Actions": "Acciones",
     "Back": "Volver",
     "Cancel": "Cancelar",
@@ -43,6 +44,8 @@
     "Mindmap body": "Contenido del mapa mental",
     "Mindmap student body": "Contenido del mapa mental del estudiante",
     "Mindmap submissions": "Env\u00edos de mapas mentales",
+    "No data available in table": "Ning\u00fan dato disponible en esta tabla",
+    "No matching records found": "No se encontraron resultados",
     "Please enter a lower grade, maximum grade allowed is:": "Por favor ingresa una calificaci\u00f3n menor, la calificaci\u00f3n m\u00e1xima permitida es:",
     "Points": "Puntos",
     "Problem Weight": "Peso del problema",
@@ -52,7 +55,8 @@
     "Save": "Guardar",
     "Save assignment": "Guardar asignaci\u00f3n",
     "Search": "Buscar",
-    "Showing _START_ to _END_ of _TOTAL_ entries": "Mostrando _START_ al _END_ de un total de _TOTAL_ registro(s)",
+    "Showing 0 to 0 of 0 entries": "Mostrando registros del 0 al 0 de un total de 0 registros",
+    "Showing _START_ to _END_ of _TOTAL_ entries": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
     "Submit": "Enviar",
     "Submitted": "Enviado",
     "The body of the mind map. It is a dictionary with the following structure: {'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}": "El contenido del mapa mental. Es un diccionario con la siguiente estructura: {'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}",

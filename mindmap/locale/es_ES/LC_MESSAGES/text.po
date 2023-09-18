@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-08 13:11-0500\n"
+"POT-Creation-Date: 2023-09-18 11:39-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,54 +186,70 @@ msgstr "Cancelar"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: public/js/src/mindmap.js:90
+#: public/js/src/mindmap.js:84
 msgid "Uploaded"
 msgstr "Subido"
 
-#: public/js/src/mindmap.js:91 public/js/src/mindmap.js:163
+#: public/js/src/mindmap.js:85 public/js/src/mindmap.js:165
 msgid "Grade"
 msgstr "Calificación"
 
-#: public/js/src/mindmap.js:92
+#: public/js/src/mindmap.js:86
 msgid "Actions"
 msgstr "Acciones"
 
-#: public/js/src/mindmap.js:114
+#: public/js/src/mindmap.js:108
 msgid "Mindmap submissions"
 msgstr "Envíos de mapas mentales"
 
-#: public/js/src/mindmap.js:115
+#: public/js/src/mindmap.js:109
 msgid "Review"
 msgstr "Revisar"
 
-#: public/js/src/mindmap.js:116
+#: public/js/src/mindmap.js:110
 msgid "Search"
 msgstr "Buscar"
 
-#: public/js/src/mindmap.js:117
+#: public/js/src/mindmap.js:111
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
-msgstr "Mostrando _START_ al _END_ de un total de _TOTAL_ registro(s)"
+msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros"
 
-#: public/js/src/mindmap.js:160
+#: public/js/src/mindmap.js:112
+msgid "No data available in table"
+msgstr "Ningún dato disponible en esta tabla"
+
+#: public/js/src/mindmap.js:113
+msgid "Showing 0 to 0 of 0 entries"
+msgstr "Mostrando registros del 0 al 0 de un total de 0 registros"
+
+#: public/js/src/mindmap.js:114
+msgid "No matching records found"
+msgstr "No se encontraron resultados"
+
+#: public/js/src/mindmap.js:115
+msgid "(filtered from _MAX_ total entries)"
+msgstr "(filtrado de un total de _MAX_ registros)"
+
+#: public/js/src/mindmap.js:162
 msgid "Remove grade"
 msgstr "Eliminar calificación"
 
-#: public/js/src/mindmap.js:161
+#: public/js/src/mindmap.js:163
 msgid "Loading..."
 msgstr "Cargando..."
 
-#: public/js/src/mindmap.js:162
+#: public/js/src/mindmap.js:164
 msgid "Back"
 msgstr "Volver"
 
-#: public/js/src/mindmap.js:184
+#: public/js/src/mindmap.js:186
 msgid "Reviewing Mindmap for student: "
 msgstr "Revisando Mapa Mental para el estudiante: "
 
-#: public/js/src/mindmap.js:228
+#: public/js/src/mindmap.js:230
 msgid "Invalid grade must be a number"
 msgstr "Calificación inválida, debe ser un número"
 
-#: public/js/src/mindmap.js:229
+#: public/js/src/mindmap.js:231
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr "Por favor ingresa una calificación menor, la calificación máxima permitida es:"
