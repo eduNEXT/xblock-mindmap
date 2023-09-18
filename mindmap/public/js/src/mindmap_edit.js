@@ -2,7 +2,6 @@
 
 // TODO: add notifications
 function MindMapXBlock(runtime, element, context) {
-
   var currentMindMap = null;
 
   $(element)
@@ -57,14 +56,12 @@ function MindMapXBlock(runtime, element, context) {
           showMindMap(jsMind, context);
         });
       }
-
     });
   } else {
     loadJSMind(function () {
       showMindMap(window.jsMind, context);
     }, context.editable);
   }
-
 }
 
 function loadJSMind(callback, isEditable = false) {

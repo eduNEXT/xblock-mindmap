@@ -87,7 +87,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context,
+            "public/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
@@ -126,7 +126,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context,
+            "public/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context
@@ -158,7 +158,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context,
+            "public/html/mindmap.html", expected_context,
         )
 
     def test_student_view_for_instructor(self):
@@ -189,7 +189,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context,
+            "public/html/mindmap.html", expected_context,
         )
 
     def test_studio_view(self):
@@ -226,7 +226,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.studio_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap_edit.html", expected_context,
+            "public/html/mindmap_edit.html", expected_context,
         )
 
     @initialize_js_mock
@@ -271,7 +271,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.student_view()
 
         self.xblock.render_template.assert_called_once_with(
-            "static/html/mindmap.html", expected_context,
+            "public/html/mindmap.html", expected_context,
         )
         initialize_js_mock.assert_called_once_with(
             'MindMapXBlock', json_args=expected_js_context

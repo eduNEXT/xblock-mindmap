@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-08 13:11-0500\n"
+"POT-Creation-Date: 2023-09-18 11:39-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindmap.py:43 static/html/mindmap_edit.html:7
+#: mindmap.py:41 public/html/mindmap_edit.html:7
 msgid "Display name"
 msgstr "Nombre a mostrar"
 
-#: mindmap.py:50
+#: mindmap.py:48
 msgid ""
 "Whether the mind map is static or not. If it is static, the instructor can "
 "create a mind map and it will be the same for all students. If it is not "
@@ -36,7 +36,7 @@ msgstr ""
 "crear un mapa mental y será el mismo para todos los estudiantes. Si no es "
 "estático, los estudiantes pueden crear sus propios mapas mentales."
 
-#: mindmap.py:54 static/html/mindmap_edit.html:14
+#: mindmap.py:52 public/html/mindmap_edit.html:30
 msgid "Is a static mindmap?"
 msgstr "¿Es un mapa mental estático?"
 
@@ -57,7 +57,7 @@ msgid ""
 "The body of the mind map. It is a dictionary with the following structure: "
 "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
 msgstr ""
-"El cuerpo del mapa mental. Es un diccionario con la siguiente estructura: "
+"El contenido del mapa mental. Es un diccionario con la siguiente estructura: "
 "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
 
 #: mindmap.py:85
@@ -74,7 +74,8 @@ msgid ""
 "the problem is worth the sum of the option point values."
 msgstr ""
 "Define el número de puntos que vale cada problema. Si el valor no está "
-"establecido, el problema vale la suma de los valores de puntos de la opción."
+"establecido, el problema vale la suma de los valores de puntos de las "
+"opciones."
 
 #: mindmap.py:102
 msgid "Maximum score"
@@ -92,135 +93,163 @@ msgstr "Enviado"
 msgid "Whether the student has submitted their submission."
 msgstr "Si el estudiante ha realizado su envío."
 
-#: static/html/mindmap.html:8
+#: public/html/mindmap.html:8
 msgid "Instructions for use"
 msgstr "Instrucciones de uso"
 
-#: static/html/mindmap.html:10
+#: public/html/mindmap.html:10
 msgid "With the mouse"
 msgstr "Con el mouse"
 
-#: static/html/mindmap.html:13
+#: public/html/mindmap.html:13
 msgid "→ Double-click the node to edit it."
 msgstr "→ Doble clic en el nodo para editarlo."
 
-#: static/html/mindmap.html:16
+#: public/html/mindmap.html:16
 msgid "→ Drag the node to move it."
 msgstr "→ Arrastre el nodo para moverlo."
 
-#: static/html/mindmap.html:19
+#: public/html/mindmap.html:19
 msgid "→ Click the circle to expand or collapse the child nodes."
 msgstr "→ Haga clic en el círculo para expandir o contraer los nodos hijos."
 
-#: static/html/mindmap.html:23
+#: public/html/mindmap.html:23
 msgid "With the keyboard"
 msgstr "Con el teclado"
 
-#: static/html/mindmap.html:26
+#: public/html/mindmap.html:26
 msgid "→ Ctrl + Enter: Create a new child node for the selected node."
 msgstr "→ Ctrl + Enter: Crear un nuevo nodo hijo para el nodo seleccionado."
 
-#: static/html/mindmap.html:29
+#: public/html/mindmap.html:29
 msgid "→ Enter: Create a new brother node for the selected node."
 msgstr "→ Enter: Crear un nuevo nodo hermano para el nodo seleccionado."
 
-#: static/html/mindmap.html:32
+#: public/html/mindmap.html:32
 msgid "→ F2: Edit the selected node."
 msgstr "→ F2: Editar el nodo seleccionado."
 
-#: static/html/mindmap.html:35
+#: public/html/mindmap.html:35
 msgid "→ Delete/Supr: Delete the selected node."
 msgstr "→ Delete/Supr: Eliminar el nodo seleccionado."
 
-#: static/html/mindmap.html:38
+#: public/html/mindmap.html:38
 msgid "→ Space: Expand or collapse the selected node."
 msgstr "→ Espacio: Expandir o contraer el nodo seleccionado."
 
-#: static/html/mindmap.html:57
+#: public/html/mindmap.html:57
 msgid "Save assignment"
 msgstr "Guardar asignación"
 
-#: static/html/mindmap.html:58
+#: public/html/mindmap.html:58
+#: public/js/src/mindmap.js:159
 msgid "Submit"
 msgstr "Enviar"
 
-#: static/html/mindmap.html:62
+#: public/html/mindmap.html:62
 msgid "Your score is:"
 msgstr "Tu puntaje es:"
 
-#: static/html/mindmap.html:66
+#: public/html/mindmap.html:66
 msgid "Grade submissions"
 msgstr "Calificar envíos"
 
-#: static/html/mindmap_edit.html:14
+#: public/html/mindmap_edit.html:14
 msgid "Weight"
 msgstr "Peso"
 
-#: static/html/mindmap_edit.html:22
+#: public/html/mindmap_edit.html:22
 msgid "Points"
 msgstr "Puntos"
 
-#: static/html/mindmap_edit.html:16
+#: public/html/mindmap_edit.html:32
 msgid "True"
 msgstr "Verdadero"
 
-#: static/html/mindmap_edit.html:17
+#: public/html/mindmap_edit.html:33
 msgid "False"
 msgstr "Falso"
 
-#: static/html/mindmap_edit.html:41
+#: public/html/mindmap_edit.html:41
 msgid "Mind map"
 msgstr "Mapa mental"
 
-#: static/html/mindmap.html:11 static/html/mindmap.html:14
-#: static/html/mindmap_edit.html:27
+#: public/html/mindmap_edit.html:52
 msgid "Save"
 msgstr "Guardar"
 
-#: static/html/mindmap_edit.html:30
+#: public/html/mindmap_edit.html:55
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: static/js/src/mindmap.js:88
-msgid "Mindmap submissions"
-msgstr "Envíos de mapas mentales"
+#: public/js/src/mindmap.js:89
+msgid "Username"
+msgstr "Nombre de usuario"
 
-#: static/js/src/mindmap.js:94
-msgid "Review"
-msgstr "Revisar"
+#: public/js/src/mindmap.js:84
+msgid "Uploaded"
+msgstr "Subido"
 
-#: static/js/src/mindmap.js:95
-msgid "Search"
-msgstr "Buscar"
-
-#: static/js/src/mindmap.js:96
-msgid "Showing _START_ to _END_ of _TOTAL_ entries"
-msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros"
-
-#: static/js/src/mindmap.js:139
-msgid "Remove grade"
-msgstr "Eliminar calificación"
-
-#: static/js/src/mindmap.js:140
-msgid "Loading..."
-msgstr "Cargando..."
-
-#: static/js/src/mindmap.js:141
-msgid "Back"
-msgstr "Volver"
-
-#: static/js/src/mindmap.js:142
+#: public/js/src/mindmap.js:85 public/js/src/mindmap.js:165
 msgid "Grade"
 msgstr "Calificación"
 
-#: static/js/src/mindmap.js:163
+#: public/js/src/mindmap.js:86
+msgid "Actions"
+msgstr "Acciones"
+
+#: public/js/src/mindmap.js:108
+msgid "Mindmap submissions"
+msgstr "Envíos de mapas mentales"
+
+#: public/js/src/mindmap.js:109
+msgid "Review"
+msgstr "Revisar"
+
+#: public/js/src/mindmap.js:110
+msgid "Search"
+msgstr "Buscar"
+
+#: public/js/src/mindmap.js:111
+msgid "Showing _START_ to _END_ of _TOTAL_ entries"
+msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros"
+
+#: public/js/src/mindmap.js:112
+msgid "No data available in table"
+msgstr "Ningún dato disponible en esta tabla"
+
+#: public/js/src/mindmap.js:113
+msgid "Showing 0 to 0 of 0 entries"
+msgstr "Mostrando registros del 0 al 0 de un total de 0 registros"
+
+#: public/js/src/mindmap.js:114
+msgid "No matching records found"
+msgstr "No se encontraron resultados"
+
+#: public/js/src/mindmap.js:115
+msgid "(filtered from _MAX_ total entries)"
+msgstr "(filtrado de un total de _MAX_ registros)"
+
+#: public/js/src/mindmap.js:162
+msgid "Remove grade"
+msgstr "Eliminar calificación"
+
+#: public/js/src/mindmap.js:163
+msgid "Loading..."
+msgstr "Cargando..."
+
+#: public/js/src/mindmap.js:164
+msgid "Back"
+msgstr "Volver"
+
+#: public/js/src/mindmap.js:186
 msgid "Reviewing Mindmap for student: "
-msgstr "Revisando mapa mental para el estudiante: "
+msgstr "Revisando Mapa Mental para el estudiante: "
 
-#: static/js/src/mindmap.js:207
+#: public/js/src/mindmap.js:230
 msgid "Invalid grade must be a number"
-msgstr "Calificación inválida debe ser un número"
+msgstr "Calificación inválida, debe ser un número"
 
-#: static/js/src/mindmap.js:208
+#: public/js/src/mindmap.js:231
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr "Por favor ingresa una calificación menor, la calificación máxima permitida es:"

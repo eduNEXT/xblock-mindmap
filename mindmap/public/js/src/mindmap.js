@@ -7,6 +7,16 @@ function MindMapXBlock(runtime, element, context) {
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
   const maxPointsAllowed = context.max_points;
 
+  let gettext;
+  if ("MindMapI18N" in window || "gettext" in window) {
+    gettext = window.MindMapI18N?.gettext || window.gettext;
+  }
+
+  if (typeof gettext == "undefined") {
+    // No translations -- used by test environment
+    gettext = (string) => string;
+  }
+
   $(".card, .icon-collapsible").on("click", function () {
     $(".icon-collapsible").toggleClass("active");
     $(".collapse-container").slideToggle(200);
@@ -69,7 +79,12 @@ function MindMapXBlock(runtime, element, context) {
 
             function showDataTable(newAssignments) {
               // TODO: add Submitted when submission issue is fixed
-              const dataTableHeaderColumns = ["Username", "Uploaded", "Grade", "Actions"];
+              const dataTableHeaderColumns = [
+                gettext("Username"),
+                gettext("Uploaded"),
+                gettext("Grade"),
+                gettext("Actions"),
+              ];
               const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) =>
                 gettext(currentColumn)
               );
@@ -94,6 +109,10 @@ function MindMapXBlock(runtime, element, context) {
               const reviewButtonText = gettext("Review");
               const dataTableSearchText = gettext("Search");
               const dataTableEntriesText = gettext("Showing _START_ to _END_ of _TOTAL_ entries");
+              const dataTableEmptyText = gettext("No data available in table");
+              const dataTableInfoEmptyText = gettext("Showing 0 to 0 of 0 entries");
+              const dataTableZeroRecordsText = gettext("No matching records found");
+              const dataTableInfoFilteredText = gettext("(filtered from _MAX_ total entries)");
               $(element).find(".modal__data").html(dataTableHTML);
               $(element).find("#modal_title").html(modalTitleSubmissions);
 
@@ -118,6 +137,10 @@ function MindMapXBlock(runtime, element, context) {
                 language: {
                   info: dataTableEntriesText,
                   search: dataTableSearchText,
+                  emptyTable: dataTableEmptyText,
+                  infoEmpty: dataTableInfoEmptyText,
+                  zeroRecords: dataTableZeroRecordsText,
+                  infoFiltered: dataTableInfoFilteredText,
                 },
               });
 
