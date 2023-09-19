@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+from enum import Enum
 
 import pkg_resources
 from django.core.exceptions import PermissionDenied
@@ -15,6 +16,7 @@ from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
+from lms.djangoapps.courseware.models import StudentModule
 from mindmap.edxapp_wrapper.student import user_by_anonymous_id
 from mindmap.edxapp_wrapper.xmodule import get_extended_due_date
 from mindmap.utils import _, utcnow
@@ -25,6 +27,12 @@ loader = ResourceLoader(__name__)
 ITEM_TYPE = "mindmap"
 ATTR_KEY_ANONYMOUS_USER_ID = 'edx-platform.anonymous_user_id'
 ATTR_KEY_USER_ROLE = 'edx-platform.user_role'
+
+
+class SubmissionStatus(Enum):
+    NOT_ATTEMPTED = "Not attempted"
+    SUBMITTED = "Submitted"
+    COMPLETED = "Completed"
 
 
 @XBlock.wants("user")
@@ -116,10 +124,10 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         scope=Scope.settings,
     )
 
-    submitted = Boolean(
+    submission_status = String(
         display_name=_("Submitted"),
         help=_("Whether the student has submitted their submission."),
-        default=False,
+        default=SubmissionStatus.NOT_ATTEMPTED.value,
         scope=Scope.user_state,
     )
 
@@ -214,6 +222,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             "in_student_view": in_student_view,
             "editable": editable,
             "xblock_id": self.scope_ids.usage_id.block_id,
+            "submission_status": self.submission_status,
         }
 
         if self.has_score:
@@ -414,11 +423,37 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         student_item_dict = self.get_student_item_dict()
         create_submission(student_item_dict, answer)
 
-        self.submitted = True
+        self.submission_status = SubmissionStatus.SUBMITTED.value
 
         return {
             "success": True,
         }
+
+    def get_or_create_student_module(self, user):
+        """
+        Gets or creates a StudentModule for the given user for this block
+
+        Returns:
+            StudentModule: A StudentModule object
+        """
+        # pylint: disable=no-member
+        student_module, created = StudentModule.objects.get_or_create(
+            course_id=self.course_id,
+            module_state_key=self.location,
+            student=user,
+            defaults={
+                "state": "{}",
+                "module_type": self.category,
+            },
+        )
+        if created:
+            log.info(
+                "Created student module %s [course: %s] [student: %s]",
+                student_module.module_state_key,
+                student_module.course_id,
+                student_module.student.username,
+            )
+        return student_module
 
     @XBlock.json_handler
     def get_instructor_grading_data(self, _, _suffix="") -> dict:
@@ -450,24 +485,43 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                 if not submission:
                     continue
                 user = user_by_anonymous_id(student.student_id)
+                student_module = self.get_or_create_student_module(user)
+                state = json.loads(student_module.state)
                 score = self.get_score(student.student_id)
-                yield {
-                    "student_id": student.student_id,
-                    "submission_id": submission["uuid"],
-                    "answer_body": submission["answer"],
-                    "username": user.username,
-                    "timestamp": submission["created_at"].strftime(
-                        DateTime.DATETIME_FORMAT
-                    ),
-                    "score": score,
-                    "submitted": self.submitted,
-                }
+
+                if state.get("submission_status") in [
+                    SubmissionStatus.COMPLETED.value, SubmissionStatus.SUBMITTED.value
+                ]:
+                    yield {
+                        "module_id": student_module.id,
+                        "student_id": student.student_id,
+                        "submission_id": submission["uuid"],
+                        "answer_body": submission["answer"],
+                        "username": user.username,
+                        "timestamp": submission["created_at"].strftime(
+                            DateTime.DATETIME_FORMAT
+                        ),
+                        "score": score,
+                        "submission_status": state.get("submission_status"),
+                    }
 
         return {
             "assignments": list(get_student_data()),
             "max_score": self.max_score(),
             "display_name": self.display_name,
         }
+
+    def get_student_module(self, module_id):
+        """
+        Returns a StudentModule that matches the given id
+
+        Args:
+            module_id (int): The module id
+
+        Returns:
+            StudentModule: A StudentModule object
+        """
+        return StudentModule.objects.get(pk=module_id)
 
     @XBlock.json_handler
     def enter_grade(self, data, _suffix="") -> dict:
@@ -495,6 +549,12 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         set_score(uuid, score, self.max_score())
 
+        module = self.get_student_module(data.get("module_id"))
+        state = json.loads(module.state)
+        state["submission_status"] = SubmissionStatus.COMPLETED.value
+        module.state = json.dumps(state)
+        module.save()
+
         return {
             "success": True,
         }
@@ -521,6 +581,12 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             raise JsonHandlerError(400, "Missing required parameters")
 
         reset_score(student_id, self.block_course_id, self.block_id)
+
+        module = self.get_student_module(data.get("module_id"))
+        state = json.loads(module.state)
+        state["submission_status"] = SubmissionStatus.SUBMITTED.value
+        module.state = json.dumps(state)
+        module.save()
 
         return {
             "success": True,
@@ -567,7 +633,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         return (
             not self.past_due()
             and self.score is None
-            and not self.submitted
+            and self.submission_status == SubmissionStatus.NOT_ATTEMPTED.value
         )
 
     def get_score(self, student_id=None) -> int:
@@ -587,7 +653,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         if score:
             return score["points_earned"]
 
-        return None
+        return 0
 
     def get_submission(self, student_id=None) -> dict:
         """

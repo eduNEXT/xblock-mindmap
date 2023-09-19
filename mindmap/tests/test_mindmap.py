@@ -468,7 +468,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         })
         self.xblock.is_instructor = Mock(return_value=True)
         user_by_anonymous_id_mock.return_value = Mock(username=self.student.student_id)
-        self.xblock.submitted = True
+        self.xblock.submission_status = True
         expected_result = {
             "assignments": [
                 {
@@ -480,7 +480,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
                     "username": self.student.student_id,
                     "timestamp": current_datetime.strftime(DateTime.DATETIME_FORMAT),
                     "score": 50,
-                    "submitted": self.xblock.submitted,
+                    "submission_status": self.xblock.submission_status,
 
                 },
             ],
