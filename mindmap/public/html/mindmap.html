@@ -58,9 +58,7 @@
   <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
 {% endif %}
 
-{% if score %}
-  <p>{% trans "Your score is:" %} {{ score }}.</p>
-{% endif %}
+<p>({{ score }}/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
 
 {% if is_instructor and in_student_view and not is_static  %}
     <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>

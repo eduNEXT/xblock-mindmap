@@ -82,6 +82,7 @@ function MindMapXBlock(runtime, element, context) {
               const dataTableHeaderColumns = [
                 gettext("Username"),
                 gettext("Uploaded"),
+                gettext("Submission Status"),
                 gettext("Grade"),
                 gettext("Actions"),
               ];
@@ -125,7 +126,7 @@ function MindMapXBlock(runtime, element, context) {
                 columns: [
                   { data: "username" },
                   { data: "timestamp" },
-                  // TODO: add this line { data: "submitted" },
+                  { data: "submission_status" },
                   { data: "score" },
                   {
                     data: null,
@@ -226,7 +227,7 @@ function MindMapXBlock(runtime, element, context) {
                     e.preventDefault();
                     const typeAction = $(this).attr("data-type");
                     const grade = $("#grade_value").val();
-                    const { submission_id, student_id } = submissionData;
+                    const { submission_id, student_id, module_id } = submissionData;
                     const invalidGradeMessage = gettext("Invalid grade must be a number");
                     const maxGradeMessage = gettext("Please enter a lower grade, maximum grade allowed is:");
                     const gradeParsed = parseInt(grade, 10);
@@ -253,6 +254,7 @@ function MindMapXBlock(runtime, element, context) {
                       data = {
                         grade: grade,
                         submission_id: submission_id,
+                        module_id: module_id,
                       };
                     }
 
@@ -260,6 +262,7 @@ function MindMapXBlock(runtime, element, context) {
                       apiUrl = removeGradeURL;
                       data = {
                         student_id: student_id,
+                        module_id: module_id,
                       };
                     }
 
@@ -295,9 +298,11 @@ function MindMapXBlock(runtime, element, context) {
       .click(function () {
         const grade = $(element).find(`#grade-input_${context.xblock_id}`).val();
         const submission_id = $(element).find(`#submission-id-input_${context.xblock_id}`).val();
+        const module_id = $(element).find(`#module-id-input_${context.xblock_id}`).val();
         const data = {
           grade: grade,
           submission_id: submission_id,
+          module_id: module_id,
         };
         console.log(data);
         $.post(enterGradeURL, JSON.stringify(data))
@@ -313,8 +318,10 @@ function MindMapXBlock(runtime, element, context) {
       .find(`#remove-grade-button_${context.xblock_id}`)
       .click(function () {
         const student_id = $(element).find(`#student-id-input_${context.xblock_id}`).val();
+        const module_id = $(element).find(`#module-id-input_${context.xblock_id}`).val();
         const data = {
           student_id: student_id,
+          module_id: module_id,
         };
         console.log(data);
         $.post(removeGradeURL, JSON.stringify(data))
