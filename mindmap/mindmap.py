@@ -9,6 +9,7 @@ import pkg_resources
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
 from web_fragments.fragment import Fragment
+from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
@@ -17,7 +18,6 @@ from xblockutils.resources import ResourceLoader
 from mindmap.edxapp_wrapper.student import user_by_anonymous_id
 from mindmap.edxapp_wrapper.xmodule import get_extended_due_date
 from mindmap.utils import _, utcnow
-
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
@@ -29,13 +29,21 @@ ATTR_KEY_USER_ROLE = 'edx-platform.user_role'
 
 @XBlock.wants("user")
 @XBlock.needs("i18n")
-class MindMapXBlock(XBlock):
+class MindMapXBlock(XBlock, CompletableXBlockMixin):
     """
     Mind Map XBlock provides a way to create and save mind maps in a course.
     """
 
-    has_score = True
-    icon_class = "problem"
+    has_score = Boolean(
+        display_name=_("Is Scorable"),
+        help=_(
+            "Whether the component is scorable. If is scorable, the student "
+            "can submit the assignment and receive a score from the instructor. "
+            "If it is not scorable, the student only can save the assignment."
+        ),
+        default=True,
+        scope=Scope.settings,
+    )
 
     display_name = String(
         display_name=_("Display name"),
@@ -194,17 +202,25 @@ class MindMapXBlock(XBlock):
         else:
             editable = in_student_view
 
-        return {
+        context = {
             "display_name": self.display_name,
+            "has_score": self.has_score,
+            "is_static": self.is_static,
+            "has_score_field": self.fields["has_score"],
+            "is_static_field": self.fields["is_static"],
             "in_student_view": in_student_view,
             "editable": editable,
             "xblock_id": self.scope_ids.usage_id.block_id,
-            "is_static": self.is_static,
-            "is_static_field": self.fields["is_static"],
-            "can_submit_assignment": self.submit_allowed(),
-            "score": self.score,
-            "max_score": self.max_score(),
         }
+
+        if self.has_score:
+            context.update({
+                "can_submit_assignment": self.submit_allowed(),
+                "score": self.score,
+                "max_score": self.max_score(),
+            })
+
+        return context
 
     def get_js_context(self, user, context):
         """
@@ -238,7 +254,7 @@ class MindMapXBlock(XBlock):
         context = self.get_context(user)
         js_context = self.get_js_context(user, context)
 
-        if not context["can_submit_assignment"]:
+        if context["has_score"] and not context["can_submit_assignment"]:
             context["editable"] = False
             js_context["editable"] = False
 
@@ -343,13 +359,15 @@ class MindMapXBlock(XBlock):
         self.display_name = data.get("display_name")
         self.is_static = data.get("is_static")
         self.mindmap_body = data.get("mind_map")
+        self.has_score = data.get("has_score")
+        self.icon_class = "problem" if self.has_score else "mindmap"
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
-
-        points = data.get("points", self.points)
-        weight = data.get("weight", self.weight)
-        self.points, self.weight = self.validate_score(points, weight)
+        if self.has_score:
+            points = data.get("points", self.points)
+            weight = data.get("weight", self.weight)
+            self.points, self.weight = self.validate_score(points, weight)
 
     @XBlock.json_handler
     def save_assignment(self, data, _suffix="") -> dict:
@@ -668,13 +686,6 @@ class MindMapXBlock(XBlock):
                     loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
         return None
-
-    @staticmethod
-    def get_dummy():
-        """
-        Dummy method to generate initial i18n
-        """
-        return translation.gettext_noop('Dummy')
 
 
 def require(assertion):

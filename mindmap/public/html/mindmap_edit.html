@@ -11,6 +11,16 @@
     </li>
     <li class="field comp-setting-entry is-set">
       <div class="wrapper-comp-setting">
+        <label class="label setting-label" for="mindmap_has_score">{% trans "Is scorable?" %}</label>
+        <select class="input settings-input" name="mindmap_has_score" id="mindmap_has_score">
+          <option value=1 {% if has_score %} selected{% endif %}>{% trans "True" %}</option>
+          <option value=0 {% if not has_score %} selected{% endif %}>{% trans "False" %}</option>
+        </select>
+      </div>
+      <span class="tip setting-help">{% trans has_score.help %}</span>
+    </li>
+    <li class="field comp-setting-entry is-set">
+      <div class="wrapper-comp-setting">
         <label class="label setting-label" for="mindmap_weight">{% trans "Weight" %}</label>
         <input class="input setting-input" name="mindmap_weight" id="mindmap_weight"
           value="{{weight}}" type="number" />
