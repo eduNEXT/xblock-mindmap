@@ -35,7 +35,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
     """
 
     has_score = Boolean(
-        display_name=_("Is Scorable"),
+        display_name=_("Is scorable?"),
         help=_(
             "Whether the component is scorable. If is scorable, the student "
             "can submit the mind map and receive a score from the instructor. "
@@ -363,7 +363,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         self.is_static = data.get("is_static")
         self.mindmap_body = data.get("mind_map")
         self.has_score = data.get("has_score")
-        self.icon_class = "problem" if self.has_score else ITEM_TYPE
+        self.icon_class = "problem" if self.has_score else ITEM_TYPE # pylint: disable=attribute-defined-outside-init
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
