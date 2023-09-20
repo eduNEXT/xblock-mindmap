@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-18 11:39-0500\n"
+"POT-Creation-Date: 2023-09-20 09:07-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,65 +22,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindmap.py:41 public/html/mindmap_edit.html:7
+#: mindmap.py:34
+msgid "Not attempted"
+msgstr ""
+
+#: mindmap.py:35
+msgid "Submitted"
+msgstr ""
+
+#: mindmap.py:36
+msgid "Completed"
+msgstr ""
+
+#: mindmap.py:50 public/html/mindmap_edit.html:7
 msgid "Display name"
 msgstr ""
 
-#: mindmap.py:48
+#: mindmap.py:57
 msgid ""
 "Whether the mind map is static or not. If it is static, the instructor can "
 "create a mind map and it will be the same for all students. If it is not "
 "static, the students can create their own mind maps."
 msgstr ""
 
-#: mindmap.py:52 public/html/mindmap_edit.html:30
+#: mindmap.py:61 public/html/mindmap_edit.html:30
 msgid "Is a static mindmap?"
 msgstr ""
 
-#: mindmap.py:59
+#: mindmap.py:68
 msgid ""
 "The mind map that will be shown to students if the\"Is a static mindmap?\" "
 "field is set to \"True\""
 msgstr ""
 
-#: mindmap.py:62
+#: mindmap.py:71
 msgid "Mindmap body"
 msgstr ""
 
-#: mindmap.py:82
+#: mindmap.py:91
 msgid ""
 "The body of the mind map. It is a dictionary with the following structure: "
 "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
 msgstr ""
 
-#: mindmap.py:85
+#: mindmap.py:94
 msgid "Mindmap student body"
 msgstr ""
 
-#: mindmap.py:91
+#: mindmap.py:100
 msgid "Problem Weight"
 msgstr ""
 
-#: mindmap.py:93
+#: mindmap.py:102
 msgid ""
 "Defines the number of points each problem is worth. If the value is not set, "
 "the problem is worth the sum of the option point values."
 msgstr ""
 
-#: mindmap.py:102
+#: mindmap.py:111
 msgid "Maximum score"
 msgstr ""
 
-#: mindmap.py:103
+#: mindmap.py:112
 msgid "Maximum grade score given to assignment by instructors."
 msgstr ""
 
-#: mindmap.py:109
-msgid "Submitted"
+#: mindmap.py:118
+msgid "Submission status"
 msgstr ""
 
-#: mindmap.py:110
-msgid "Whether the student has submitted their submission."
+#: mindmap.py:119
+msgid "The submission status of the assignment."
 msgstr ""
 
 #: public/html/mindmap.html:8
@@ -132,15 +144,15 @@ msgid "Save assignment"
 msgstr ""
 
 #: public/html/mindmap.html:58
-#: public/js/src/mindmap.js:159
+#: public/js/src/mindmap.js:162
 msgid "Submit"
 msgstr ""
 
-#: public/html/mindmap.html:62
-msgid "Your score is:"
+#: public/html/mindmap.html:61
+msgid "points"
 msgstr ""
 
-#: public/html/mindmap.html:66
+#: public/html/mindmap.html:64
 msgid "Grade submissions"
 msgstr ""
 
@@ -180,66 +192,70 @@ msgstr ""
 msgid "Uploaded"
 msgstr ""
 
-#: public/js/src/mindmap.js:85 public/js/src/mindmap.js:165
+#: public/js/src/mindmap.js:85
+msgid "Submission Status"
+msgstr ""
+
+#: public/js/src/mindmap.js:86 public/js/src/mindmap.js:166
 msgid "Grade"
 msgstr ""
 
-#: public/js/src/mindmap.js:86
+#: public/js/src/mindmap.js:87
 msgid "Actions"
 msgstr ""
 
-#: public/js/src/mindmap.js:108
+#: public/js/src/mindmap.js:109
 msgid "Mindmap submissions"
 msgstr ""
 
-#: public/js/src/mindmap.js:109
+#: public/js/src/mindmap.js:110
 msgid "Review"
 msgstr ""
 
-#: public/js/src/mindmap.js:110
+#: public/js/src/mindmap.js:111
 msgid "Search"
 msgstr ""
 
-#: public/js/src/mindmap.js:111
+#: public/js/src/mindmap.js:112
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr ""
 
-#: public/js/src/mindmap.js:112
+#: public/js/src/mindmap.js:113
 msgid "No data available in table"
 msgstr ""
 
-#: public/js/src/mindmap.js:113
+#: public/js/src/mindmap.js:114
 msgid "Showing 0 to 0 of 0 entries"
 msgstr ""
 
-#: public/js/src/mindmap.js:114
+#: public/js/src/mindmap.js:115
 msgid "No matching records found"
 msgstr ""
 
-#: public/js/src/mindmap.js:115
+#: public/js/src/mindmap.js:116
 msgid "(filtered from _MAX_ total entries)"
 msgstr ""
 
-#: public/js/src/mindmap.js:162
+#: public/js/src/mindmap.js:163
 msgid "Remove grade"
 msgstr ""
 
-#: public/js/src/mindmap.js:163
+#: public/js/src/mindmap.js:164
 msgid "Loading..."
 msgstr ""
 
-#: public/js/src/mindmap.js:164
+#: public/js/src/mindmap.js:165
 msgid "Back"
 msgstr ""
 
-#: public/js/src/mindmap.js:186
+#: public/js/src/mindmap.js:187
 msgid "Reviewing Mindmap for student: "
 msgstr ""
 
-#: public/js/src/mindmap.js:230
+#: public/js/src/mindmap.js:231
 msgid "Invalid grade must be a number"
 msgstr ""
 
-#: public/js/src/mindmap.js:231
+#: public/js/src/mindmap.js:232
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr ""

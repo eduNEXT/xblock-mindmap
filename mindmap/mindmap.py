@@ -15,7 +15,11 @@ from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
-from lms.djangoapps.courseware.models import StudentModule
+try:
+    from lms.djangoapps.courseware.models import StudentModule
+except ImportError:
+    StudentModule = None
+
 from mindmap.edxapp_wrapper.student import user_by_anonymous_id
 from mindmap.edxapp_wrapper.xmodule import get_extended_due_date
 from mindmap.utils import _, utcnow
@@ -30,6 +34,7 @@ ATTR_KEY_USER_ROLE = 'edx-platform.user_role'
 
 
 class SubmissionStatus(Enum):
+    """Submission status enum"""
     NOT_ATTEMPTED = "Not attempted"
     SUBMITTED = "Submitted"
     COMPLETED = "Completed"
@@ -114,8 +119,8 @@ class MindMapXBlock(XBlock):
     )
 
     submission_status = String(
-        display_name=_("Submitted"),
-        help=_("Whether the student has submitted their submission."),
+        display_name=_("Submission status"),
+        help=_("The submission status of the assignment."),
         default=SubmissionStatus.NOT_ATTEMPTED.value,
         scope=Scope.user_state,
     )
@@ -632,7 +637,7 @@ class MindMapXBlock(XBlock):
         if score:
             return score["points_earned"]
 
-        return 0
+        return None
 
     def get_submission(self, student_id=None) -> dict:
         """
@@ -734,13 +739,6 @@ class MindMapXBlock(XBlock):
                     loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
         return None
-
-    @staticmethod
-    def get_dummy():
-        """
-        Dummy method to generate initial i18n
-        """
-        return translation.gettext_noop('Dummy')
 
 
 def require(assertion):
