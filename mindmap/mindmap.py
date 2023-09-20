@@ -38,8 +38,11 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         display_name=_("Is Scorable"),
         help=_(
             "Whether the component is scorable. If is scorable, the student "
-            "can submit the assignment and receive a score from the instructor. "
-            "If it is not scorable, the student only can save the assignment."
+            "can submit the mind map and receive a score from the instructor. "
+            "If it is not scorable, the student only can save the mind map. "
+            "Important: Changing from scorable to not scorable, the progress "
+            "of the students who have already been assigned a grade will not "
+            "be reset."
         ),
         default=True,
         scope=Scope.settings,
@@ -360,7 +363,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         self.is_static = data.get("is_static")
         self.mindmap_body = data.get("mind_map")
         self.has_score = data.get("has_score")
-        self.icon_class = "problem" if self.has_score else "mindmap"
+        self.icon_class = "problem" if self.has_score else ITEM_TYPE
 
         # We need to validate the points and weight fields ourselves because
         # Studio doesn't do it for us.
