@@ -191,6 +191,17 @@ class MindMapXBlock(XBlock):
             template_path, context, i18n_service=self.runtime.service(self, 'i18n')
         )
 
+    def set_submission_status(self) -> None:
+        """Update the submission status for the current user."""
+        student_id = self.get_current_user().opt_attrs.get(ATTR_KEY_ANONYMOUS_USER_ID)
+        submission = self.get_submission(student_id)
+
+        if submission:
+            submission_status = submission["answer"].get(
+                "submission_status", SubmissionStatus.NOT_ATTEMPTED.value
+            )
+            self.submission_status = submission_status
+
     def get_context(self, user):
         """
         Return the context for the student view.
@@ -248,6 +259,7 @@ class MindMapXBlock(XBlock):
         Returns:
             Fragment: The fragment to render
         """
+        self.set_submission_status()
         user = self.get_current_user()
         context = self.get_context(user)
         js_context = self.get_js_context(user, context)
@@ -400,9 +412,11 @@ class MindMapXBlock(XBlock):
 
         require(self.submit_allowed())
 
+        # Create a new submission
         self.mindmap_student_body = data.get("mind_map")
         answer = {
             "mindmap_student_body": json.dumps(self.mindmap_student_body),
+            "submission_status": SubmissionStatus.SUBMITTED.value,
         }
         student_item_dict = self.get_student_item_dict()
         create_submission(student_item_dict, answer)
@@ -413,31 +427,31 @@ class MindMapXBlock(XBlock):
             "success": True,
         }
 
-    def get_or_create_student_module(self, user):
-        """
-        Gets or creates a StudentModule for the given user for this block
+    # def get_or_create_student_module(self, user):
+    #     """
+    #     Gets or creates a StudentModule for the given user for this block
 
-        Returns:
-            StudentModule: A StudentModule object
-        """
-        # pylint: disable=no-member
-        student_module, created = StudentModule.objects.get_or_create(
-            course_id=self.course_id,
-            module_state_key=self.location,
-            student=user,
-            defaults={
-                "state": "{}",
-                "module_type": self.category,
-            },
-        )
-        if created:
-            log.info(
-                "Created student module %s [course: %s] [student: %s]",
-                student_module.module_state_key,
-                student_module.course_id,
-                student_module.student.username,
-            )
-        return student_module
+    #     Returns:
+    #         StudentModule: A StudentModule object
+    #     """
+    #     # pylint: disable=no-member
+    #     student_module, created = StudentModule.objects.get_or_create(
+    #         course_id=self.course_id,
+    #         module_state_key=self.location,
+    #         student=user,
+    #         defaults={
+    #             "state": "{}",
+    #             "module_type": self.category,
+    #         },
+    #     )
+    #     if created:
+    #         log.info(
+    #             "Created student module %s [course: %s] [student: %s]",
+    #             student_module.module_state_key,
+    #             student_module.course_id,
+    #             student_module.student.username,
+    #         )
+    #     return student_module
 
     @XBlock.json_handler
     def get_instructor_grading_data(self, _, _suffix="") -> dict:
@@ -464,30 +478,35 @@ class MindMapXBlock(XBlock):
             students = SubmissionsStudent.objects.filter(
                 course_id=self.course_id, item_id=self.block_id
             )
+
             for student in students:
+
                 submission = self.get_submission(student.student_id)
-                if not submission:
+                answer = submission.get("answer", {})
+
+                if (
+                    not submission or
+                    answer.get("submission_status") ==
+                    SubmissionStatus.NOT_ATTEMPTED.value
+                ):
                     continue
+
+                # student_module = self.get_or_create_student_module(user)
+                # state = json.loads(student_module.state)
                 user = user_by_anonymous_id(student.student_id)
-                student_module = self.get_or_create_student_module(user)
-                state = json.loads(student_module.state)
                 score = self.get_score(student.student_id)
 
-                if state.get("submission_status") in [
-                    SubmissionStatus.COMPLETED.value, SubmissionStatus.SUBMITTED.value
-                ]:
-                    yield {
-                        "module_id": student_module.id,
-                        "student_id": student.student_id,
-                        "submission_id": submission["uuid"],
-                        "answer_body": submission["answer"],
-                        "username": user.username,
-                        "timestamp": submission["created_at"].strftime(
-                            DateTime.DATETIME_FORMAT
-                        ),
-                        "score": score,
-                        "submission_status": state.get("submission_status"),
-                    }
+                yield {
+                    "student_id": student.student_id,
+                    "submission_id": submission["uuid"],
+                    "answer_body": answer,
+                    "username": user.username,
+                    "timestamp": submission["created_at"].strftime(
+                        DateTime.DATETIME_FORMAT
+                    ),
+                    "score": score,
+                    "submission_status": answer.get("submission_status"),
+                }
 
         return {
             "assignments": list(get_student_data()),
@@ -495,17 +514,17 @@ class MindMapXBlock(XBlock):
             "display_name": self.display_name,
         }
 
-    def get_student_module(self, module_id):
-        """
-        Returns a StudentModule that matches the given id
+    # def get_student_module(self, module_id):
+    #     """
+    #     Returns a StudentModule that matches the given id
 
-        Args:
-            module_id (int): The module id
+    #     Args:
+    #         module_id (int): The module id
 
-        Returns:
-            StudentModule: A StudentModule object
-        """
-        return StudentModule.objects.get(pk=module_id)
+    #     Returns:
+    #         StudentModule: A StudentModule object
+    #     """
+    #     return StudentModule.objects.get(pk=module_id)
 
     @XBlock.json_handler
     def enter_grade(self, data, _suffix="") -> dict:
@@ -520,24 +539,34 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import set_score  # pylint: disable=import-outside-toplevel
+        from submissions.api import set_score, create_submission # pylint: disable=import-outside-toplevel
 
         require(self.is_instructor())
 
         score = int(data.get("grade"))
-        uuid = data.get("submission_id")
-        if not score or not uuid:
+        # uuid = data.get("submission_id")
+
+        if not score:
             raise JsonHandlerError(400, "Missing required parameters")
         if score > self.max_score():
             raise JsonHandlerError(400, "Score cannot be greater than max score")
 
-        set_score(uuid, score, self.max_score())
+        # Create a new submission
+        self.mindmap_student_body = data.get("mind_map")
+        answer = {
+            "mindmap_student_body": json.dumps(self.mindmap_student_body),
+            "submission_status": SubmissionStatus.COMPLETED.value,
+        }
+        student_item_dict = self.get_student_item_dict()
+        submission = create_submission(student_item_dict, answer)
+        set_score(submission["uuid"], score, self.max_score())
+        breakpoint()
 
-        module = self.get_student_module(data.get("module_id"))
-        state = json.loads(module.state)
-        state["submission_status"] = SubmissionStatus.COMPLETED.value
-        module.state = json.dumps(state)
-        module.save()
+        # module = self.get_student_module(data.get("module_id"))
+        # state = json.loads(module.state)
+        # state["submission_status"] = SubmissionStatus.COMPLETED.value
+        # module.state = json.dumps(state)
+        # module.save()
 
         return {
             "success": True,
@@ -556,7 +585,7 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import reset_score  # pylint: disable=import-outside-toplevel
+        from submissions.api import reset_score, create_submission # pylint: disable=import-outside-toplevel
 
         require(self.is_instructor())
 
@@ -564,13 +593,22 @@ class MindMapXBlock(XBlock):
         if not student_id:
             raise JsonHandlerError(400, "Missing required parameters")
 
-        reset_score(student_id, self.block_course_id, self.block_id)
+         # Create a new submission
+        self.mindmap_student_body = data.get("mind_map")
+        answer = {
+            "mindmap_student_body": json.dumps(self.mindmap_student_body),
+            "submission_status": SubmissionStatus.SUBMITTED.value,
+        }
+        student_item_dict = self.get_student_item_dict()
+        submission = create_submission(student_item_dict, answer)
 
-        module = self.get_student_module(data.get("module_id"))
-        state = json.loads(module.state)
-        state["submission_status"] = SubmissionStatus.SUBMITTED.value
-        module.state = json.dumps(state)
-        module.save()
+        reset_score(submission["uuid"], self.block_course_id, self.block_id)
+
+        # module = self.get_student_module(data.get("module_id"))
+        # state = json.loads(module.state)
+        # state["submission_status"] = SubmissionStatus.SUBMITTED.value
+        # module.state = json.dumps(state)
+        # module.save()
 
         return {
             "success": True,
