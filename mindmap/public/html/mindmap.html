@@ -53,15 +53,17 @@
 
 <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
 
+{% if has_score not score %}
+  <p>(0/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
+{% elif has_score and score %}
+  <p>({{ score }}/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
+{% endif %}
+
 {% if editable and in_student_view and can_submit_assignment %}
   <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
   <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
 {% elif editable and in_student_view and not has_score %}
   <button id="save_button_{{xblock_id}}">{% trans "Save" %}</button>
-{% endif %}
-
-{% if has_score and score %}
-  <p>({{ score }}/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
 {% endif %}
 
 {% if is_instructor and in_student_view and not is_static and has_score %}
