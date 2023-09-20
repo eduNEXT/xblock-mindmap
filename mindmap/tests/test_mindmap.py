@@ -44,6 +44,7 @@ class MindMapXBlockTestMixin(TestCase):
         self.xblock.points = 100
         self.xblock.weight = 1
         self.xblock.has_score = True
+        self.xblock.submission_status = "Not attempted"
         self.xblock.course_id = "test-course-id"
 
 
@@ -78,6 +79,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -119,6 +121,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -160,6 +163,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
 
         self.xblock.student_view()
@@ -193,6 +197,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_instructor": True,
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
 
         self.xblock.student_view()
@@ -233,6 +238,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
 
         self.xblock.studio_view()
@@ -273,6 +279,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -397,8 +404,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             expected_answer,
         )
 
+    @patch("mindmap.mindmap.MindMapXBlock.get_student_module")
     @patch("submissions.api.set_score")
-    def test_enter_grade(self, set_score_mock: Mock):
+    def test_enter_grade(self, set_score_mock: Mock, get_student_module_mock: Mock):
         """
         Check enter grade handler.
 
@@ -412,6 +420,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             }
         ).encode("utf-8")
         self.xblock.is_instructor = Mock(return_value=True)
+        get_student_module_mock.return_value = Mock(state='{"test-state": "mindmap"}')
 
         response = self.xblock.enter_grade(self.request)
 
@@ -422,8 +431,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             self.xblock.max_score(),
         )
 
+    @patch("mindmap.mindmap.MindMapXBlock.get_student_module")
     @patch("submissions.api.reset_score")
-    def test_remove_grade(self, reset_score_mock: Mock):
+    def test_remove_grade(self, reset_score_mock: Mock, get_student_module_mock: Mock):
         """
         Check remove grade handler.
 
@@ -432,6 +442,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         """
         self.request.body = json.dumps({"student_id": self.student_id}).encode("utf-8")
         self.xblock.is_instructor = Mock(return_value=True)
+        get_student_module_mock.return_value = Mock(state='{"test-state": "mindmap"}')
 
         response = self.xblock.remove_grade(self.request)
 
@@ -442,9 +453,15 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             self.xblock.block_id,
         )
 
+    @patch("mindmap.mindmap.MindMapXBlock.get_or_create_student_module")
     @patch("mindmap.mindmap.user_by_anonymous_id")
     @patch("submissions.models.StudentItem")
-    def test_get_instructor_grading_data(self, student_item_mock: Mock, user_by_anonymous_id_mock: Mock):
+    def test_get_instructor_grading_data(
+        self,
+        student_item_mock: Mock,
+        user_by_anonymous_id_mock: Mock,
+        get_or_create_student_module_mock: Mock,
+    ):
         """
         Check get instructor grading data handler.
 
@@ -459,6 +476,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             ),
         ]
         current_datetime = datetime.datetime.now()
+        module_id = 1
         self.xblock.get_submission = Mock(return_value={
             "uuid": "test-submission-id",
             "answer": {
@@ -468,10 +486,11 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         })
         self.xblock.is_instructor = Mock(return_value=True)
         user_by_anonymous_id_mock.return_value = Mock(username=self.student.student_id)
-        self.xblock.submission_status = True
+        self.xblock.submission_status = "Submitted"
         expected_result = {
             "assignments": [
                 {
+                    "module_id": module_id,
                     "student_id": self.student.student_id,
                     "submission_id": "test-submission-id",
                     "answer_body": {
@@ -487,6 +506,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             "display_name": self.xblock.display_name,
             "max_score": self.xblock.max_score(),
         }
+        get_or_create_student_module_mock.return_value = Mock(
+            state='{"submission_status": "Submitted"}', id=module_id,
+        )
 
         response = self.xblock.get_instructor_grading_data(self.request)
 
