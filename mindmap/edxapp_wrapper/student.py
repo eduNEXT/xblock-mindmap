@@ -15,4 +15,14 @@ def get_anonymous_user_id_function(*args, **kwargs):
     return backend.get_user_by_anonymous_id(*args, **kwargs)
 
 
+def get_student_module_function():
+    """Get StudentModule model."""
+
+    backend_function = settings.MINDMAP_STUDENT_MODULE_BACKEND
+    backend = import_module(backend_function)
+
+    return backend.get_student_module()
+
+
+student_module = get_student_module_function
 user_by_anonymous_id = get_anonymous_user_id_function

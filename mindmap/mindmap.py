@@ -16,12 +16,10 @@ from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
-try:
-    from lms.djangoapps.courseware.models import StudentModule
-except ImportError:
-    StudentModule = None
-
-from mindmap.edxapp_wrapper.student import user_by_anonymous_id
+from mindmap.edxapp_wrapper.student import (
+    user_by_anonymous_id,
+    student_module as StudentModule,
+)
 from mindmap.edxapp_wrapper.xmodule import get_extended_due_date
 from mindmap.utils import _, utcnow
 
@@ -35,9 +33,9 @@ ATTR_KEY_USER_ROLE = 'edx-platform.user_role'
 
 class SubmissionStatus(Enum):
     """Submission status enum"""
-    NOT_ATTEMPTED = "Not attempted"
-    SUBMITTED = "Submitted"
-    COMPLETED = "Completed"
+    NOT_ATTEMPTED = _("Not attempted")
+    SUBMITTED = _("Submitted")
+    COMPLETED = _("Completed")
 
 
 @XBlock.wants("user")
@@ -442,7 +440,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             StudentModule: A StudentModule object
         """
         # pylint: disable=no-member
-        student_module, created = StudentModule.objects.get_or_create(
+        student_module, created = StudentModule().objects.get_or_create(
             course_id=self.course_id,
             module_state_key=self.location,
             student=user,
@@ -526,7 +524,21 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             StudentModule: A StudentModule object
         """
-        return StudentModule.objects.get(pk=module_id)
+        return StudentModule().objects.get(pk=module_id)
+
+    def update_student_state(self, module_id: int, submission_status: str) -> None:
+        """
+        Updates the state of a student.
+
+        Args:
+            module_id (int): The module id
+            submission_status (str): The submission status
+        """
+        module = self.get_student_module(module_id)
+        state = json.loads(module.state)
+        state["submission_status"] = submission_status
+        module.state = json.dumps(state)
+        module.save()
 
     @XBlock.json_handler
     def enter_grade(self, data, _suffix="") -> dict:
@@ -554,11 +566,9 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         set_score(uuid, score, self.max_score())
 
-        module = self.get_student_module(data.get("module_id"))
-        state = json.loads(module.state)
-        state["submission_status"] = SubmissionStatus.COMPLETED.value
-        module.state = json.dumps(state)
-        module.save()
+        self.update_student_state(
+            data.get("module_id"), SubmissionStatus.COMPLETED.value
+        )
 
         return {
             "success": True,
@@ -587,11 +597,9 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         reset_score(student_id, self.block_course_id, self.block_id)
 
-        module = self.get_student_module(data.get("module_id"))
-        state = json.loads(module.state)
-        state["submission_status"] = SubmissionStatus.SUBMITTED.value
-        module.state = json.dumps(state)
-        module.save()
+        self.update_student_state(
+            data.get("module_id"), SubmissionStatus.SUBMITTED.value
+        )
 
         return {
             "success": True,

@@ -53,9 +53,9 @@
 
 <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
 
-{% if has_score not score %}
+{% if has_score and not score and in_student_view %}
   <p>(0/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
-{% elif has_score and score %}
+{% elif has_score and score and in_student_view %}
   <p>({{ score }}/{{ max_score }} {% trans "points" %}) {% trans submission_status %}</p>
 {% endif %}
 

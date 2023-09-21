@@ -25,7 +25,7 @@
   django.catalog = django.catalog || {};
   
   const newcatalog = {
-    "(filtered from _MAX_ total entries)": "(filtrado de un total de _MAX_ registros)",
+    "(filtered from _MAX_ total entries)": "(filtrado de un total de _MAX_ registro(s))",
     "Actions": "Acciones",
     "Back": "Volver",
     "Cancel": "Cancelar",
@@ -58,8 +58,8 @@
     "Save": "Guardar",
     "Save assignment": "Guardar asignaci\u00f3n",
     "Search": "Buscar",
-    "Showing 0 to 0 of 0 entries": "Mostrando registros del 0 al 0 de un total de 0 registros",
-    "Showing _START_ to _END_ of _TOTAL_ entries": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    "Showing 0 to 0 of 0 entries": "Mostrando registros del 0 al 0 de un total de 0 registro(s)",
+    "Showing _START_ to _END_ of _TOTAL_ entries": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registro(s)",
     "Submission Status": "Estado del Env\u00edo",
     "Submission status": "Estado del env\u00edo",
     "Submit": "Enviar",
