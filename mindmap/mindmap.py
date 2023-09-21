@@ -40,7 +40,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             "Whether the component is scorable. If is scorable, the student "
             "can submit the mind map and receive a score from the instructor. "
             "If it is not scorable, the student only can save the mind map. "
-            "Important: Changing from scorable to not scorable, the progress "
+            "WARNING: Changing from scorable to not scorable, the progress "
             "of the students who have already been assigned a grade will not "
             "be reset."
         ),
