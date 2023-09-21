@@ -518,7 +518,7 @@ class MindMapXBlock(XBlock):
         """
         from submissions.api import create_submission
         student_submission = self.get_submission(student_id)
-        mindmap_student_body = student_submission.get("mindmap_student_body", {})
+        mindmap_student_body = student_submission.get("answer", {}).get("mindmap_student_body", {})
         answer = {
             "mindmap_student_body": mindmap_student_body,
             "submission_status": submission_status,
@@ -539,19 +539,20 @@ class MindMapXBlock(XBlock):
             dict: A dictionary containing the handler result.
         """
         # Lazy import: import here to avoid app not ready errors
-        from submissions.api import reset_score, create_submission # pylint: disable=import-outside-toplevel
+        from submissions.api import reset_score # pylint: disable=import-outside-toplevel
 
         require(self.is_instructor())
 
         student_id = data.get("student_id")
-        if not student_id:
+        submission_id = data.get("submission_id")
+        if not student_id or not submission_id:
             raise JsonHandlerError(400, "Missing required parameters")
 
-        latest_submission = self.update_student_submission_status(
+        reset_score(submission_id, self.block_course_id, self.block_id)
+
+        self.update_student_submission_status(
             data.get("student_id"), SubmissionStatus.SUBMITTED.value,
         )
-
-        reset_score(latest_submission["uuid"], self.block_course_id, self.block_id)
 
         return {
             "success": True,

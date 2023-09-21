@@ -227,7 +227,7 @@ function MindMapXBlock(runtime, element, context) {
                     e.preventDefault();
                     const typeAction = $(this).attr("data-type");
                     const grade = $("#grade_value").val();
-                    const { student_id } = submissionData;
+                    const { student_id, submission_id } = submissionData;
                     const invalidGradeMessage = gettext("Invalid grade must be a number");
                     const maxGradeMessage = gettext("Please enter a lower grade, maximum grade allowed is:");
                     const gradeParsed = parseInt(grade, 10);
@@ -261,6 +261,7 @@ function MindMapXBlock(runtime, element, context) {
                       apiUrl = removeGradeURL;
                       data = {
                         student_id: student_id,
+                        submission_id: submission_id,
                       };
                     }
 
