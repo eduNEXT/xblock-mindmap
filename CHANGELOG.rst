@@ -14,6 +14,25 @@ Change Log
 Unreleased
 **********
 
+0.8.1 - 2023-09-22
+**********************************************
+
+Changed
+=======
+
+* Remove score in student view when the mindmap is static
+
+
+0.8.0 - 2023-09-22
+**********************************************
+
+Added
+=====
+
+* Add the ability to configure the block as scorable from Studio
+* Show assignment information to students
+
+
 0.7.2 - 2023-09-18
 **********************************************
 
