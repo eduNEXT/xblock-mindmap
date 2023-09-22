@@ -56,13 +56,15 @@
 {% if editable and in_student_view and can_submit_assignment %}
   <button id="save_button_{{xblock_id}}">{% trans "Save assignment" %}</button>
   <button id="submit_button_{{xblock_id}}">{% trans "Submit" %}</button>
+{% elif editable and in_student_view and not has_score %}
+  <button id="save_button_{{xblock_id}}">{% trans "Save" %}</button>
 {% endif %}
 
-{% if score %}
-  <p>{% trans "Your score is:" %} {{ score }}.</p>
+{% if has_score and score %}
+  <p>{% trans "Your score is:" %} {{ score }} / {{ max_score }}</p>
 {% endif %}
 
-{% if is_instructor and in_student_view and not is_static  %}
+{% if is_instructor and in_student_view and not is_static and has_score %}
     <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>
 
     <div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">

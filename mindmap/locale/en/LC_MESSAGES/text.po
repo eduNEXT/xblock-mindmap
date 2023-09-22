@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-18 11:39-0500\n"
+"POT-Creation-Date: 2023-09-21 14:45-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,64 +22,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: mindmap.py:41 public/html/mindmap_edit.html:7
+#: mindmap.py:38 public/html/mindmap_edit.html:14
+msgid "Is scorable?"
+msgstr ""
+
+#: mindmap.py:40
+msgid ""
+"Whether the component is scorable. If is scorable, the student can submit "
+"the mind map and receive a score from the instructor. If it is not scorable, "
+"the student only can save the mind map. WARNING: Changing from scorable to "
+"not scorable, the progress of the students who have already been assigned a "
+"grade will not be reset."
+msgstr ""
+
+#: mindmap.py:52 public/html/mindmap_edit.html:7
 msgid "Display name"
 msgstr ""
 
-#: mindmap.py:48
+#: mindmap.py:59
 msgid ""
 "Whether the mind map is static or not. If it is static, the instructor can "
 "create a mind map and it will be the same for all students. If it is not "
 "static, the students can create their own mind maps."
 msgstr ""
 
-#: mindmap.py:52 public/html/mindmap_edit.html:30
+#: mindmap.py:63 public/html/mindmap_edit.html:40
 msgid "Is a static mindmap?"
 msgstr ""
 
-#: mindmap.py:59
+#: mindmap.py:70
 msgid ""
 "The mind map that will be shown to students if the\"Is a static mindmap?\" "
 "field is set to \"True\""
 msgstr ""
 
-#: mindmap.py:62
+#: mindmap.py:73
 msgid "Mindmap body"
 msgstr ""
 
-#: mindmap.py:82
+#: mindmap.py:93
 msgid ""
 "The body of the mind map. It is a dictionary with the following structure: "
 "{'root': {'text': 'Root', 'children': [{'text': 'Child 1', 'children': []}]}}"
 msgstr ""
 
-#: mindmap.py:85
+#: mindmap.py:96
 msgid "Mindmap student body"
 msgstr ""
 
-#: mindmap.py:91
+#: mindmap.py:102
 msgid "Problem Weight"
 msgstr ""
 
-#: mindmap.py:93
+#: mindmap.py:104
 msgid ""
 "Defines the number of points each problem is worth. If the value is not set, "
 "the problem is worth the sum of the option point values."
 msgstr ""
 
-#: mindmap.py:102
+#: mindmap.py:113
 msgid "Maximum score"
 msgstr ""
 
-#: mindmap.py:103
+#: mindmap.py:114
 msgid "Maximum grade score given to assignment by instructors."
 msgstr ""
 
-#: mindmap.py:109
+#: mindmap.py:120
 msgid "Submitted"
 msgstr ""
 
-#: mindmap.py:110
+#: mindmap.py:121
 msgid "Whether the student has submitted their submission."
 msgstr ""
 
@@ -132,43 +145,43 @@ msgid "Save assignment"
 msgstr ""
 
 #: public/html/mindmap.html:58
-#: public/js/src/mindmap.js:159
+#: public/js/src/mindmap.js:161
 msgid "Submit"
 msgstr ""
 
-#: public/html/mindmap.html:62
-msgid "Your score is:"
-msgstr ""
-
-#: public/html/mindmap.html:66
-msgid "Grade submissions"
-msgstr ""
-
-#: public/html/mindmap_edit.html:14
-msgid "Weight"
-msgstr ""
-
-#: public/html/mindmap_edit.html:22
-msgid "Points"
-msgstr ""
-
-#: public/html/mindmap_edit.html:32
-msgid "True"
-msgstr ""
-
-#: public/html/mindmap_edit.html:33
-msgid "False"
-msgstr ""
-
-#: public/html/mindmap_edit.html:41
-msgid "Mind map"
-msgstr ""
-
-#: public/html/mindmap_edit.html:52
+#: public/html/mindmap.html:60 public/html/mindmap_edit.html:62
 msgid "Save"
 msgstr ""
 
-#: public/html/mindmap_edit.html:55
+#: public/html/mindmap.html:64
+msgid "Your score is:"
+msgstr ""
+
+#: public/html/mindmap.html:68
+msgid "Grade submissions"
+msgstr ""
+
+#: public/html/mindmap_edit.html:16 public/html/mindmap_edit.html:42
+msgid "True"
+msgstr ""
+
+#: public/html/mindmap_edit.html:17 public/html/mindmap_edit.html:43
+msgid "False"
+msgstr ""
+
+#: public/html/mindmap_edit.html:24
+msgid "Weight"
+msgstr ""
+
+#: public/html/mindmap_edit.html:32
+msgid "Points"
+msgstr ""
+
+#: public/html/mindmap_edit.html:51
+msgid "Mind map"
+msgstr ""
+
+#: public/html/mindmap_edit.html:65
 msgid "Cancel"
 msgstr ""
 

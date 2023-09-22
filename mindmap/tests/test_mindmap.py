@@ -43,6 +43,7 @@ class MindMapXBlockTestMixin(TestCase):
         self.xblock.display_name = "Test MindMap"
         self.xblock.points = 100
         self.xblock.weight = 1
+        self.xblock.has_score = True
         self.xblock.course_id = "test-course-id"
 
 
@@ -75,6 +76,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "can_submit_assignment": True,
             "score": 0,
             "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -114,6 +117,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "can_submit_assignment": True,
             "score": 0,
             "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -153,6 +158,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "can_submit_assignment": True,
             "score": 0,
             "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
 
         self.xblock.student_view()
@@ -184,6 +191,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "score": 0,
             "max_score": self.xblock.max_score(),
             "is_instructor": True,
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
 
         self.xblock.student_view()
@@ -206,6 +215,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": True,
             "points": 100,
             "weight": 1,
+            "has_score": True,
         }
         expected_context = {
             "display_name": self.xblock.display_name,
@@ -221,6 +231,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "weight": 1,
             "weight_field": self.xblock.fields["weight"],
             "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
 
         self.xblock.studio_view()
@@ -259,6 +271,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "can_submit_assignment": False,
             "score": 0,
             "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -335,6 +349,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             "display_name": "Test Mind Map",
             "mindmap_body": self.mind_map,
             "is_static": True,
+            "has_score": True,
         }
         data.update(bad_formatted_data)
         self.request.body = json.dumps(data).encode("utf-8")
