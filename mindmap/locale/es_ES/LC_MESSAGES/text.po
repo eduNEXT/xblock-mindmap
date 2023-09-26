@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-22 09:17-0500\n"
+"POT-Creation-Date: 2023-09-25 11:10-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,26 +100,25 @@ msgstr "Peso del problema"
 
 #: mindmap.py:115
 msgid ""
-"Defines the number of points each problem is worth. If the value is not set, "
-"the problem is worth the sum of the option point values."
+"Defines the number of points this problem is worth. If the value is not set, "
+"the problem is worth one point."
 msgstr ""
-"Define el número de puntos que vale cada problema. Si el valor no está "
-"establecido, el problema vale la suma de los valores de puntos de las "
-"opciones."
+"Define la cantidad de puntos que vale este problema. Si el valor no está "
+"establecido, el problema vale un punto."
 
-#: mindmap.py:124
+#: mindmap.py:123 public/html/mindmap_edit.html:32
 msgid "Maximum score"
 msgstr "Puntaje máximo"
 
-#: mindmap.py:125
-msgid "Maximum grade score given to assignment by instructors."
-msgstr "Puntaje máximo de calificación otorgado a la tarea por los instructores."
+#: mindmap.py:124
+msgid "Maximum grade score given to assignment by staff."
+msgstr "Calificación máxima dada a la tarea por el instructor."
 
-#: mindmap.py:131
+#: mindmap.py:130
 msgid "Submission status"
 msgstr "Estado del envío"
 
-#: mindmap.py:132
+#: mindmap.py:131
 msgid "The submission status of the assignment."
 msgstr "El estado del envío de la tarea."
 
@@ -198,10 +197,6 @@ msgstr "Falso"
 #: public/html/mindmap_edit.html:24
 msgid "Weight"
 msgstr "Peso"
-
-#: public/html/mindmap_edit.html:32
-msgid "Points"
-msgstr "Puntos"
 
 #: public/html/mindmap_edit.html:51
 msgid "Mind map"

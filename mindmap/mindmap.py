@@ -112,9 +112,8 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
     weight = Float(
         display_name=_("Problem Weight"),
         help=_(
-            "Defines the number of points each problem is worth. "
-            "If the value is not set, the problem is worth the sum of the "
-            "option point values."
+            "Defines the number of points this problem is worth. If "
+            "the value is not set, the problem is worth one point."
         ),
         values={"min": 0, "step": 0.1},
         scope=Scope.settings,
@@ -122,7 +121,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
     points = Integer(
         display_name=_("Maximum score"),
-        help=_("Maximum grade score given to assignment by instructors."),
+        help=_("Maximum grade score given to assignment by staff."),
         default=100,
         scope=Scope.settings,
     )
