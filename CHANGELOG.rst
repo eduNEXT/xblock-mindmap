@@ -14,6 +14,15 @@ Change Log
 Unreleased
 **********
 
+0.8.2 - 2023-09-26
+**********************************************
+
+Changed
+=======
+
+* Update names and messages of the XBlock fields
+
+
 0.8.1 - 2023-09-22
 **********************************************
 
@@ -65,6 +74,7 @@ Changed
 
 * Students can't edit mindmaps after submissions.
 
+
 0.6.1 - 2023-08-28
 **********************************************
 
@@ -72,6 +82,7 @@ Changed
 =======
 
 * Fix non-draggable nodes in mindmap component when in Studio.
+
 
 0.6.0 - 2023-08-24
 **********************************************
@@ -81,6 +92,7 @@ Added
 
 * Support for grading mindmap components using submissions API.
 
+
 0.5.0 - 2023-08-11
 **********************************************
 
@@ -88,6 +100,7 @@ Changed
 =======
 
 * Use xblocks fields to store state
+
 
 0.4.1 - 2023-08-11
 **********************************************
