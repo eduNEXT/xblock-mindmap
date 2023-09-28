@@ -350,7 +350,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             bool: True if current user is instructor and not in studio.
         """
         in_studio_preview = self.scope_ids.user_id is None
-        return self.is_instructor() and not in_studio_preview
+        return not in_studio_preview and (self.is_instructor() or self.is_course_staff(self.get_current_user()))
 
     def is_instructor(self) -> bool:
         """
