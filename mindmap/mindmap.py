@@ -468,7 +468,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             dict: A dictionary containing student assignment information.
         """
-        require(self.is_instructor())
+        require(self.is_instructor() or self.is_course_staff(self.get_current_user()))
 
         def get_student_data() -> dict:
             """
@@ -554,7 +554,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         # Lazy import: import here to avoid app not ready errors
         from submissions.api import set_score  # pylint: disable=import-outside-toplevel
 
-        require(self.is_instructor())
+        require(self.is_instructor() or self.is_course_staff(self.get_current_user()))
 
         score = int(data.get("grade"))
         uuid = data.get("submission_id")
@@ -588,7 +588,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         # Lazy import: import here to avoid app not ready errors
         from submissions.api import reset_score  # pylint: disable=import-outside-toplevel
 
-        require(self.is_instructor())
+        require(self.is_instructor() or self.is_course_staff(self.get_current_user()))
 
         student_id = data.get("student_id")
         if not student_id:
