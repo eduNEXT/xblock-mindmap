@@ -69,12 +69,18 @@
 {% if is_instructor and in_student_view and not is_static and has_score %}
     <button id="get_grade_submissions_button_{{xblock_id}}">{% trans "Grade submissions" %}</button>
 
-    <div id="modal-submissions" class="modal-submissions" aria-hidden="true" tabindex="-1">
+    <div class="modal-submissions" aria-hidden="true" tabindex="-1">
       <div class="modal__content">
-        <h2 id="modal_title"></h2>
+        <h2 class="modal_title"></h2>
         <div class="modal__data"></div>
         <div class="modal__footer"></div>
         <button type="button" class="modal__close">&times;</button>
       </div>
     </div>
+{% endif %}
+
+{% if in_student_view %}
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jsmind@0.7.1/es6/jsmind.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/jsmind@0.7.1/es6/jsmind.draggable-node.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 {% endif %}

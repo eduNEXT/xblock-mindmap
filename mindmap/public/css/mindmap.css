@@ -30,6 +30,10 @@
     overflow: hidden;
 }
 
+.icon-collapsible {
+  cursor: pointer;
+}
+
 .icon-collapsible:after {
     /* Unicode character for "plus" sign (+) */
     content: "\02795";

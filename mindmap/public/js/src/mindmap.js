@@ -17,17 +17,12 @@ function MindMapXBlock(runtime, element, context) {
     gettext = (string) => string;
   }
 
-  $(".card, .icon-collapsible").on("click", function () {
-    $(".icon-collapsible").toggleClass("active");
-    $(".collapse-container").slideToggle(200);
+  $(element).find(".card, .icon-collapsible").on("click", function (event) {
+    event.stopPropagation();
+    $(element).find(".icon-collapsible").toggleClass("active");
+    $(element).find(".collapse-container").slideToggle(200);
   });
 
-  $(document).keydown(function (event) {
-    // 'Esc' key was pressed
-    if (event.key === "Escape") {
-      $(element).find("#modal-submissions").removeClass("modal_opened");
-    }
-  });
 
   function showMindMap(jsMind, context) {
     const mind = context.mind_map;
@@ -65,7 +60,7 @@ function MindMapXBlock(runtime, element, context) {
     $(element)
       .find(".modal__close")
       .click(function () {
-        $(element).find("#modal-submissions").removeClass("modal_opened");
+        $(element).find(".modal-submissions").removeClass("modal_opened");
       });
 
     $(element)
@@ -74,7 +69,13 @@ function MindMapXBlock(runtime, element, context) {
         $.post(getGradingDataURL, JSON.stringify({}))
           .done(function (response) {
             const { assignments } = response;
-            $(element).find("#modal-submissions").addClass("modal_opened");
+            const xBlockContainerPosition = $(element).position();
+            const xBlockContainerHeight = $(element).height();
+            const modalHeight = `${xBlockContainerHeight + 35}px`;
+            $(element)
+              .find(".modal-submissions")
+              .addClass("modal_opened")
+              .css({ height: modalHeight, top: xBlockContainerPosition.top });
 
             showDataTable();
 
@@ -86,15 +87,13 @@ function MindMapXBlock(runtime, element, context) {
                 gettext("Grade"),
                 gettext("Actions"),
               ];
-              const dataTableHeaderColumnsTranslated = dataTableHeaderColumns.map((currentColumn) =>
-                gettext(currentColumn)
-              );
-              const dataTableHeaderColumnsHTML = dataTableHeaderColumnsTranslated.reduce(
+
+              const dataTableHeaderColumnsHTML = dataTableHeaderColumns.reduce(
                 (prevColumn, currentColumn) => `${prevColumn}<th>${currentColumn}</th>`,
                 ""
               );
               const dataTableHTML = `
-                <table id="dataTable">
+                <table id="dataTable_${block_id}">
                   <thead>
                     <tr>
                       ${dataTableHeaderColumnsHTML}
@@ -115,9 +114,9 @@ function MindMapXBlock(runtime, element, context) {
               const dataTableZeroRecordsText = gettext("No matching records found");
               const dataTableInfoFilteredText = gettext("(filtered from _MAX_ total entries)");
               $(element).find(".modal__data").html(dataTableHTML);
-              $(element).find("#modal_title").html(modalTitleSubmissions);
+              $(element).find(".modal_title").html(modalTitleSubmissions);
 
-              const dataTable = $("#dataTable").DataTable({
+              const dataTable = $(`#dataTable_${block_id}`).DataTable({
                 data: newAssignments || assignments,
                 scrollY: "50vh",
                 dom: "Bfrtip",
@@ -155,7 +154,7 @@ function MindMapXBlock(runtime, element, context) {
 
             function handleRowDataTableClick(dataTable) {
               $(element)
-                .find("#dataTable")
+                .find(`#dataTable_${block_id}`)
                 .on("click", ".review_button", function (e) {
                   e.preventDefault();
                   const target = $(e.target);
@@ -191,7 +190,7 @@ function MindMapXBlock(runtime, element, context) {
 
                   const modalTitle = gettext("Reviewing Mindmap for student: ") + submissionData.username;
                   $(element).find(".modal__data").html(mindMapReviewContainer);
-                  $(element).find("#modal_title").html(modalTitle);
+                  $(element).find(".modal_title").html(modalTitle);
                   const [mindMapReviewContent] = $(element).find("#review-mindmap");
                   const reviewMindMapOptions = {
                     container: mindMapReviewContent,
@@ -349,50 +348,12 @@ function MindMapXBlock(runtime, element, context) {
       });
   }
 
-  // Allows us to add a script to the DOM
-  function loadScript(script) {
-    $("<script>").attr("type", "text/javascript").attr("src", script).appendTo(element);
-  }
 
   if (typeof require === "function") {
     require(["jsMind"], function (jsMind) {
       showMindMap(jsMind, context);
     });
   } else {
-    loadJSMind(function () {
-      showMindMap(window.jsMind, context);
-    });
-
-    loadScript("https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js");
-  }
-}
-
-function loadJSMind(callback) {
-  if (window.jsMind) {
-    callback();
-  } else {
-    // Load jsMind dynamically using $.getScript
-    $.getScript("https://unpkg.com/jsmind@0.6.4/es6/jsmind.js")
-      .done(function () {
-        // Assign jsMind to the window object after it's loaded
-        window.jsMind = jsMind;
-
-        // Load jsMind.draggable-node dynamically using $.getScript
-        $.getScript("https://unpkg.com/jsmind@0.6.4/es6/jsmind.draggable-node.js")
-          .done(function () {
-            if (window.jsMind) {
-              // Both jsMind and jsMind.draggable are now loaded and available
-              callback();
-            } else {
-              console.error("Error loading jsMind or jsMind.draggable.");
-            }
-          })
-          .fail(function () {
-            console.error("Error loading jsMind.draggable-node.");
-          });
-      })
-      .fail(function () {
-        console.error("Error loading jsMind.");
-      });
+    showMindMap(window.jsMind, context);
   }
 }
