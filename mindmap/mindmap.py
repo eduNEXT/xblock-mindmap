@@ -166,17 +166,22 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return self.runtime.service(self, "user").get_current_user()
 
-    def is_course_staff(self, user) -> bool:
+    @property
+    def is_student(self) -> bool:
         """
-        Check whether the user has course staff permissions for this XBlock.
+        Check if the current user is a student.
         """
-        return user.opt_attrs.get("edx-platform.user_is_staff")
+        return self.get_current_user().opt_attrs.get("edx-platform.user_role") == "student"
 
-    def is_student(self, user) -> bool:
+    @property
+    def is_course_team(self) -> bool:
         """
-        Check if the user is a student.
+        Check if the user is part of the course team (instructor or staff).
         """
-        return user.opt_attrs.get("edx-platform.user_role") == "student"
+        user = self.get_current_user()
+        is_course_staff = user.opt_attrs.get("edx-platform.user_is_staff")
+        is_instructor = user.opt_attrs.get(ATTR_KEY_USER_ROLE) == "instructor"
+        return is_course_staff or is_instructor
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
@@ -199,7 +204,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             template_path, context, i18n_service=self.runtime.service(self, 'i18n')
         )
 
-    def get_context(self, user):
+    def get_context(self):
         """
         Return the context for the student view.
 
@@ -209,7 +214,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             dict: The context for the student view
         """
-        in_student_view = self.is_student(user) or self.is_course_staff(user)
+        in_student_view = self.is_student or self.is_course_team
         if self.is_static:
             editable = False
         else:
@@ -265,7 +270,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        context = self.get_context(user)
+        context = self.get_context()
         js_context = self.get_js_context(user, context)
 
         if context["has_score"] and not context["can_submit_assignment"]:
@@ -293,7 +298,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        context = self.get_context(user)
+        context = self.get_context()
         js_context = self.get_js_context(user, context)
 
         context.update({
@@ -350,16 +355,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             bool: True if current user is instructor and not in studio.
         """
         in_studio_preview = self.scope_ids.user_id is None
-        return self.is_instructor() and not in_studio_preview
-
-    def is_instructor(self) -> bool:
-        """
-        Check if user role is instructor.
-
-        Returns:
-            bool: True if user role is instructor.
-        """
-        return self.get_current_user().opt_attrs.get(ATTR_KEY_USER_ROLE) == "instructor"
+        return not in_studio_preview and self.is_course_team
 
     @XBlock.json_handler
     def studio_submit(self, data, _suffix="") -> None:
@@ -468,7 +464,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             dict: A dictionary containing student assignment information.
         """
-        require(self.is_instructor())
+        require(self.is_course_team)
 
         def get_student_data() -> dict:
             """
@@ -554,7 +550,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         # Lazy import: import here to avoid app not ready errors
         from submissions.api import set_score  # pylint: disable=import-outside-toplevel
 
-        require(self.is_instructor())
+        require(self.is_course_team)
 
         score = int(data.get("grade"))
         uuid = data.get("submission_id")
@@ -588,7 +584,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         # Lazy import: import here to avoid app not ready errors
         from submissions.api import reset_score  # pylint: disable=import-outside-toplevel
 
-        require(self.is_instructor())
+        require(self.is_course_team)
 
         student_id = data.get("student_id")
         if not student_id:
