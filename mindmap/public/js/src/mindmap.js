@@ -19,8 +19,8 @@ function MindMapXBlock(runtime, element, context) {
 
   $(element).find(".card, .icon-collapsible").on("click", function (event) {
     event.stopPropagation();
-    $(".icon-collapsible").toggleClass("active");
-    $(".collapse-container").slideToggle(200);
+    $(element).find(".icon-collapsible").toggleClass("active");
+    $(element).find(".collapse-container").slideToggle(200);
   });
 
 
