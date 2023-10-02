@@ -29,9 +29,6 @@ class MindMapXBlockTestMixin(TestCase):
         self.mind_map = {"data": [{ "id": "root", "isroot": True, "topic": "Root" }]}
         self.student = Mock(student_id="test-student-id", full_name="Test Student")
         self.anonymous_user_id = "test-anonymous-user-id"
-        self.xblock.is_student = Mock()
-        self.xblock.is_course_staff = Mock()
-        self.xblock.get_current_user = Mock()
         self.xblock.get_current_mind_map = Mock()
         self.xblock.render_template = Mock(return_value="Test render")
         self.xblock.resource_string = Mock()
@@ -64,7 +61,9 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             - The student view is set up for the render with the student.
         """
         self.xblock.is_static = False
-        self.xblock.is_student.return_value = True
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_role": "student",
+        }
         self.xblock.get_current_user.return_value = self.student
         self.xblock.get_current_mind_map.return_value = self.mind_map
         expected_context = {
@@ -107,7 +106,9 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             - The student view is set up for the render with the student.
         """
         self.xblock.is_static = False
-        self.xblock.is_student.return_value = True
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_role": "student",
+        }
         self.xblock.get_current_mind_map.return_value = None
         expected_context = {
             "display_name": self.xblock.display_name,
@@ -148,7 +149,9 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             - The student view is set up for the render with the student.
         """
         self.xblock.is_static = True
-        self.xblock.is_student.return_value = True
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_role": "student",
+        }
         self.xblock.get_current_mind_map.return_value = self.mind_map
         self.xblock.is_static = True
         expected_context = {
@@ -180,8 +183,10 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             - The student view is set up for the render with the instructor.
         """
         self.xblock.is_static = False
-        self.xblock.is_student.return_value = False
-        self.xblock.is_course_staff.return_value = True
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_is_staff": True,
+        }
+        self.xblock.is_course_staff = True
         self.xblock.get_current_mind_map.return_value = self.mind_map
         self.xblock.show_staff_grading_interface.return_value = True
         expected_context = {
@@ -213,8 +218,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         Expected result:
             - The studio view is set up for the render.
         """
-        self.xblock.is_student.return_value = False
-        self.xblock.is_course_staff.return_value = False
+        self.xblock.get_current_user.return_value.opt_attrs = {}
         self.xblock.fields = {
             "display_name": "Test Mind Map",
             "is_static": True,
@@ -264,7 +268,9 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         """
         block_id = self.xblock.scope_ids.usage_id.block_id
         self.xblock.is_static = False
-        self.xblock.is_student.return_value = True
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_role": "student",
+        }
         self.xblock.get_current_mind_map.return_value = self.mind_map
         self.xblock.submit_allowed.return_value = False
         expected_context = {
@@ -419,7 +425,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
                 "submission_id": self.submission_id
             }
         ).encode("utf-8")
-        self.xblock.is_instructor = Mock(return_value=True)
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_is_staff": True,
+        }
         get_student_module_mock.return_value = Mock(state='{"test-state": "mindmap"}')
 
         response = self.xblock.enter_grade(self.request)
@@ -441,7 +449,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             - The student view is rendered with the appropriate values.
         """
         self.request.body = json.dumps({"student_id": self.student_id}).encode("utf-8")
-        self.xblock.is_instructor = Mock(return_value=True)
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_is_staff": True,
+        }
         get_student_module_mock.return_value = Mock(state='{"test-state": "mindmap"}')
 
         response = self.xblock.remove_grade(self.request)
@@ -484,7 +494,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             },
             "created_at": current_datetime,
         })
-        self.xblock.is_instructor = Mock(return_value=True)
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_is_staff": True,
+        }
         user_by_anonymous_id_mock.return_value = Mock(username=self.student.student_id)
         self.xblock.submission_status = "Submitted"
         expected_result = {
