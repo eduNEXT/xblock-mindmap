@@ -14,7 +14,7 @@ from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
-from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
+from xblock.fields import Boolean, DateTime, Dict, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
 from mindmap.edxapp_wrapper.student import (
@@ -251,6 +251,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                 "can_submit_assignment": self.submit_allowed(),
                 "raw_score": self.raw_score,
                 "max_raw_score": self.points,
+                "weight": self.weight,
             })
 
         return context
@@ -268,6 +269,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         return {
             "author": user.full_name,
             "max_raw_score": self.points,
+            "weight": self.weight,
             "mind_map": self.get_current_mind_map(),
             "editable": context["editable"],
             "xblock_id": self.scope_ids.usage_id.block_id,
