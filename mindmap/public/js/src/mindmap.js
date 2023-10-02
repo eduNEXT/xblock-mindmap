@@ -17,7 +17,8 @@ function MindMapXBlock(runtime, element, context) {
     gettext = (string) => string;
   }
 
-  $(".card, .icon-collapsible").on("click", function () {
+  $(element).find(".card, .icon-collapsible").on("click", function (event) {
+    event.stopPropagation();
     $(".icon-collapsible").toggleClass("active");
     $(".collapse-container").slideToggle(200);
   });
@@ -70,7 +71,7 @@ function MindMapXBlock(runtime, element, context) {
             const { assignments } = response;
             const xBlockContainerPosition = $(element).position();
             const xBlockContainerHeight = $(element).height();
-            const modalHeight =  `${xBlockContainerHeight + 35}px`;
+            const modalHeight = `${xBlockContainerHeight + 35}px`;
             $(element)
               .find(".modal-submissions")
               .addClass("modal_opened")
