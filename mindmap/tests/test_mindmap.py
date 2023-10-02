@@ -251,6 +251,40 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "public/html/mindmap_edit.html", expected_context,
         )
 
+    def test_author_view(self):
+        """
+        Check author view is rendered correctly.
+
+        Expected result:
+            - The studio view is set up for the render.
+        """
+        self.xblock.is_static = False
+        self.xblock.get_current_user.return_value.opt_attrs = {
+            "edx-platform.user_is_staff": True,
+        }
+        self.xblock.is_course_staff = True
+        self.xblock.get_current_mind_map.return_value = self.mind_map
+        expected_context = {
+            "display_name": self.xblock.display_name,
+            "in_student_view": True,
+            "editable": False,
+            "xblock_id": self.xblock.scope_ids.usage_id.block_id,
+            "is_static": self.xblock.is_static,
+            "is_static_field": self.xblock.fields["is_static"],
+            "can_submit_assignment": True,
+            "score": 0,
+            "max_score": self.xblock.max_score(),
+            "has_score": True,
+            "has_score_field": self.xblock.fields["has_score"],
+            "submission_status": self.xblock.submission_status,
+        }
+
+        self.xblock.author_view()
+
+        self.xblock.render_template.assert_called_once_with(
+            "public/html/mindmap.html", expected_context,
+        )
+
     @initialize_js_mock
     def test_student_not_allowed_submission(self, initialize_js_mock: Mock):
         """
