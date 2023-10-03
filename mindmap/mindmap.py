@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import math
 from enum import Enum
 
 import pkg_resources
@@ -116,7 +115,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             "Defines the number of points this problem is worth. If "
             "the value is not set, the problem is worth one point."
         ),
-        default=1,
+        default=10,
         scope=Scope.settings,
     )
 
@@ -592,7 +591,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         if raw_score > self.points:
             raise JsonHandlerError(400, "Score cannot be greater than max score")
 
-        set_score(uuid, math.ceil((raw_score / self.points) * self.weight), self.weight)
+        set_score(uuid, round((raw_score / self.points) * self.weight), self.weight)
 
         self.update_student_state(
             data.get("module_id"), SubmissionStatus.COMPLETED.value
@@ -689,7 +688,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         weighted_score = self.get_weighted_score(student_id)
         if weighted_score:
-            return math.ceil((weighted_score * self.points) / self.weight)
+            return round((weighted_score * self.points) / self.weight)
 
         return None
 
