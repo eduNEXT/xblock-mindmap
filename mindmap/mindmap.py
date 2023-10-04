@@ -301,10 +301,6 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         context = self.get_context()
         js_context = self.get_js_context(user, context)
 
-        if context["has_score"] and not context["can_submit_assignment"]:
-            context["editable"] = False
-            js_context["editable"] = False
-
         frag = self.load_fragment("mindmap", context)
 
         frag.add_javascript(self.resource_string("public/js/src/requiredModules.js"))
