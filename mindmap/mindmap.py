@@ -218,7 +218,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         if self.is_static:
             editable = False
         else:
-            editable = True
+            editable = in_student_view or self.is_course_team
 
         context = {
             "display_name": self.display_name,
