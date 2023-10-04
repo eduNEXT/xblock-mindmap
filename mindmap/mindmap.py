@@ -132,6 +132,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         default=SubmissionStatus.NOT_ATTEMPTED.value,
         scope=Scope.user_state,
     )
+    has_author_view = True
 
     @property
     def block_id(self):
@@ -204,7 +205,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             template_path, context, i18n_service=self.runtime.service(self, 'i18n')
         )
 
-    def get_context(self):
+    def get_context(self, in_student_view=False):
         """
         Return the context for the student view.
 
@@ -214,11 +215,10 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             dict: The context for the student view
         """
-        in_student_view = self.is_student or self.is_course_team
         if self.is_static:
             editable = False
         else:
-            editable = in_student_view
+            editable = in_student_view or self.is_course_team
 
         context = {
             "display_name": self.display_name,
@@ -270,15 +270,38 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        context = self.get_context()
+        context = self.get_context(in_student_view=True)
         js_context = self.get_js_context(user, context)
 
         if context["has_score"] and not context["can_submit_assignment"]:
             context["editable"] = False
             js_context["editable"] = False
 
-        if self.show_staff_grading_interface():
+        if self.is_course_team:
             context["is_instructor"] = True
+
+        frag = self.load_fragment("mindmap", context)
+
+        frag.add_javascript(self.resource_string("public/js/src/requiredModules.js"))
+        frag.initialize_js('MindMapXBlock', json_args=js_context)
+
+        return frag
+
+    def author_view(self, _context=None) -> Fragment:
+        """
+        The primary view of the MindMapXBlock, shown to authors in Studio.
+
+        Args:
+            _context (dict, optional): Context for the template. Defaults to None.
+
+        Returns:
+            Fragment: The fragment to render
+        """
+        user = self.get_current_user()
+        context = self.get_context()
+        js_context = self.get_js_context(user, context)
+        context["editable"] = False
+        js_context["editable"] = False
 
         frag = self.load_fragment("mindmap", context)
 
@@ -308,7 +331,9 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             "weight": self.weight,
             "weight_field": self.fields["weight"],
         })
-
+        js_context.update({
+            "editable": True,
+        })
         frag = self.load_fragment("mindmap_edit", context)
 
         frag.initialize_js('MindMapXBlock', json_args=js_context)
@@ -346,16 +371,6 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         if self.mindmap_student_body and not self.is_static:
             return self.mindmap_student_body
         return self.mindmap_body
-
-    def show_staff_grading_interface(self) -> bool:
-        """
-        Return if current user is staff and not in studio.
-
-        Returns:
-            bool: True if current user is instructor and not in studio.
-        """
-        in_studio_preview = self.scope_ids.user_id is None
-        return not in_studio_preview and self.is_course_team
 
     @XBlock.json_handler
     def studio_submit(self, data, _suffix="") -> None:
