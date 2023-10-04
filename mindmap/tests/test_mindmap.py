@@ -266,8 +266,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
         self.xblock.get_current_mind_map.return_value = self.mind_map
         expected_context = {
             "display_name": self.xblock.display_name,
-            "in_student_view": True,
-            "editable": False,
+            "in_student_view": False,
+            "editable": True,
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
