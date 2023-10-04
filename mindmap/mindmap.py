@@ -448,6 +448,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         }
         student_item_dict = self.get_student_item_dict()
         create_submission(student_item_dict, answer)
+        self.emit_completion(1)
 
         self.submission_status = SubmissionStatus.SUBMITTED.value
 
