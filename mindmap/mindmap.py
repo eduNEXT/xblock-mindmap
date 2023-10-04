@@ -205,7 +205,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             template_path, context, i18n_service=self.runtime.service(self, 'i18n')
         )
 
-    def get_context(self):
+    def get_context(self, in_student_view=False):
         """
         Return the context for the student view.
 
@@ -215,11 +215,10 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             dict: The context for the student view
         """
-        in_student_view = self.is_student or self.is_course_team
         if self.is_static:
             editable = False
         else:
-            editable = in_student_view
+            editable = True
 
         context = {
             "display_name": self.display_name,
@@ -271,7 +270,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             Fragment: The fragment to render
         """
         user = self.get_current_user()
-        context = self.get_context()
+        context = self.get_context(in_student_view=True)
         js_context = self.get_js_context(user, context)
 
         if context["has_score"] and not context["can_submit_assignment"]:
