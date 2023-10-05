@@ -119,6 +119,13 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         scope=Scope.settings,
     )
 
+    raw_score = Integer(
+        display_name=_("Raw score"),
+        help=_("The raw score for the assignment."),
+        default=None,
+        scope=Scope.user_state,
+    )
+
     points = Integer(
         display_name=_("Maximum score"),
         help=_("Maximum grade score given to assignment by staff."),
@@ -132,6 +139,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         default=SubmissionStatus.NOT_ATTEMPTED.value,
         scope=Scope.user_state,
     )
+
     has_author_view = True
 
     @property
@@ -267,6 +275,8 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             dict: The context for the student view
         """
         return {
+            "raw_score": self.raw_score,
+            "weighted_score": self.get_weighted_score(),
             "author": user.full_name,
             "max_raw_score": self.points,
             "weight": self.weight,
@@ -531,7 +541,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                         "timestamp": submission["created_at"].strftime(
                             DateTime.DATETIME_FORMAT
                         ),
-                        "raw_score": raw_score,
+                        "raw_score": state.get("raw_score", raw_score),
                         "max_raw_score": self.points,
                         "weight": self.weight,
                         "weighted_score": self.get_weighted_score(student.student_id),
@@ -557,7 +567,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return StudentModule().objects.get(pk=module_id)
 
-    def update_student_state(self, module_id: int, submission_status: str) -> None:
+    def update_student_state(self, module_id: int, submission_status: str, raw_score: int=None) -> None:
         """
         Updates the state of a student.
 
@@ -568,6 +578,8 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         module = self.get_student_module(module_id)
         state = json.loads(module.state)
         state["submission_status"] = submission_status
+        if not state.get("raw_score") and raw_score is not None:
+            state["raw_score"] = raw_score
         module.state = json.dumps(state)
         module.save()
 
@@ -598,7 +610,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         set_score(uuid, round((raw_score / self.points) * self.weight), self.weight)
 
         self.update_student_state(
-            data.get("module_id"), SubmissionStatus.COMPLETED.value
+            data.get("module_id"), SubmissionStatus.COMPLETED.value, raw_score=raw_score,
         )
 
         return {
