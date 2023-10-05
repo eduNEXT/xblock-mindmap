@@ -81,6 +81,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -127,6 +128,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
@@ -173,6 +175,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.student_view()
@@ -210,6 +213,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.student_view()
@@ -250,6 +254,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "submission_status": self.xblock.submission_status,
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.studio_view()
@@ -285,6 +290,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.author_view()
@@ -329,6 +335,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "raw_score": 50,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,

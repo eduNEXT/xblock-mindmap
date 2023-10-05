@@ -53,10 +53,10 @@
 
 <div id="jsmind_container_{{xblock_id}}" class="jsmind_container"></div>
 
-{% if not is_static and has_score and not raw_score and in_student_view %}
-  <p>(0/{{ max_raw_score }} {% trans "points" %}) {% trans submission_status %}</p>
-{% elif not is_static and has_score and raw_score and in_student_view %}
-  <p>({{ raw_score }}/{{ max_raw_score }} {% trans "points" %}) {% trans submission_status %}</p>
+{% if not is_static and has_score and not weighted_score and in_student_view %}
+  <p>(0/{{ weight }} {% trans "points" %}) {% trans submission_status %}</p>
+{% elif not is_static and has_score and weighted_score and in_student_view %}
+  <p>({{ weighted_score }}/{{ weight }} {% trans "points" %}) {% trans submission_status %}</p>
 {% endif %}
 
 {% if editable and in_student_view and can_submit_assignment %}

@@ -251,6 +251,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                 "raw_score": self.raw_score,
                 "max_raw_score": self.points,
                 "weight": self.weight,
+                "weighted_score": self.get_weighted_score(),
             })
 
         return context
