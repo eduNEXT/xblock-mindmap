@@ -42,6 +42,7 @@ class MindMapXBlockTestMixin(TestCase):
         self.xblock.points = 100
         self.xblock.weight = 10
         self.xblock.has_score = True
+        self.xblock.raw_score = 50
         self.xblock.submission_status = "Not attempted"
         self.xblock.course_id = "test-course-id"
 
@@ -90,6 +91,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()
@@ -137,6 +140,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()
@@ -344,6 +349,8 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "xblock_id": block_id,
             "max_raw_score": self.xblock.points,
             "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()

@@ -156,13 +156,6 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return str(self.course_id)
 
-    @property
-    def raw_score(self):
-        """
-        Return score from submissions.
-        """
-        return self.get_raw_score()
-
     def get_weighted_score(self, student_id=None):
         """
         Return weighted score from submissions.
