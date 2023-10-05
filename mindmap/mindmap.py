@@ -578,7 +578,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         module = self.get_student_module(module_id)
         state = json.loads(module.state)
         state["submission_status"] = submission_status
-        if not state.get("raw_score") and raw_score is not None:
+        if raw_score is not None:
             state["raw_score"] = raw_score
         module.state = json.dumps(state)
         module.save()
