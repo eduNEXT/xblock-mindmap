@@ -600,9 +600,9 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         require(self.is_course_team)
 
-        raw_score = int(data.get("grade"))
+        raw_score = int(data.get("grade", 0))
         uuid = data.get("submission_id")
-        if not raw_score or not uuid:
+        if not uuid:
             raise JsonHandlerError(400, "Missing required parameters")
         if raw_score > self.points:
             raise JsonHandlerError(400, "Score cannot be greater than max score")
