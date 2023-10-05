@@ -315,6 +315,8 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         user = self.get_current_user()
         context = self.get_context()
         js_context = self.get_js_context(user, context)
+        context["editable"] = False
+        js_context["editable"] = False
 
         frag = self.load_fragment("mindmap", context)
 
