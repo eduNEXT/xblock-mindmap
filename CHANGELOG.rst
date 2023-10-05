@@ -14,6 +14,13 @@ Change Log
 Unreleased
 **********
 
+
+0.8.5 - 2023-10-02
+**********************************************
+
+Changed
+=======
+
 * Add author view to the XBlock to be used in Studio.
 
 0.8.4 - 2023-10-02
