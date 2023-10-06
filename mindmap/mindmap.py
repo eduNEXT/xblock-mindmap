@@ -13,7 +13,7 @@ from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
-from xblock.fields import Boolean, DateTime, Dict, Float, Integer, Scope, String
+from xblock.fields import Boolean, DateTime, Dict, Integer, Scope, String
 from xblockutils.resources import ResourceLoader
 
 from mindmap.edxapp_wrapper.student import (
@@ -109,14 +109,21 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         scope=Scope.user_state,
     )
 
-    weight = Float(
+    weight = Integer(
         display_name=_("Problem Weight"),
         help=_(
             "Defines the number of points this problem is worth. If "
             "the value is not set, the problem is worth one point."
         ),
-        values={"min": 0, "step": 0.1},
+        default=10,
         scope=Scope.settings,
+    )
+
+    raw_score = Integer(
+        display_name=_("Raw score"),
+        help=_("The raw score for the assignment."),
+        default=None,
+        scope=Scope.user_state,
     )
 
     points = Integer(
@@ -132,6 +139,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         default=SubmissionStatus.NOT_ATTEMPTED.value,
         scope=Scope.user_state,
     )
+
     has_author_view = True
 
     @property
@@ -148,18 +156,24 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return str(self.course_id)
 
-    @property
-    def score(self):
+    def get_weighted_score(self, student_id=None):
         """
-        Return score from submissions.
+        Return weighted score from submissions.
         """
-        return self.get_score()
+        # Lazy import: import here to avoid app not ready errors
+        from submissions.api import get_score  # pylint: disable=import-outside-toplevel
+
+        score = get_score(self.get_student_item_dict(student_id))
+        if score:
+            return score["points_earned"]
+
+        return None
 
     def max_score(self):
         """
         Return the maximum score.
         """
-        return self.points
+        return self.weight
 
     def get_current_user(self):
         """
@@ -235,8 +249,10 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         if self.has_score:
             context.update({
                 "can_submit_assignment": self.submit_allowed(),
-                "score": self.score,
-                "max_score": self.max_score(),
+                "raw_score": self.raw_score,
+                "max_raw_score": self.points,
+                "weight": self.weight,
+                "weighted_score": self.get_weighted_score(),
             })
 
         return context
@@ -252,8 +268,11 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
             dict: The context for the student view
         """
         return {
+            "raw_score": self.raw_score,
+            "weighted_score": self.get_weighted_score(),
             "author": user.full_name,
-            "max_points": self.points,
+            "max_raw_score": self.points,
+            "weight": self.weight,
             "mind_map": self.get_current_mind_map(),
             "editable": context["editable"],
             "xblock_id": self.scope_ids.usage_id.block_id,
@@ -435,6 +454,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         }
         student_item_dict = self.get_student_item_dict()
         create_submission(student_item_dict, answer)
+        self.emit_completion(1)
 
         self.submission_status = SubmissionStatus.SUBMITTED.value
 
@@ -500,7 +520,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                 user = user_by_anonymous_id(student.student_id)
                 student_module = self.get_or_create_student_module(user)
                 state = json.loads(student_module.state)
-                score = self.get_score(student.student_id)
+                raw_score = self.get_raw_score(student.student_id)
 
                 if state.get("submission_status") in [
                     SubmissionStatus.COMPLETED.value, SubmissionStatus.SUBMITTED.value
@@ -514,13 +534,17 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
                         "timestamp": submission["created_at"].strftime(
                             DateTime.DATETIME_FORMAT
                         ),
-                        "score": score,
+                        "raw_score": state.get("raw_score", raw_score),
+                        "max_raw_score": self.points,
+                        "weight": self.weight,
+                        "weighted_score": self.get_weighted_score(student.student_id),
                         "submission_status": state.get("submission_status"),
                     }
 
         return {
             "assignments": list(get_student_data()),
-            "max_score": self.max_score(),
+            "max_raw_score": self.points,
+            "weight": self.weight,
             "display_name": self.display_name,
         }
 
@@ -536,7 +560,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return StudentModule().objects.get(pk=module_id)
 
-    def update_student_state(self, module_id: int, submission_status: str) -> None:
+    def update_student_state(self, module_id: int, submission_status: str, raw_score: int=None) -> None:
         """
         Updates the state of a student.
 
@@ -547,6 +571,8 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         module = self.get_student_module(module_id)
         state = json.loads(module.state)
         state["submission_status"] = submission_status
+        if raw_score is not None:
+            state["raw_score"] = raw_score
         module.state = json.dumps(state)
         module.save()
 
@@ -567,17 +593,17 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         require(self.is_course_team)
 
-        score = int(data.get("grade"))
+        raw_score = int(data.get("grade", 0))
         uuid = data.get("submission_id")
-        if not score or not uuid:
+        if not uuid:
             raise JsonHandlerError(400, "Missing required parameters")
-        if score > self.max_score():
+        if raw_score > self.points:
             raise JsonHandlerError(400, "Score cannot be greater than max score")
 
-        set_score(uuid, score, self.max_score())
+        set_score(uuid, round((raw_score / self.points) * self.weight), self.weight)
 
         self.update_student_state(
-            data.get("module_id"), SubmissionStatus.COMPLETED.value
+            data.get("module_id"), SubmissionStatus.COMPLETED.value, raw_score=raw_score,
         )
 
         return {
@@ -634,7 +660,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
         if weight:
             try:
-                weight = float(weight)
+                weight = int(weight)
             except ValueError as exc:
                 raise JsonHandlerError(400, "Weight must be a decimal number") from exc
             if weight < 0:
@@ -655,11 +681,11 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         """
         return (
             not self.past_due()
-            and self.score is None
+            and self.raw_score is None
             and self.submission_status == SubmissionStatus.NOT_ATTEMPTED.value
         )
 
-    def get_score(self, student_id=None) -> int:
+    def get_raw_score(self, student_id=None) -> int:
         """
         Return student's current score.
 
@@ -669,12 +695,9 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         Returns:
             int: The student's current score.
         """
-        # Lazy import: import here to avoid app not ready errors
-        from submissions.api import get_score  # pylint: disable=import-outside-toplevel
-
-        score = get_score(self.get_student_item_dict(student_id))
-        if score:
-            return score["points_earned"]
+        weighted_score = self.get_weighted_score(student_id)
+        if weighted_score:
+            return round((weighted_score * self.points) / self.weight)
 
         return None
 

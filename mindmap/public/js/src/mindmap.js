@@ -5,7 +5,8 @@ function MindMapXBlock(runtime, element, context) {
   const getGradingDataURL = runtime.handlerUrl(element, "get_instructor_grading_data");
   const enterGradeURL = runtime.handlerUrl(element, "enter_grade");
   const removeGradeURL = runtime.handlerUrl(element, "remove_grade");
-  const maxPointsAllowed = context.max_points;
+  const maxPointsAllowed = context.max_raw_score;
+  const problemWeight = context.weight;
 
   let gettext;
   if ("MindMapI18N" in window || "gettext" in window) {
@@ -84,7 +85,8 @@ function MindMapXBlock(runtime, element, context) {
                 gettext("Username"),
                 gettext("Uploaded"),
                 gettext("Submission Status"),
-                gettext("Grade"),
+                gettext("Raw score"),
+                gettext("Weighted score"),
                 gettext("Actions"),
               ];
 
@@ -131,7 +133,24 @@ function MindMapXBlock(runtime, element, context) {
                       return gettext(data);
                     },
                   },
-                  { data: "score" },
+                  {
+                    data: "raw_score",
+                    render: (data) => {
+                      if (data === null) {
+                        return "";
+                      }
+                      return `${data}/${maxPointsAllowed}`;
+                    },
+                  },
+                  {
+                    data: "weighted_score",
+                    render: (data) => {
+                      if (data === null) {
+                        return "";
+                      }
+                      return `${data}/${problemWeight}`;
+                    },
+                  },
                   {
                     data: null,
                     render: () => {

@@ -34,13 +34,15 @@ class MindMapXBlockTestMixin(TestCase):
         self.xblock.resource_string = Mock()
         self.xblock.submit_allowed = Mock(return_value=True)
         self.xblock.past_due = Mock(return_value=False)
-        self.xblock.get_score = Mock(return_value=0)
+        self.xblock.get_raw_score = Mock(return_value=50)
+        self.xblock.get_weighted_score = Mock(return_value=5)
         self.xblock.get_current_user = Mock(return_value=self.student)
         self.xblock.show_staff_grading_interface = Mock(return_value=False)
         self.xblock.display_name = "Test MindMap"
         self.xblock.points = 100
-        self.xblock.weight = 1
+        self.xblock.weight = 10
         self.xblock.has_score = True
+        self.xblock.raw_score = 50
         self.xblock.submission_status = "Not attempted"
         self.xblock.course_id = "test-course-id"
 
@@ -74,18 +76,23 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
             "mind_map": self.mind_map,
             "editable": self.editable_mind_map,
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
-            "max_points": self.xblock.points,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()
@@ -118,18 +125,23 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
             "mind_map": None,
             "editable": self.editable_mind_map,
             "xblock_id": self.xblock.scope_ids.usage_id.block_id,
-            "max_points": self.xblock.points,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()
@@ -162,11 +174,13 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.student_view()
@@ -197,12 +211,14 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
             "is_instructor": True,
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.student_view()
@@ -223,7 +239,7 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "display_name": "Test Mind Map",
             "is_static": True,
             "points": 100,
-            "weight": 1,
+            "weight": 10,
             "has_score": True,
         }
         expected_context = {
@@ -234,15 +250,16 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
             "points": 100,
             "points_field": self.xblock.fields["points"],
-            "weight": 1,
+            "weight": 10,
             "weight_field": self.xblock.fields["weight"],
-            "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.studio_view()
@@ -272,11 +289,13 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": True,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
 
         self.xblock.author_view()
@@ -315,18 +334,23 @@ class TestMindMapXBlock(MindMapXBlockTestMixin):
             "is_static": self.xblock.is_static,
             "is_static_field": self.xblock.fields["is_static"],
             "can_submit_assignment": False,
-            "score": 0,
-            "max_score": self.xblock.max_score(),
             "has_score": True,
             "has_score_field": self.xblock.fields["has_score"],
             "submission_status": self.xblock.submission_status,
+            "raw_score": 50,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
         }
         expected_js_context = {
             "author": self.student.full_name,
             "mind_map": self.mind_map,
             "editable": False,
             "xblock_id": block_id,
-            "max_points": self.xblock.points,
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
+            "weighted_score": self.xblock.get_weighted_score(),
+            "raw_score": self.xblock.raw_score,
         }
 
         self.xblock.student_view()
@@ -354,7 +378,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             "mind_map": self.mind_map,
             "is_static": True,
             "points": 100,
-            "weight": 1,
+            "weight": 10,
         }
         self.request = Mock(
             body=json.dumps(self.data).encode("utf-8"),
@@ -362,7 +386,8 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
             status_code_success=HTTPStatus.OK,
         )
         self.student_id = "test-student-id"
-        self.grade = 100
+        self.raw_grade = 50
+        self.weighted_grade = 5
         self.submission_id = "test-submission-id"
 
     def test_studio_submit(self):
@@ -455,7 +480,7 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         """
         self.request.body = json.dumps(
             {
-                "grade": self.grade,
+                "grade": self.raw_grade,
                 "submission_id": self.submission_id
             }
         ).encode("utf-8")
@@ -469,8 +494,8 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         self.assertEqual(HTTPStatus.OK, response.status_code)
         set_score_mock.assert_called_once_with(
             self.submission_id,
-            self.grade,
-            self.xblock.max_score(),
+            self.weighted_grade,
+            self.xblock.weight,
         )
 
     @patch("mindmap.mindmap.MindMapXBlock.get_student_module")
@@ -512,10 +537,9 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
         Expected result:
             - The student view is rendered with the appropriate values.
         """
-        self.xblock.get_score.return_value = 50
         student_item_mock.objects.filter.return_value = [
             Mock(
-                grade=self.xblock.score,
+                grade=self.xblock.raw_score,
                 student_id=self.student.student_id,
             ),
         ]
@@ -544,13 +568,17 @@ class TestMindMapXBlockHandlers(MindMapXBlockTestMixin):
                     },
                     "username": self.student.student_id,
                     "timestamp": current_datetime.strftime(DateTime.DATETIME_FORMAT),
-                    "score": 50,
+                    "raw_score": self.xblock.raw_score,
+                    "max_raw_score": self.xblock.points,
+                    "weight": self.xblock.weight,
+                    "weighted_score": self.xblock.get_weighted_score(),
                     "submission_status": self.xblock.submission_status,
 
                 },
             ],
             "display_name": self.xblock.display_name,
-            "max_score": self.xblock.max_score(),
+            "max_raw_score": self.xblock.points,
+            "weight": self.xblock.weight,
         }
         get_or_create_student_module_mock.return_value = Mock(
             state='{"submission_status": "Submitted"}', id=module_id,

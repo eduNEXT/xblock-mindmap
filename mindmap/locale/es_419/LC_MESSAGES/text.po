@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-25 11:10-0500\n"
+"POT-Creation-Date: 2023-10-05 14:30-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Bryann Valderrama <bryann.valderrama@edunext.co>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -106,19 +106,27 @@ msgstr ""
 "Define la cantidad de puntos que vale este problema. Si el valor no está "
 "establecido, el problema vale un punto."
 
-#: mindmap.py:123 public/html/mindmap_edit.html:32
+#: mindmap.py:123 public/js/src/mindmap.js:88
+msgid "Raw score"
+msgstr "Puntaje bruto"
+
+#: mindmap.py:124
+msgid "The raw score for the assignment."
+msgstr "La calificación bruta para la tarea."
+
+#: mindmap.py:130 public/html/mindmap_edit.html:32
 msgid "Maximum score"
 msgstr "Puntaje máximo"
 
-#: mindmap.py:124
+#: mindmap.py:131
 msgid "Maximum grade score given to assignment by staff."
 msgstr "Calificación máxima dada a la tarea por el instructor."
 
-#: mindmap.py:130
+#: mindmap.py:137
 msgid "Submission status"
 msgstr "Estado del envío"
 
-#: mindmap.py:131
+#: mindmap.py:138
 msgid "The submission status of the assignment."
 msgstr "El estado del envío de la tarea."
 
@@ -210,51 +218,51 @@ msgstr "Cancelar"
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: public/js/src/mindmap.js:85
+#: public/js/src/mindmap.js:86
 msgid "Uploaded"
 msgstr "Subido"
 
-#: public/js/src/mindmap.js:86
+#: public/js/src/mindmap.js:87
 msgid "Submission Status"
 msgstr "Estado del Envío"
 
-#: public/js/src/mindmap.js:87 public/js/src/mindmap.js:171
-msgid "Grade"
-msgstr "Calificación"
+#: public/js/src/mindmap.js:89
+msgid "Weighted score"
+msgstr "Puntaje ponderado"
 
-#: public/js/src/mindmap.js:88
+#: public/js/src/mindmap.js:90
 msgid "Actions"
 msgstr "Acciones"
 
-#: public/js/src/mindmap.js:108
+#: public/js/src/mindmap.js:1010
 msgid "Mindmap submissions"
 msgstr "Envíos de mapas mentales"
 
-#: public/js/src/mindmap.js:109
+#: public/js/src/mindmap.js:111
 msgid "Review"
 msgstr "Revisar"
 
-#: public/js/src/mindmap.js:110
+#: public/js/src/mindmap.js:112
 msgid "Search"
 msgstr "Buscar"
 
-#: public/js/src/mindmap.js:111
+#: public/js/src/mindmap.js:113
 msgid "Showing _START_ to _END_ of _TOTAL_ entries"
 msgstr "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registro(s)"
 
-#: public/js/src/mindmap.js:112
+#: public/js/src/mindmap.js:114
 msgid "No data available in table"
 msgstr "Ningún dato disponible en esta tabla"
 
-#: public/js/src/mindmap.js:113
+#: public/js/src/mindmap.js:115
 msgid "Showing 0 to 0 of 0 entries"
 msgstr "Mostrando registros del 0 al 0 de un total de 0 registro(s)"
 
-#: public/js/src/mindmap.js:114
+#: public/js/src/mindmap.js:116
 msgid "No matching records found"
 msgstr "No se encontraron resultados"
 
-#: public/js/src/mindmap.js:115
+#: public/js/src/mindmap.js:117
 msgid "(filtered from _MAX_ total entries)"
 msgstr "(filtrado de un total de _MAX_ registro(s))"
 
@@ -262,22 +270,26 @@ msgstr "(filtrado de un total de _MAX_ registro(s))"
 msgid "Remove grade"
 msgstr "Eliminar calificación"
 
-#: public/js/src/mindmap.js:168
+#: public/js/src/mindmap.js:187
 msgid "Loading..."
 msgstr "Cargando..."
 
-#: public/js/src/mindmap.js:169
+#: public/js/src/mindmap.js:188
 msgid "Back"
 msgstr "Volver"
 
-#: public/js/src/mindmap.js:191
+#: public/js/src/mindmap.js:189
+msgid "Grade"
+msgstr "Calificación"
+
+#: public/js/src/mindmap.js:210
 msgid "Reviewing Mindmap for student: "
 msgstr "Revisando Mapa Mental para el estudiante: "
 
-#: public/js/src/mindmap.js:235
+#: public/js/src/mindmap.js:254
 msgid "Invalid grade must be a number"
 msgstr "Calificación inválida, debe ser un número"
 
-#: public/js/src/mindmap.js:236
+#: public/js/src/mindmap.js:255
 msgid "Please enter a lower grade, maximum grade allowed is:"
 msgstr "Por favor ingresa una calificación menor, la calificación máxima permitida es:"
