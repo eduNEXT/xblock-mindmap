@@ -89,8 +89,9 @@ twine==4.0.2
     # via -r requirements/ci.in
 typing-extensions==4.8.0
     # via rich
-urllib3==2.0.6
+urllib3==1.26.17
     # via
+    #   -c requirements/constraints.txt
     #   requests
     #   twine
 virtualenv==20.24.5
