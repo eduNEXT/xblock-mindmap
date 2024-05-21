@@ -29,7 +29,7 @@ Compatibility Notes
 | Redwood          | >= 0.8.0     |
 +------------------+--------------+
 
-The settings can be changed in ``limesurvey/settings/common.py`` or, for example, in tutor configurations.
+The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 
 **NOTE**: the current ``common.py`` works with Open edX Palm, Quince and Redwood version.
 
