@@ -16,6 +16,23 @@ The Mind Map Xblock component can be used to build and display a mind map for le
 
 This Xblock has been created as an open source contribution to the Open edX platform and has been funded by the Unidigital project from the Spanish Government - 2023. 
 
+Compatibility Notes
+===================
+
++------------------+--------------+
+| Open edX Release | Version      |
++==================+==============+
+| Palm             | >= 0.8.0     |
++------------------+--------------+
+| Quince           | >= 0.8.0     |
++------------------+--------------+
+| Redwood          | >= 0.8.0     |
++------------------+--------------+
+
+The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
+
+**NOTE**: the current ``common.py`` works with Open edX Palm, Quince and Redwood version.
+
 
 Enabling the XBlock in a course
 *******************************
