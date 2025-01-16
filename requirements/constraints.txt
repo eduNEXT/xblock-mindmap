@@ -13,3 +13,6 @@
 
 # urllib3>=2.0.0 conflicts with zipp so we're using the same version as in edx-platform
 urllib3<2.0.0
+
+# backports.zoneinfo is only needed for Python < 3.9
+backports.zoneinfo; python_version<'3.9'

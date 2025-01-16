@@ -21,7 +21,7 @@ backports-tarfile==1.2.0
     # via
     #   -r requirements/ci.txt
     #   jaraco-context
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1 ; python_version < "3.9"
     # via
     #   -r requirements/quality.txt
     #   django
