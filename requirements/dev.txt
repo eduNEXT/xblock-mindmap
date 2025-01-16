@@ -128,7 +128,7 @@ edx-i18n-tools==1.6.3
     # via
     #   -r requirements/dev.in
     #   -r requirements/quality.txt
-edx-lint==5.4.1
+edx-lint==5.3.7
     # via -r requirements/quality.txt
 edx-submissions==3.8.4
     # via -r requirements/quality.txt
