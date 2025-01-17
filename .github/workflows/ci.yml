@@ -15,13 +15,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        python-version: ['3.8']
-        toxenv: [quality, docs, django32, django40]
+        python-version: ['3.8', '3.11']
+        toxenv: [quality, docs, django32, django42]
+        exclude:
+          - python-version: '3.11'
+            toxenv: django32
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
 
