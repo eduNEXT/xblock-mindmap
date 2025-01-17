@@ -28,12 +28,12 @@ Compatibility Notes
 +------------------+--------------+
 | Redwood          | >= 0.8.0     |
 +------------------+--------------+
-| Sumac            | >= 2.0.0     |
+| Sumac            | >= 0.10.0     |
 +------------------+--------------+
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 
-**NOTE**: the current ``common.py`` works with Open edX Palm, Quince, Redwood  and Sumac version.
+**NOTE**: the current ``common.py`` works with Open edX Palm, Quince, Redwood and Sumac versions.
 
 
 Enabling the XBlock in a course
@@ -114,7 +114,7 @@ You can see the Mind Map in action in the XBlock Workbench. Running the Workbenc
 
     git clone git@github.com:eduNEXT/xblock-mindmap
     cd xblock-mindmap
-    virtualenv -p python3.11 venv && source venv/bin/activate
+    virtualenv -p python3.x venv && source venv/bin/activate
     make upgrade
     make install
     make dev.run
