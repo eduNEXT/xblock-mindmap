@@ -141,6 +141,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
         'Natural Language :: English',
+        'Framework :: Django',
+        'Framework :: Django :: 3.2',
         'Framework :: Django :: 4.2',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
