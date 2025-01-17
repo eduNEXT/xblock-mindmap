@@ -28,7 +28,7 @@ Compatibility Notes
 +------------------+--------------+
 | Redwood          | >= 0.8.0     |
 +------------------+--------------+
-| Sumac            | >= 0.10.0    |
+| Sumac            | >= 1.1.0     |
 +------------------+--------------+
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
