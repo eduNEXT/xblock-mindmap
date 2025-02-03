@@ -128,7 +128,7 @@ importlib-metadata==8.5.0
     #   keyring
     #   sphinx
     #   twine
-importlib-resources==6.4.5
+importlib-resources==6.4.5; python_version < '3.9'
     # via keyring
 iniconfig==2.0.0
     # via
