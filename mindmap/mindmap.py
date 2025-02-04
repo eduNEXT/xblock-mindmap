@@ -6,10 +6,7 @@ import json
 import logging
 from enum import Enum
 
-try:
-    from importlib.resources import files as importlib_files
-except ImportError:
-    from importlib_resources import files as importlib_files
+from importlib.resources import files as importlib_files
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
 from web_fragments.fragment import Fragment
