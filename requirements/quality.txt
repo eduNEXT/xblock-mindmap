@@ -95,8 +95,6 @@ fs-s3fs==1.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-django-pyfs
-importlib-resources==6.5.2
-    # via -r requirements/test.txt
 iniconfig==2.0.0
     # via
     #   -r requirements/test.txt

@@ -157,8 +157,6 @@ importlib-metadata==8.6.1
     # via
     #   -r requirements/ci.txt
     #   keyring
-importlib-resources==6.5.2
-    # via -r requirements/quality.txt
 iniconfig==2.0.0
     # via
     #   -r requirements/quality.txt

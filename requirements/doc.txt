@@ -118,8 +118,6 @@ imagesize==1.4.1
     # via sphinx
 importlib-metadata==8.6.1
     # via keyring
-importlib-resources==6.5.2
-    # via -r requirements/test.txt
 iniconfig==2.0.0
     # via
     #   -r requirements/test.txt

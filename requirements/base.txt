@@ -49,8 +49,6 @@ fs==2.4.16
     #   xblock
 fs-s3fs==1.1.1
     # via openedx-django-pyfs
-importlib-resources==6.5.2
-    # via -r requirements/base.in
 jmespath==1.0.1
     # via
     #   boto3
