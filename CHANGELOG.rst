@@ -20,8 +20,9 @@ Unreleased
 Changed
 =======
 
-* Remove python 3.8 and django 3.2 support
-* pkg_resources is deprecated, and its recommended replacement, importlib.resources, is only fully available in Python 3.9+.
+* Remove support for python 3.8 and django 3.2
+* Replaced deprecated `pkg_resources` APIs with `importlib.resources` and `importlib.metadata` to ensure compatibility with newer Django and Python versions.
+* Starting with this version (9.0.0), it is no longer compatible with Quince.
 
 
 1.1.0 - 2025-01-17
