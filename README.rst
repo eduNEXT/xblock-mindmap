@@ -28,7 +28,7 @@ Compatibility Notes
 +------------------+------------------+
 | Redwood          | >= 0.8.0         |
 +------------------+------------------+
-| Sumac            | >= 0.8.0         |
+| Sumac            | >= 1.1.0         |
 +------------------+------------------+
 
 To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
