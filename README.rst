@@ -19,17 +19,19 @@ This Xblock has been created as an open source contribution to the Open edX plat
 Compatibility Notes
 ===================
 
-+------------------+--------------+
-| Open edX Release | Version      |
-+==================+==============+
-| Palm             | >= 0.8.0     |
-+------------------+--------------+
-| Quince           | >= 0.8.0     |
-+------------------+--------------+
-| Redwood          | >= 0.8.0     |
-+------------------+--------------+
-| Sumac            | >= 1.1.0     |
-+------------------+--------------+
++------------------+------------------+
+| Open edX Release | Version          |
++==================+==================+
+| Palm             | >= 0.8.0 < 2.0.0 |
++------------------+------------------+
+| Quince           | >= 0.8.0 < 2.0.0 |
++------------------+------------------+
+| Redwood          | >= 0.8.0         |
++------------------+------------------+
+| Sumac            | >= 1.1.0         |
++------------------+------------------+
+
+To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 

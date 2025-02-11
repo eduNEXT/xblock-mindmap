@@ -6,7 +6,7 @@ import json
 import logging
 from enum import Enum
 
-import pkg_resources
+from importlib.resources import files as importlib_files
 from django.core.exceptions import PermissionDenied
 from django.utils import translation
 from web_fragments.fragment import Fragment
@@ -200,8 +200,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
 
     def resource_string(self, path):
         """Handy helper for getting resources from our kit."""
-        data = pkg_resources.resource_string(__name__, path)
-        return data.decode("utf8")
+        return importlib_files(__package__).joinpath(path).read_text(encoding="utf-8")
 
     def render_template(self, template_path, context=None) -> str:
         """
@@ -797,8 +796,7 @@ class MindMapXBlock(XBlock, CompletableXBlockMixin):
         text_js = 'public/js/translations/{locale_code}/text.js'
         lang_code = locale_code.split('-')[0]
         for code in (translation.to_locale(locale_code), lang_code, 'en'):
-            if pkg_resources.resource_exists(
-                    loader.module_name, text_js.format(locale_code=code)):
+            if importlib_files(__package__).joinpath(text_js.format(locale_code=code)).exists():
                 return text_js.format(locale_code=code)
         return None
 
