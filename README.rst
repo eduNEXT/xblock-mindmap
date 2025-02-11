@@ -31,14 +31,7 @@ Compatibility Notes
 | Sumac            | >= 2.0.0         |
 +------------------+------------------+
 
-Starting from **version 2.0.0**, this project **no longer supports Python 3.8**.  
-
-#### Why was Python 3.8 support removed?  
-- **Python 3.8 reached end-of-life (EOL) in October 2024**, meaning it no longer receives security updates.  
-- **`pkg_resources` (from `setuptools`) is deprecated**, and its recommended replacement, `importlib.resources`, is only fully supported in **Python 3.9+**.  
-
-To ensure better maintainability and performance, **Python 3.9 or newer** is now required.  
-
+To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 
