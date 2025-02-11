@@ -26,9 +26,9 @@ Compatibility Notes
 +------------------+------------------+
 | Quince           | >= 0.8.0 < 2.0.0 |
 +------------------+------------------+
-| Redwood          | >= 1.1.0         |
+| Redwood          | >= 0.8.0         |
 +------------------+------------------+
-| Sumac            | >= 2.0.0         |
+| Sumac            | >= 0.8.0         |
 +------------------+------------------+
 
 To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
