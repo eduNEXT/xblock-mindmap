@@ -11,5 +11,7 @@
 # Common constraints for edx repos
 -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
 
-# urllib3>=2.0.0 conflicts with zipp so we're using the same version as in edx-platform
-urllib3<2.0.0
+# Cause: https://github.com/openedx/edx-lint/issues/475
+# This can be unpinned once https://github.com/openedx/edx-lint/issues/476 has been resolved.
+urllib3<2.3.0
+
