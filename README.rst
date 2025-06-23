@@ -30,14 +30,14 @@ Compatibility Notes
 +------------------+------------------+
 | Sumac            | >= 1.1.0         |
 +------------------+------------------+
-| Teak             | >= 3.0.0         |
+| Teak             | >= 2.1.0         |
 +------------------+------------------+
 
 To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 
-**NOTE**: the current ``common.py`` works with Open edX Palm, Quince, Redwood, Sumac and Teak versions.
+**NOTE**: the current ``common.py`` works with Open edX releases >= Redwood.
 
 
 Enabling the XBlock in a course
