@@ -34,8 +34,9 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 	$(PIP_COMPILE) -o requirements/quality.txt requirements/quality.in
 	$(PIP_COMPILE) -o requirements/ci.txt requirements/ci.in
 	$(PIP_COMPILE) -o requirements/dev.txt requirements/dev.in
-	# Let tox control the Django version for tests
-	sed '/^[dD]jango==/d' requirements/test.txt > requirements/test.tmp
+	
+	grep -e "^django==" requirements/test.txt > requirements/django52.txt
+	sed '/^[dD]jango==/d;' requirements/test.txt > requirements/test.tmp
 	mv requirements/test.tmp requirements/test.txt
 
 piptools: ## install pinned version of pip-compile and pip-sync
