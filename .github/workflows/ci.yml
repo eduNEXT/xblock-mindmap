@@ -15,11 +15,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04
-        python-version: ['3.11', '3.12']
-        toxenv: [quality, docs, django42, django52]
-        exclude:
-        - python-version: '3.12'
-          toxenv: 'django42'
+        python-version: ['3.12']
+        toxenv: [quality, docs, django52]
 
     steps:
     - uses: actions/checkout@v5
