@@ -32,8 +32,12 @@ Compatibility Notes
 +------------------+------------------+
 | Teak             | >= 2.1.0         |
 +------------------+------------------+
+| Ulmo             | >= 2.2.0         |
++------------------+------------------+
+| Verawood         | >= 2.3.0         |
++------------------+------------------+
 
-To ensure better maintainability and performance, **Python 3.11 or newer** is now required.
+To ensure better maintainability and performance, **Python 3.12 or newer** is now required.
 
 The settings can be changed in ``mindmap/settings/common.py`` or, for example, in tutor configurations.
 
